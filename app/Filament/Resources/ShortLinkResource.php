@@ -66,7 +66,7 @@ class ShortLinkResource extends Resource
         return $table->columns([
             Tables\Columns\TextColumn::make('slug')->copyable()->searchable(),
             Tables\Columns\TextColumn::make('user.email')->label('Owner')->searchable(),
-            Tables\Columns\TextColumn::make('original_url')->limit(40)->tooltip(fn($r)=>$r->original_url),
+            Tables\Columns\TextColumn::make('original_url')->limit(40)->tooltip(fn($record)=>$record->original_url),
             Tables\Columns\TextColumn::make('total_clicks')->numeric()->sortable(),
             Tables\Columns\TextColumn::make('valid_views')->numeric()->sortable(),
             Tables\Columns\TextColumn::make('total_earned')->money('VND', divideBy:1)->sortable(),
@@ -75,10 +75,10 @@ class ShortLinkResource extends Resource
         ])->filters([
             Tables\Filters\SelectFilter::make('status')->options(['active'=>'Active','disabled'=>'Disabled','blocked'=>'Blocked']),
         ])->actions([
-            Tables\Actions\Action::make('block')->visible(fn($r)=>$r->status!=='blocked')
-                ->color('danger')->action(fn($r)=>$r->update(['status'=>'blocked'])),
-            Tables\Actions\Action::make('activate')->visible(fn($r)=>$r->status!=='active')
-                ->color('success')->action(fn($r)=>$r->update(['status'=>'active'])),
+            Tables\Actions\Action::make('block')->visible(fn($record)=>$record->status!=='blocked')
+                ->color('danger')->action(fn($record)=>$record->update(['status'=>'blocked'])),
+            Tables\Actions\Action::make('activate')->visible(fn($record)=>$record->status!=='active')
+                ->color('success')->action(fn($record)=>$record->update(['status'=>'active'])),
             Tables\Actions\DeleteAction::make(),
         ]);
     }

@@ -21,7 +21,7 @@ class PendingPayouts extends BaseWidget
                 Tables\Columns\TextColumn::make('created_at')->since(),
             ])
             ->actions([
-                Tables\Actions\Action::make('open')->url(fn($r)=>\App\Filament\Resources\PayoutRequestResource::getUrl('edit',['record'=>$r])),
+                Tables\Actions\Action::make('open')->url(fn($record)=>\App\Filament\Resources\PayoutRequestResource::getUrl('edit',['record'=>$record])),
             ]);
     }
 }

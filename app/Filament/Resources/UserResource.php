@@ -57,10 +57,10 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('ban')->visible(fn($r)=>$r->status==='active')
-                    ->action(fn($r)=>$r->update(['status'=>'banned']))->color('danger'),
-                Tables\Actions\Action::make('unban')->visible(fn($r)=>$r->status==='banned')
-                    ->action(fn($r)=>$r->update(['status'=>'active']))->color('success'),
+                Tables\Actions\Action::make('ban')->visible(fn($record)=>$record->status==='active')
+                    ->action(fn($record)=>$record->update(['status'=>'banned']))->color('danger'),
+                Tables\Actions\Action::make('unban')->visible(fn($record)=>$record->status==='banned')
+                    ->action(fn($record)=>$record->update(['status'=>'active']))->color('success'),
             ]);
     }
 

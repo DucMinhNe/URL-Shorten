@@ -48,7 +48,7 @@ class AdCampaignResource extends Resource
             Tables\Columns\TextColumn::make('weight'),
             Tables\Columns\TextColumn::make('impressions')->numeric(),
             Tables\Columns\TextColumn::make('clicks_count')->numeric()->label('Clicks'),
-            Tables\Columns\TextColumn::make('ctr')->state(fn($r)=>$r->impressions>0?round($r->clicks_count/$r->impressions*100,2).'%':'-'),
+            Tables\Columns\TextColumn::make('ctr')->state(fn($record)=>$record->impressions>0?round($record->clicks_count/$record->impressions*100,2).'%':'-'),
             Tables\Columns\TextColumn::make('status')->badge()->colors(['success'=>'active','warning'=>'paused']),
         ])->filters([
             Tables\Filters\SelectFilter::make('placement')->options(['top'=>'Top','side'=>'Side','bottom'=>'Bottom']),

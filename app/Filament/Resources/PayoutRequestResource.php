@@ -81,13 +81,13 @@ class PayoutRequestResource extends Resource
                 'pending'=>'Pending','approved'=>'Approved','paid'=>'Paid','rejected'=>'Rejected',
             ])->default('pending'),
         ])->actions([
-            Tables\Actions\Action::make('markPaid')->visible(fn($r)=>in_array($r->status,['pending','approved']))
+            Tables\Actions\Action::make('markPaid')->visible(fn($record)=>in_array($record->status,['pending','approved']))
                 ->form([Forms\Components\TextInput::make('transaction_ref')->required()->label('Transaction ref')])
-                ->action(fn($r,$data)=>app(\App\Services\PayoutService::class)->markPaid($r, auth()->user(), $data['transaction_ref']))
+                ->action(fn($record,$data)=>app(\App\Services\PayoutService::class)->markPaid($record, auth()->user(), $data['transaction_ref']))
                 ->color('success')->icon('heroicon-o-check'),
-            Tables\Actions\Action::make('reject')->visible(fn($r)=>$r->status==='pending')
+            Tables\Actions\Action::make('reject')->visible(fn($record)=>$record->status==='pending')
                 ->form([Forms\Components\Textarea::make('reason')->required()])
-                ->action(fn($r,$data)=>app(\App\Services\PayoutService::class)->reject($r, auth()->user(), $data['reason']))
+                ->action(fn($record,$data)=>app(\App\Services\PayoutService::class)->reject($record, auth()->user(), $data['reason']))
                 ->color('danger')->icon('heroicon-o-x-mark')
                 ->requiresConfirmation(),
         ]);
