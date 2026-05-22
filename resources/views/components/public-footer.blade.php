@@ -70,7 +70,7 @@
         <div class="mt-12 pt-8 border-t border-hairline-soft flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3 type-caption text-stone">
                 <button class="pill-tab !py-1 !px-3 !type-caption-bold">🇻🇳 Tiếng Việt</button>
-                <span>© 2026 LinkPay · Đồ án sinh viên</span>
+                <span>© 2026 LinkPay. All rights reserved.</span>
             </div>
             <div class="flex items-center gap-4 type-caption text-stone">
                 <a href="#" class="hover:text-ink-deep">Điều khoản</a>
