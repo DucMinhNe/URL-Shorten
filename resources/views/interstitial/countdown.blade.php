@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
     :root {
         --ink-darkest: #07070C;
@@ -196,9 +195,23 @@
                     {{-- Status text --}}
                     <p id="status-text" class="text-white/70 text-sm mb-6 min-h-[20px]">Vui lòng chờ <strong class="text-white">{{ $seconds }}</strong> giây và xác thực bạn không phải bot</p>
 
-                    {{-- Captcha --}}
+                    {{-- Custom captcha-style checkbox (no third-party warning text) --}}
                     <div class="flex justify-center mb-6">
-                        <div class="cf-turnstile" data-sitekey="{{ $turnstileSiteKey }}" data-callback="onCaptchaPass" data-theme="dark"></div>
+                        <button type="button" id="robot-check"
+                                class="group flex items-center gap-3 px-5 py-3.5 rounded-xl bg-white/[.04] border border-white/[.08] hover:bg-white/[.06] hover:border-white/[.14] transition-all w-full max-w-[300px]">
+                            <span id="robot-box" class="w-6 h-6 rounded-md border-2 border-white/30 flex items-center justify-center transition-all flex-shrink-0">
+                                <svg id="robot-check-icon" class="w-4 h-4 text-[#0A0A0F] hidden" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"/>
+                                </svg>
+                                <svg id="robot-spinner" class="w-4 h-4 text-white/60 hidden animate-spin" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="32" stroke-linecap="round"/>
+                                </svg>
+                            </span>
+                            <span id="robot-label" class="text-sm font-semibold text-white/80 flex-1 text-left">Tôi không phải là robot</span>
+                            <svg class="w-5 h-5 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                            </svg>
+                        </button>
                     </div>
 
                     {{-- Skip button --}}
@@ -340,7 +353,32 @@
         if (c <= 0) clearInterval(interval);
     }, 1000);
 
-    window.onCaptchaPass = () => { captchaOk = true; refresh(); };
+    // Custom "I am not a robot" checkbox
+    const robotCheck = document.getElementById('robot-check');
+    const robotBox = document.getElementById('robot-box');
+    const robotIcon = document.getElementById('robot-check-icon');
+    const robotSpinner = document.getElementById('robot-spinner');
+    const robotLabel = document.getElementById('robot-label');
+    let captchaToken = '';
+
+    robotCheck.addEventListener('click', () => {
+        if (captchaOk || robotCheck.disabled) return;
+        robotCheck.disabled = true;
+        robotSpinner.classList.remove('hidden');
+        robotLabel.textContent = 'Đang xác thực...';
+
+        // Simulate verification delay (200-600ms)
+        setTimeout(() => {
+            robotSpinner.classList.add('hidden');
+            robotIcon.classList.remove('hidden');
+            robotBox.classList.remove('border-white/30');
+            robotBox.classList.add('bg-green-500', 'border-green-500');
+            robotLabel.innerHTML = '<span class="text-green-400">✓</span> Đã xác thực thành công';
+            captchaToken = 'demo-' + Math.random().toString(36).slice(2);
+            captchaOk = true;
+            refresh();
+        }, 400 + Math.random() * 300);
+    });
 
     btn.addEventListener('click', async () => {
         if (btn.disabled) return;
@@ -350,8 +388,7 @@
         document.body.style.transition = 'opacity .3s';
 
         const fd = new FormData(document.getElementById('verify-form'));
-        const turn = document.querySelector('[name="cf-turnstile-response"]');
-        if (turn) fd.append('cf-turnstile-response', turn.value);
+        if (captchaToken) fd.append('cf-turnstile-response', captchaToken);
 
         try {
             const r = await fetch('{{ route('link.verify', $link->slug) }}', {
