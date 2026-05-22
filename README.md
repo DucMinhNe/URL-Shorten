@@ -1,59 +1,141 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# URL Shortener with Ads — Đồ án Laravel 12
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Hệ thống rút gọn link kèm quảng cáo, trả tiền cho người dùng theo lượt view hợp lệ. Build cho đồ án sinh viên.
 
-## About Laravel
+## Tính năng
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- 🔗 Rút gọn URL với custom alias, password protect, guest mode
+- 📺 Trang interstitial 5s adf.ly style với 3 ad slot (top + side + bottom)
+- 🛡️ Cloudflare Turnstile captcha + IP dedup 24h + chống tự click
+- 💰 Tính tiền theo CPM cấu hình được trong admin
+- 💸 Yêu cầu rút tiền qua Momo/ZaloPay/PayPal, admin duyệt thủ công
+- 🎛️ Admin panel Filament 3: users, links, ads, payouts, settings, blacklist
+- 📊 Dashboard user với KPI cards + chart 30 ngày (Chart.js)
+- 🌐 Đa ngôn ngữ VN + EN với cookie switcher
+- 🔐 Google OAuth login + email/password (Breeze)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Laravel 12 · PHP 8.3 · MySQL · Filament 3.3 · Blade + Alpine.js + Tailwind CSS · Pest 4 · Vite
 
-## Learning Laravel
+## Yêu cầu
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- PHP 8.3+
+- Composer 2.x
+- Node.js 20+
+- MySQL 8 (hoặc MariaDB 10.6+, XAMPP cũng OK)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Cài đặt local
 
-## Laravel Sponsors
+```bash
+git clone <repo-url> URL-Shorten
+cd URL-Shorten
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+composer install
+npm install
 
-### Premium Partners
+cp .env.example .env
+php artisan key:generate
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Tạo DB MySQL
+mysql -u root -e "CREATE DATABASE url_shorten CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
-## Contributing
+# Migrate + seed demo data (~15s, ~17k clicks)
+php artisan migrate:fresh --seed
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Build assets
+npm run build
 
-## Code of Conduct
+# Start dev server
+php artisan serve
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Truy cập `http://localhost:8000`.
 
-## Security Vulnerabilities
+## Tài khoản demo
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Vai trò | Email | Mật khẩu | Truy cập |
+|---|---|---|---|
+| Admin | admin@demo.com | Admin@123 | `/admin` |
+| User | demo@demo.com | Demo@123 | `/dashboard` |
 
-## License
+## Cấu trúc thư mục chính
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```
+app/
+├── Filament/Resources/        # Admin CRUD (6 resources)
+├── Filament/Widgets/          # 3 dashboard widgets
+├── Http/Controllers/          # Home, Link, Redirect, Interstitial, Payout, Dashboard
+├── Models/                    # 10 Eloquent models
+└── Services/                  # 7 services (business logic)
+
+database/
+├── migrations/                # 10 schema migrations
+├── factories/                 # Factory definitions
+└── seeders/                   # 8 seeders cho demo data
+
+resources/views/
+├── home.blade.php             # Landing với form rút gọn
+├── dashboard.blade.php        # User KPI + chart
+├── links/                     # CRUD link
+├── payout/                    # Yêu cầu rút tiền
+└── interstitial/              # Trang trung gian adf.ly style
+```
+
+## Luồng chính
+
+### Người dùng rút gọn link
+1. Vào `/` (guest) hoặc `/links/create` (đã login)
+2. Nhập URL gốc → server sinh slug random hoặc dùng alias custom → save vào DB
+3. Trả về link rút gọn `domain.com/{slug}`
+
+### Người xem click link
+1. GET `/{slug}` → kiểm tra slug, nếu có password thì hiện form unlock
+2. Hiển thị trang interstitial: 3 ad slot + countdown 5s + Cloudflare Turnstile
+3. Sau 5s + captcha pass → POST `/{slug}/verify` → server xác thực captcha, dedup IP, cộng tiền cho owner (nếu valid view) → trả JSON redirect → JS chuyển đến URL gốc
+
+### User rút tiền
+1. Vào `/payout` → xem balance + nhập amount + chọn Momo/Zalo/PayPal + account info
+2. Server check balance, trừ tiền (hold), tạo PayoutRequest status=pending
+3. Admin vào `/admin` → tab Payouts → action "Mark Paid" (nhập transaction_ref) hoặc "Reject" (nhập note → refund tiền)
+
+## Cấu hình mở rộng (tuỳ chọn)
+
+### Google OAuth
+Tạo OAuth client tại [Google Cloud Console](https://console.cloud.google.com/), authorized redirect URI = `http://localhost:8000/auth/google/callback`. Update `.env`:
+```
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-secret
+```
+
+### Cloudflare Turnstile
+Mặc định dùng test keys (always-pass). Để dùng captcha thật: đăng ký free tại [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/) và cập nhật `.env`:
+```
+TURNSTILE_SITE_KEY=0x4AAA...
+TURNSTILE_SECRET_KEY=0x4AAA...
+```
+
+### Email (cho production)
+Đổi `MAIL_MAILER=log` sang `smtp` và config Gmail/cPanel SMTP:
+```
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your@gmail.com
+MAIL_PASSWORD=app-password-16-chars
+MAIL_ENCRYPTION=tls
+```
+
+## Deploy lên shared hosting
+
+1. Build local: `npm run build`
+2. Upload toàn bộ project lên hosting qua FTP/cPanel
+3. Đặt document root trỏ vào `public/`
+4. Tạo DB MySQL qua cPanel + update `.env`
+5. SSH (nếu có): `php artisan migrate --force && php artisan db:seed --force`
+6. Setup cron 1 phút/lần: `* * * * * cd /home/user/site && php artisan schedule:run >> /dev/null 2>&1`
+
+## Tài liệu thiết kế
+
+- `docs/superpowers/specs/2026-05-22-url-shorten-ads-design.md` — Design document (kiến trúc, ERD, flow chi tiết)
+- `docs/superpowers/plans/2026-05-22-url-shorten-implementation.md` — Implementation plan (40 tasks)
