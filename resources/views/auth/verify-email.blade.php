@@ -1,31 +1,54 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-    </div>
+<x-guest-layout :title="'Xác thực email — LinkPay'">
+<div class="min-h-screen flex flex-col">
+    <header class="px-8 py-6 flex items-center justify-between border-b border-hairline-soft">
+        <x-brand size="md"/>
+    </header>
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
-        </div>
-    @endif
+    <div class="flex-1 flex items-center justify-center px-6 py-12">
+        <div class="w-full max-w-[480px]">
+            <div class="card-feature text-center">
+                <div class="w-24 h-24 mx-auto rounded-full bg-primary-soft flex items-center justify-center text-primary-deep mb-6">
+                    <x-heroicon-o-envelope-open class="w-12 h-12"/>
+                </div>
 
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
-            @csrf
+                <div class="section-label justify-center mb-3"><span>Bước cuối</span></div>
+                <h1 class="type-heading-lg text-ink-deep">Kiểm tra hộp thư<br><span class="font-light italic text-slate">của bạn.</span></h1>
+                <p class="type-body-md text-slate mt-4">
+                    Bọn tao đã gửi link xác thực tới <strong class="text-ink-deep">{{ auth()->user()?->email ?? 'email của bạn' }}</strong>. Click vào đó để mở khoá tính năng kiếm tiền.
+                </p>
 
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
+                @if (session('status') == 'verification-link-sent')
+                    <div class="mt-6 p-4 rounded-xl bg-[color:var(--color-success-soft)] border border-success/30 text-success type-body-sm-bold flex items-center gap-2 justify-center">
+                        <x-heroicon-s-check-circle class="w-5 h-5"/>
+                        Email xác thực mới đã được gửi
+                    </div>
+                @endif
+
+                <div class="mt-8 space-y-3">
+                    <a href="https://mail.google.com" target="_blank" class="btn btn-primary w-full">
+                        <x-heroicon-o-envelope class="w-4 h-4"/>
+                        Mở Gmail
+                    </a>
+
+                    <form method="POST" action="{{ route('verification.send') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-ghost w-full">
+                            <x-heroicon-o-arrow-path class="w-4 h-4"/>
+                            Gửi lại email xác thực
+                        </button>
+                    </form>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-hairline-soft flex items-center justify-center gap-4 type-body-sm">
+                    <a href="{{ route('profile.edit') }}" class="text-slate hover:text-ink-deep">Đổi email</a>
+                    <span class="text-stone">·</span>
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="text-slate hover:text-ink-deep">Đăng xuất</button>
+                    </form>
+                </div>
             </div>
-        </form>
-
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                {{ __('Log Out') }}
-            </button>
-        </form>
+        </div>
     </div>
+</div>
 </x-guest-layout>

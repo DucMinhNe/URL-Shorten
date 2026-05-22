@@ -27,9 +27,19 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('LinkPay Admin')
+            ->favicon(asset('favicon.ico'))
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue,
+                'gray' => Color::Slate,
+                'danger' => Color::Red,
+                'success' => Color::Emerald,
+                'warning' => Color::Amber,
+                'info' => Color::Sky,
             ])
+            ->font('Montserrat')
+            ->sidebarCollapsibleOnDesktop()
+            ->breadcrumbs(true)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([

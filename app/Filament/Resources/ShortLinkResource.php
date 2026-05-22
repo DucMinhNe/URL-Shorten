@@ -17,7 +17,12 @@ class ShortLinkResource extends Resource
 {
     protected static ?string $model = ShortLink::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-link';
+    protected static ?string $navigationGroup = 'Nội dung';
+    protected static ?string $navigationLabel = 'Liên kết';
+    protected static ?string $modelLabel = 'liên kết';
+    protected static ?string $pluralModelLabel = 'liên kết';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {

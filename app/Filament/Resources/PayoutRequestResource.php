@@ -17,7 +17,22 @@ class PayoutRequestResource extends Resource
 {
     protected static ?string $model = PayoutRequest::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
+    protected static ?string $navigationGroup = 'Tài chính';
+    protected static ?string $navigationLabel = 'Yêu cầu rút tiền';
+    protected static ?string $modelLabel = 'yêu cầu rút tiền';
+    protected static ?string $pluralModelLabel = 'yêu cầu rút tiền';
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::where('status', 'pending')->count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
 
     public static function form(Form $form): Form
     {
