@@ -38,7 +38,9 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                \App\Filament\Widgets\StatsOverview::class,
+                \App\Filament\Widgets\ClicksChart::class,
+                \App\Filament\Widgets\PendingPayouts::class,
             ])
             ->middleware([
                 EncryptCookies::class,
