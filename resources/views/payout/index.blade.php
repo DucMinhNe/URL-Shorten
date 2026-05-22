@@ -85,16 +85,18 @@
                         <div class="space-y-2">
                             @php
                                 $methods = [
-                                    ['key'=>'momo', 'name'=>'Momo', 'desc'=>'SĐT Momo · Min 100.000đ', 'color'=>'pink', 'letter'=>'M'],
-                                    ['key'=>'zalo', 'name'=>'ZaloPay', 'desc'=>'SĐT ZaloPay · Min 100.000đ', 'color'=>'blue', 'letter'=>'Z'],
-                                    ['key'=>'paypal', 'name'=>'PayPal', 'desc'=>'Email PayPal · Min $4 USD', 'color'=>'indigo', 'letter'=>'P'],
+                                    ['key'=>'momo',   'name'=>'MoMo',    'desc'=>'SĐT MoMo · Min 100.000đ',     'logo'=>'momo.svg',    'bg'=>'#ea27c2'],
+                                    ['key'=>'zalo',   'name'=>'ZaloPay', 'desc'=>'SĐT ZaloPay · Min 100.000đ', 'logo'=>'zalopay.svg', 'bg'=>'#0068FF'],
+                                    ['key'=>'paypal', 'name'=>'PayPal',  'desc'=>'Email PayPal · Min $4 USD',  'logo'=>'paypal.svg',  'bg'=>'#003087'],
                                 ];
                                 $checked = old('method', $user->payout_method ?? 'momo');
                             @endphp
                             @foreach($methods as $m)
                                 <label class="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors {{ $checked === $m['key'] ? 'border-primary bg-primary-soft' : 'border-hairline-soft hover:border-hairline' }}">
                                     <input type="radio" name="method" value="{{ $m['key'] }}" {{ $checked === $m['key'] ? 'checked' : '' }} class="text-primary"/>
-                                    <div class="w-10 h-10 rounded-xl bg-{{ $m['color'] }}-100 text-{{ $m['color'] }}-600 flex items-center justify-center type-heading-sm font-black flex-shrink-0">{{ $m['letter'] }}</div>
+                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 p-1.5" style="background: {{ $m['bg'] }};">
+                                        <img src="{{ asset('images/payment/'.$m['logo']) }}" alt="{{ $m['name'] }}" class="w-full h-full object-contain {{ $m['key'] === 'paypal' ? 'brightness-0 invert' : '' }}">
+                                    </div>
                                     <div class="flex-1">
                                         <div class="type-body-sm-bold text-ink-deep">{{ $m['name'] }}</div>
                                         <div class="type-caption text-stone">{{ $m['desc'] }}</div>
@@ -150,12 +152,17 @@
                             @php
                                 $statusBadge = ['pending'=>'badge-warning','approved'=>'badge-info','paid'=>'badge-success','rejected'=>'badge-critical'][$r->status] ?? 'badge-neutral';
                                 $statusLabel = ['pending'=>'Đang chờ','approved'=>'Đã duyệt','paid'=>'Đã chuyển','rejected'=>'Từ chối'][$r->status] ?? $r->status;
-                                $methodColors = ['momo'=>'pink','zalo'=>'blue','paypal'=>'indigo'];
-                                $methodLetters = ['momo'=>'M','zalo'=>'Z','paypal'=>'P'];
+                                $methodMeta = [
+                                    'momo'   => ['logo'=>'momo.svg',    'bg'=>'#ea27c2', 'invert'=>false],
+                                    'zalo'   => ['logo'=>'zalopay.svg', 'bg'=>'#0068FF', 'invert'=>false],
+                                    'paypal' => ['logo'=>'paypal.svg',  'bg'=>'#003087', 'invert'=>true],
+                                ][$r->method] ?? ['logo'=>'momo.svg','bg'=>'#999','invert'=>false];
                             @endphp
                             <details class="group">
                                 <summary class="p-5 cursor-pointer flex items-center gap-4 list-none hover:bg-surface-soft transition-colors">
-                                    <div class="w-10 h-10 rounded-xl bg-{{ $methodColors[$r->method] ?? 'gray' }}-100 text-{{ $methodColors[$r->method] ?? 'gray' }}-600 flex items-center justify-center type-body-md-bold font-black flex-shrink-0">{{ $methodLetters[$r->method] ?? '?' }}</div>
+                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 p-1.5" style="background: {{ $methodMeta['bg'] }};">
+                                        <img src="{{ asset('images/payment/'.$methodMeta['logo']) }}" alt="{{ $r->method }}" class="w-full h-full object-contain {{ $methodMeta['invert'] ? 'brightness-0 invert' : '' }}">
+                                    </div>
                                     <div class="flex-1 min-w-0">
                                         <div class="type-body-md-bold text-ink-deep">{{ number_format($r->amount) }}đ</div>
                                         <div class="type-caption text-stone">{{ ucfirst($r->method) }} · {{ $r->account_info }}</div>

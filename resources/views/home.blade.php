@@ -256,17 +256,15 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             {{-- Momo --}}
             <div class="card-photo border border-hairline-soft">
-                <div class="aspect-[4/3] bg-gradient-to-br from-pink-500 to-pink-700 flex items-center justify-center relative">
-                    <div class="w-24 h-24 bg-canvas rounded-3xl flex items-center justify-center shadow-lg">
-                        <span class="font-black text-3xl text-pink-600">M</span>
-                    </div>
+                <div class="aspect-[4/3] flex items-center justify-center relative" style="background: radial-gradient(circle at 30% 30%, #ff4dab 0%, #ea27c2 50%, #a50064 100%);">
+                    <img src="{{ asset('images/payment/momo.svg') }}" alt="MoMo" class="w-28 h-28 drop-shadow-xl">
                     <span class="absolute top-4 right-4 badge badge-success">
                         <x-heroicon-s-check class="w-3 h-3"/> Phổ biến
                     </span>
                 </div>
                 <div class="p-8">
-                    <h3 class="type-heading-sm">Momo</h3>
-                    <p class="type-body-md text-slate mt-2">Chuyển khoản qua số điện thoại Momo. Tối thiểu 100.000đ.</p>
+                    <h3 class="type-heading-sm">MoMo</h3>
+                    <p class="type-body-md text-slate mt-2">Chuyển khoản qua số điện thoại MoMo. Tối thiểu 100.000đ.</p>
                     <div class="mt-4 flex items-center gap-2 type-caption-bold text-slate">
                         <x-heroicon-s-clock class="w-4 h-4"/>
                         Duyệt trong 24h · Phí 0đ
@@ -276,14 +274,12 @@
 
             {{-- ZaloPay --}}
             <div class="card-photo border border-hairline-soft">
-                <div class="aspect-[4/3] bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                    <div class="w-24 h-24 bg-canvas rounded-3xl flex items-center justify-center shadow-lg">
-                        <span class="font-black text-3xl text-blue-600">Z</span>
-                    </div>
+                <div class="aspect-[4/3] flex items-center justify-center px-10" style="background: linear-gradient(135deg, #00ABFC 0%, #0068FF 100%);">
+                    <img src="{{ asset('images/payment/zalopay.svg') }}" alt="ZaloPay" class="max-w-[80%] max-h-[60%] drop-shadow-xl">
                 </div>
                 <div class="p-8">
                     <h3 class="type-heading-sm">ZaloPay</h3>
-                    <p class="type-body-md text-slate mt-2">Chuyển khoản qua số ZaloPay. Tối thiểu 100.000đ.</p>
+                    <p class="type-body-md text-slate mt-2">Chuyển khoản qua tài khoản ZaloPay. Tối thiểu 100.000đ.</p>
                     <div class="mt-4 flex items-center gap-2 type-caption-bold text-slate">
                         <x-heroicon-s-clock class="w-4 h-4"/>
                         Duyệt trong 24h · Phí 0đ
@@ -293,10 +289,8 @@
 
             {{-- PayPal --}}
             <div class="card-photo border border-hairline-soft">
-                <div class="aspect-[4/3] bg-gradient-to-br from-indigo-700 to-indigo-900 flex items-center justify-center">
-                    <div class="w-24 h-24 bg-canvas rounded-3xl flex items-center justify-center shadow-lg">
-                        <span class="font-black text-3xl text-indigo-700">P</span>
-                    </div>
+                <div class="aspect-[4/3] flex items-center justify-center px-10" style="background: linear-gradient(135deg, #003087 0%, #001F5C 100%);">
+                    <img src="{{ asset('images/payment/paypal.svg') }}" alt="PayPal" class="max-w-[75%] max-h-[55%] drop-shadow-xl brightness-0 invert">
                 </div>
                 <div class="p-8">
                     <h3 class="type-heading-sm">PayPal</h3>
