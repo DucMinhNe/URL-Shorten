@@ -29,15 +29,41 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->brandName('LinkPay Admin')
             ->favicon(asset('favicon.ico'))
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->darkMode(false)
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => [
+                    50  => '#e7e7ff',
+                    100 => '#d2d3ff',
+                    200 => '#a5a7ff',
+                    300 => '#878aff',
+                    400 => '#7679ff',
+                    500 => '#696cff',
+                    600 => '#5f61e6',
+                    700 => '#4a4dcc',
+                    800 => '#3f4199',
+                    900 => '#2a2b66',
+                    950 => '#151633',
+                ],
                 'gray' => Color::Slate,
                 'danger' => Color::Red,
-                'success' => Color::Emerald,
-                'warning' => Color::Amber,
-                'info' => Color::Sky,
+                'success' => [
+                    50  => '#e8fadf',
+                    500 => '#71dd37',
+                    600 => '#5cb928',
+                ],
+                'warning' => [
+                    50  => '#fff2d6',
+                    500 => '#ffab00',
+                    600 => '#cc8900',
+                ],
+                'info' => [
+                    50  => '#d7f5fc',
+                    500 => '#03c3ec',
+                    600 => '#029cbd',
+                ],
             ])
-            ->font('Montserrat')
+            ->font('Public Sans')
             ->sidebarCollapsibleOnDesktop()
             ->breadcrumbs(true)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

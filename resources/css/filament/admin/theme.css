@@ -1,0 +1,459 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@config 'tailwind.config.js';
+
+/* ============================================================
+   LinkPay Admin Theme — Sneat-inspired (Bootstrap port to Filament)
+   Source: github.com/themeselection/sneat-bootstrap-html-admin-template-free
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500&display=swap');
+
+:root {
+    /* Sneat brand colors */
+    --sneat-primary: 105 108 255;        /* #696CFF — purple */
+    --sneat-primary-deep: 95 97 230;     /* #5F61E6 */
+    --sneat-primary-bg: 231 231 255;     /* #E7E7FF — subtle */
+    --sneat-success: 113 221 55;         /* #71DD37 */
+    --sneat-warning: 255 171 0;          /* #FFAB00 */
+    --sneat-danger: 255 62 29;           /* #FF3E1D */
+    --sneat-info: 3 195 236;             /* #03C3EC */
+    --sneat-secondary: 133 146 163;      /* #8592A3 */
+
+    /* Surfaces */
+    --sneat-body-bg: 245 245 249;        /* #F5F5F9 */
+    --sneat-card-bg: 255 255 255;
+    --sneat-sidebar-bg: 255 255 255;
+
+    /* Text */
+    --sneat-heading: 56 69 81;           /* #384551 */
+    --sneat-body: 100 110 120;           /* #646E78 */
+    --sneat-muted: 167 172 178;          /* #A7ACB2 */
+
+    /* Borders */
+    --sneat-border: 228 230 232;         /* #E4E6E8 */
+    --sneat-divider: 233 234 236;        /* #E9EAEC */
+
+    /* Shadows */
+    --sneat-shadow-sm: 0 2px 6px 0 rgba(34, 48, 62, 0.08);
+    --sneat-shadow: 0 3px 8px 0 rgba(34, 48, 62, 0.1);
+    --sneat-shadow-lg: 0 4px 12px 0 rgba(34, 48, 62, 0.14);
+
+    /* Radii */
+    --sneat-radius-sm: 0.25rem;
+    --sneat-radius: 0.375rem;       /* 6px */
+    --sneat-radius-lg: 0.5rem;      /* 8px */
+    --sneat-radius-xl: 0.625rem;    /* 10px */
+    --sneat-radius-xxl: 1rem;       /* 16px */
+}
+
+/* ============================================================
+   GLOBAL TYPOGRAPHY
+   ============================================================ */
+.fi-body {
+    font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+    background-color: #f5f5f9 !important;
+    color: #646e78 !important;
+    font-size: 0.9375rem;
+    line-height: 1.375;
+}
+
+.fi-body h1, .fi-body h2, .fi-body h3, .fi-body h4, .fi-body h5, .fi-body h6,
+.fi-header-heading {
+    color: #384551 !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em;
+}
+
+.fi-section-header-heading,
+.fi-ta-header-heading,
+.fi-fo-section-header-heading {
+    color: #384551 !important;
+    font-weight: 600 !important;
+}
+
+/* ============================================================
+   SIDEBAR — clean white with subtle accents
+   ============================================================ */
+.fi-sidebar {
+    background-color: #ffffff !important;
+    border-right: 1px solid #e4e6e8 !important;
+    box-shadow: 0 0 6px 0 rgba(67, 89, 113, 0.08);
+}
+
+.fi-sidebar-nav {
+    padding: 1rem !important;
+}
+
+.fi-sidebar-header {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #e4e6e8 !important;
+    padding: 1.25rem 1.5rem !important;
+}
+
+.fi-sidebar-group-label {
+    color: #a7acb2 !important;
+    font-size: 0.6875rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    padding: 1rem 0.75rem 0.5rem !important;
+}
+
+/* Nav items */
+.fi-sidebar-item-button {
+    border-radius: 0.375rem !important;
+    padding: 0.55rem 0.75rem !important;
+    font-size: 0.9375rem !important;
+    font-weight: 400 !important;
+    color: #646e78 !important;
+    transition: all 0.15s ease !important;
+    margin: 1px 0 !important;
+}
+
+.fi-sidebar-item-button:hover {
+    background-color: rgba(105, 108, 255, 0.08) !important;
+    color: #384551 !important;
+}
+
+.fi-sidebar-item-active .fi-sidebar-item-button {
+    background: linear-gradient(72.47deg, #696CFF 22.16%, rgba(105, 108, 255, 0.7) 76.47%) !important;
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    box-shadow: 0 2px 6px 0 rgba(105, 108, 255, 0.3) !important;
+}
+
+.fi-sidebar-item-active .fi-sidebar-item-button .fi-sidebar-item-icon,
+.fi-sidebar-item-active .fi-sidebar-item-button .fi-sidebar-item-label {
+    color: #ffffff !important;
+}
+
+.fi-sidebar-item-icon {
+    color: #8592a3 !important;
+    width: 1.125rem !important;
+    height: 1.125rem !important;
+}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+.fi-topbar {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #e4e6e8 !important;
+    box-shadow: 0 1px 0 rgba(67, 89, 113, 0.04) !important;
+}
+
+.fi-topbar nav.fi-breadcrumbs {
+    color: #8592a3 !important;
+}
+
+.fi-breadcrumbs-item-label {
+    color: #8592a3 !important;
+    font-size: 0.875rem !important;
+}
+
+.fi-breadcrumbs-current-label {
+    color: #384551 !important;
+    font-weight: 500 !important;
+}
+
+/* ============================================================
+   PAGE HEADING
+   ============================================================ */
+.fi-header {
+    padding-bottom: 1.5rem !important;
+}
+
+.fi-header-heading {
+    font-size: 1.5rem !important;
+    color: #384551 !important;
+}
+
+.fi-header-subheading {
+    color: #8592a3 !important;
+    font-size: 0.9375rem !important;
+}
+
+/* ============================================================
+   CARDS — Sneat signature subtle shadows
+   ============================================================ */
+.fi-section,
+.fi-wi,
+.fi-ta-ctn,
+.fi-fo-section {
+    background-color: #ffffff !important;
+    border: 1px solid transparent !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 2px 6px 0 rgba(34, 48, 62, 0.08) !important;
+    overflow: hidden;
+}
+
+.fi-section-content,
+.fi-wi-stats-overview-stat,
+.fi-fo-section-content-ctn {
+    padding: 1.5rem !important;
+}
+
+.fi-section-header,
+.fi-fo-section-header {
+    padding: 1.25rem 1.5rem !important;
+    border-bottom: 1px solid #e9eaec !important;
+}
+
+/* ============================================================
+   STATS WIDGETS — colorful with icon
+   ============================================================ */
+.fi-wi-stats-overview-stat {
+    background-color: #ffffff !important;
+    border: 1px solid transparent !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 2px 6px 0 rgba(34, 48, 62, 0.08) !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fi-wi-stats-overview-stat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px 0 rgba(34, 48, 62, 0.14) !important;
+}
+
+.fi-wi-stats-overview-stat-label {
+    color: #8592a3 !important;
+    font-size: 0.8125rem !important;
+    font-weight: 500 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.fi-wi-stats-overview-stat-value {
+    color: #384551 !important;
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    margin-top: 0.5rem !important;
+}
+
+.fi-wi-stats-overview-stat-description {
+    color: #8592a3 !important;
+    font-size: 0.8125rem !important;
+}
+
+/* ============================================================
+   BUTTONS — Sneat pill/rounded with shadow on primary
+   ============================================================ */
+.fi-btn {
+    border-radius: 0.375rem !important;
+    font-weight: 500 !important;
+    font-size: 0.9375rem !important;
+    padding: 0.4375rem 1.25rem !important;
+    transition: all 0.15s ease !important;
+}
+
+.fi-btn-color-primary {
+    background: #696cff !important;
+    border-color: #696cff !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 4px 0 rgba(105, 108, 255, 0.4) !important;
+}
+
+.fi-btn-color-primary:hover {
+    background: #5f61e6 !important;
+    border-color: #5f61e6 !important;
+    box-shadow: 0 2px 6px 0 rgba(105, 108, 255, 0.5) !important;
+    transform: translateY(-1px);
+}
+
+.fi-btn-color-danger {
+    background: #ff3e1d !important;
+    box-shadow: 0 2px 4px 0 rgba(255, 62, 29, 0.4) !important;
+}
+
+.fi-btn-color-success {
+    background: #71dd37 !important;
+    box-shadow: 0 2px 4px 0 rgba(113, 221, 55, 0.4) !important;
+}
+
+.fi-btn-color-warning {
+    background: #ffab00 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 4px 0 rgba(255, 171, 0, 0.4) !important;
+}
+
+/* ============================================================
+   BADGES — softer Sneat style
+   ============================================================ */
+.fi-badge {
+    border-radius: 0.375rem !important;
+    padding: 0.25rem 0.5rem !important;
+    font-weight: 500 !important;
+    font-size: 0.75rem !important;
+    line-height: 1 !important;
+}
+
+.fi-badge-color-primary { background-color: #e7e7ff !important; color: #5f61e6 !important; }
+.fi-badge-color-success { background-color: #e8fadf !important; color: #5cb928 !important; }
+.fi-badge-color-warning { background-color: #fff2d6 !important; color: #cc8900 !important; }
+.fi-badge-color-danger  { background-color: #ffe0db !important; color: #d63319 !important; }
+.fi-badge-color-info    { background-color: #d7f5fc !important; color: #029cbd !important; }
+.fi-badge-color-gray    { background-color: #ebeef0 !important; color: #646e78 !important; }
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+.fi-ta {
+    background-color: #ffffff !important;
+}
+
+.fi-ta-header-cell {
+    background-color: #f4f5f6 !important;
+    color: #646e78 !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+    padding: 0.875rem 1.5rem !important;
+    border-bottom: 1px solid #e4e6e8 !important;
+}
+
+.fi-ta-row {
+    border-bottom: 1px solid #f4f5f6 !important;
+}
+
+.fi-ta-row:hover {
+    background-color: #fafafb !important;
+}
+
+.fi-ta-cell {
+    padding: 0.875rem 1.5rem !important;
+    color: #646e78 !important;
+    font-size: 0.9375rem !important;
+}
+
+.fi-ta-text-item-label {
+    color: #384551 !important;
+    font-weight: 500 !important;
+}
+
+/* Table filters bar */
+.fi-ta-filters {
+    padding: 1rem 1.5rem !important;
+    background-color: #fafafb !important;
+    border-bottom: 1px solid #e9eaec !important;
+}
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+.fi-input,
+.fi-select-input,
+.fi-textarea {
+    background-color: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 0.375rem !important;
+    color: #384551 !important;
+    font-size: 0.9375rem !important;
+    padding: 0.4375rem 0.875rem !important;
+    height: 38px !important;
+    transition: border-color 0.15s, box-shadow 0.15s !important;
+}
+
+.fi-input:focus,
+.fi-select-input:focus {
+    border-color: #696cff !important;
+    box-shadow: 0 0 0 3px rgba(105, 108, 255, 0.2) !important;
+    outline: none !important;
+}
+
+.fi-fo-field-wrp-label {
+    color: #384551 !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    margin-bottom: 0.4375rem !important;
+}
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+.fi-pagination-item {
+    border-radius: 0.375rem !important;
+}
+
+.fi-pagination-item-current {
+    background-color: #696cff !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 4px 0 rgba(105, 108, 255, 0.4) !important;
+}
+
+/* ============================================================
+   DROPDOWN / MODALS
+   ============================================================ */
+.fi-dropdown-panel,
+.fi-modal-window {
+    background-color: #ffffff !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 5px 14px 0 rgba(34, 48, 62, 0.16) !important;
+    border: 1px solid #e4e6e8 !important;
+}
+
+.fi-dropdown-list-item {
+    color: #646e78 !important;
+}
+
+.fi-dropdown-list-item:hover {
+    background-color: #f4f5f6 !important;
+}
+
+/* ============================================================
+   CHARTS — adjust Filament's chart widget
+   ============================================================ */
+.fi-wi-chart {
+    padding: 1.5rem !important;
+}
+
+/* ============================================================
+   LOGIN PAGE
+   ============================================================ */
+.fi-simple-layout {
+    background-color: #f5f5f9 !important;
+}
+
+.fi-simple-page {
+    background-color: #ffffff !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 4px 12px 0 rgba(34, 48, 62, 0.14) !important;
+    border: 1px solid #e4e6e8 !important;
+    padding: 2rem !important;
+}
+
+/* ============================================================
+   NAV BADGE
+   ============================================================ */
+.fi-sidebar-item-badge {
+    background-color: #ff3e1d !important;
+    color: #ffffff !important;
+    border-radius: 0.375rem !important;
+    padding: 0.125rem 0.375rem !important;
+    font-size: 0.6875rem !important;
+    font-weight: 700 !important;
+}
+
+.fi-sidebar-item-active .fi-sidebar-item-badge {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+}
+
+/* ============================================================
+   MISC POLISH
+   ============================================================ */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #a7acb2; }
+
+/* Remove Filament's dark blue tint */
+.fi-sidebar-nav-item, .fi-sidebar-item, .fi-section, .fi-header {
+    background-color: transparent !important;
+}
+
+/* Tighten section gap */
+.fi-page > * + * {
+    margin-top: 1.5rem !important;
+}
