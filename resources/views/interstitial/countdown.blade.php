@@ -235,45 +235,79 @@
             </div>
         </div>
 
-        {{-- RIGHT: Ad column --}}
+        {{-- RIGHT: Ad column — uses real brand data from JSON content field --}}
         <div class="lg:w-[420px] xl:w-[480px] flex flex-col gap-4">
             <div class="flex items-center justify-between">
                 <span class="text-[10px] mono uppercase tracking-[0.25em] text-white/30">Quảng cáo</span>
                 <a href="#" class="text-[10px] mono text-white/30 hover:text-white/60">Tại sao tôi thấy quảng cáo?</a>
             </div>
 
-            {{-- Top featured ad --}}
-            @if($ads['top'])
-                <a href="{{ $ads['top']->target_url ?? '#' }}" target="_blank" rel="noopener"
-                   class="ad-card block rounded-2xl overflow-hidden group transition-all">
+            @php
+                // Decode brand metadata from each ad slot
+                $parseAd = function($ad) {
+                    if (!$ad) return null;
+                    $meta = json_decode($ad->content ?? '', true);
+                    if (!is_array($meta) || !isset($meta['image'])) return null;
+                    return [
+                        'image'    => $meta['image'],
+                        'headline' => $meta['headline'],
+                        'sub'      => $meta['sub'],
+                        'cta'      => $meta['cta'],
+                        'brand'    => $meta['brand'],
+                        'color'    => $meta['color'],
+                        'target'   => $ad->target_url,
+                    ];
+                };
+                $topAd = $parseAd($ads['top']);
+                $sideAd = $parseAd($ads['side']);
+                $bottomAd = $parseAd($ads['bottom']);
+            @endphp
+
+            {{-- Featured top ad: photo + brand-color gradient + Vietnamese copy --}}
+            @if($topAd)
+                <a href="{{ $topAd['target'] ?? '#' }}" target="_blank" rel="noopener"
+                   class="block rounded-3xl overflow-hidden group transition-all relative" style="box-shadow: 0 8px 32px -8px rgba(0,0,0,.5);">
                     <div class="relative" style="aspect-ratio: 4/3;">
-                        <img src="{{ $ads['top']->content }}" alt="{{ $ads['top']->name }}" class="absolute inset-0 w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
-                        <div class="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-white/10 backdrop-blur-md text-[10px] mono uppercase tracking-wider text-white/80">Featured</div>
-                        <div class="absolute bottom-4 left-4 right-4">
-                            <div class="text-xs text-white/60 mono uppercase tracking-wider">{{ $ads['top']->name }}</div>
-                            <div class="text-white font-bold text-lg mt-1 leading-tight">Khám phá ưu đãi đặc biệt từ đối tác của chúng tôi</div>
-                            <div class="mt-3 inline-flex items-center gap-1.5 text-[#FFD60A] text-sm font-semibold group-hover:gap-2.5 transition-all">
-                                Tìm hiểu ngay
-                                <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"/></svg>
+                        <img src="{{ asset(ltrim($topAd['image'], '/')) }}" alt="{{ $topAd['brand'] }}" class="absolute inset-0 w-full h-full object-cover">
+                        {{-- Brand color gradient overlay --}}
+                        <div class="absolute inset-0" style="background: linear-gradient(135deg, {{ $topAd['color'] }}E6 0%, {{ $topAd['color'] }}99 50%, transparent 100%);"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+
+                        {{-- Top: Featured badge + Brand badge --}}
+                        <div class="absolute top-4 left-4 right-4 flex items-center justify-between">
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-[10px] font-bold uppercase tracking-wider" style="color: {{ $topAd['color'] }};">
+                                <span class="w-1.5 h-1.5 rounded-full" style="background: {{ $topAd['color'] }};"></span>
+                                {{ $topAd['brand'] }}
+                            </div>
+                            <div class="px-2 py-1 rounded-full bg-black/40 backdrop-blur-md text-[9px] uppercase tracking-wider text-white/80 font-bold">Featured</div>
+                        </div>
+
+                        {{-- Bottom: Headline + Sub + CTA --}}
+                        <div class="absolute bottom-5 left-5 right-5">
+                            <div class="text-white text-2xl font-black tracking-tight leading-none drop-shadow-lg">{{ $topAd['headline'] }}</div>
+                            <div class="text-white/95 text-xs mt-2 font-medium drop-shadow leading-snug">{{ $topAd['sub'] }}</div>
+                            <div class="mt-4 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white text-xs font-bold group-hover:gap-2.5 transition-all" style="color: {{ $topAd['color'] }};">
+                                {{ $topAd['cta'] }}
+                                <svg class="w-3 h-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"/></svg>
                             </div>
                         </div>
                     </div>
                 </a>
             @endif
 
-            {{-- Two smaller ads --}}
+            {{-- Two smaller ads side-by-side --}}
             <div class="grid grid-cols-2 gap-3">
-                @foreach (['side', 'bottom'] as $slot)
-                    @if($ads[$slot])
-                        <a href="{{ $ads[$slot]->target_url ?? '#' }}" target="_blank" rel="noopener"
-                           class="ad-card block rounded-xl overflow-hidden transition-all">
+                @foreach ([$sideAd, $bottomAd] as $small)
+                    @if($small)
+                        <a href="{{ $small['target'] ?? '#' }}" target="_blank" rel="noopener"
+                           class="block rounded-2xl overflow-hidden group transition-all relative" style="box-shadow: 0 4px 16px -4px rgba(0,0,0,.4);">
                             <div class="relative" style="aspect-ratio: 1/1;">
-                                <img src="{{ $ads[$slot]->content }}" alt="{{ $ads[$slot]->name }}" class="absolute inset-0 w-full h-full object-cover">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                                <div class="absolute bottom-2 left-2 right-2">
-                                    <div class="text-[10px] mono uppercase tracking-wider text-white/50">{{ Str::words($ads[$slot]->name, 2, '') }}</div>
-                                    <div class="text-white text-xs font-semibold mt-0.5 leading-tight line-clamp-2">{{ $ads[$slot]->name }}</div>
+                                <img src="{{ asset(ltrim($small['image'], '/')) }}" alt="{{ $small['brand'] }}" class="absolute inset-0 w-full h-full object-cover">
+                                <div class="absolute inset-0" style="background: linear-gradient(180deg, transparent 0%, {{ $small['color'] }}AA 70%, {{ $small['color'] }}EE 100%);"></div>
+                                <div class="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-white text-[9px] font-bold uppercase tracking-wider" style="color: {{ $small['color'] }};">{{ $small['brand'] }}</div>
+                                <div class="absolute bottom-3 left-3 right-3">
+                                    <div class="text-white text-sm font-black tracking-tight leading-none drop-shadow">{{ $small['headline'] }}</div>
+                                    <div class="text-white/90 text-[10px] mt-1 font-medium line-clamp-2 leading-snug">{{ $small['sub'] }}</div>
                                 </div>
                             </div>
                         </a>
@@ -281,7 +315,7 @@
                 @endforeach
             </div>
 
-            {{-- Stats badge below ads --}}
+            {{-- Trust strip below ads --}}
             <div class="mt-auto pt-4 flex items-center justify-between text-[11px] text-white/40 mono">
                 <span class="flex items-center gap-1.5">
                     <svg class="w-3 h-3 text-green-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001z"/></svg>
