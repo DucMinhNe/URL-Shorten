@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InterstitialController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\PayoutController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RedirectController;
 use App\Http\Controllers\ShortLinkController;
@@ -18,6 +19,8 @@ Route::get('/dashboard', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('links', ShortLinkController::class)->except('show');
+    Route::get('/payout', [PayoutController::class, 'index'])->name('payout.index');
+    Route::post('/payout', [PayoutController::class, 'store'])->name('payout.store');
 });
 
 Route::middleware('auth')->group(function () {
