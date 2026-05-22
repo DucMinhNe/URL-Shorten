@@ -28,13 +28,15 @@
                 </button>
 
                 @auth
-                    <a href="{{ route('dashboard') }}" class="btn btn-primary">
+                    <a href="{{ route('dashboard') }}" class="px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all hover:shadow-md hover:-translate-y-0.5"
+                       style="background: linear-gradient(135deg, #FF4D6D 0%, #E11D48 100%); color: white; box-shadow: 0 4px 12px -2px rgba(225, 29, 72, 0.4);">
                         Vào Dashboard
                         <x-heroicon-m-arrow-right class="w-4 h-4"/>
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="hidden sm:inline-flex btn btn-ghost">Đăng nhập</a>
-                    <a href="{{ route('register') }}" class="btn btn-primary">
+                    <a href="{{ route('login') }}" class="hidden sm:inline-flex px-4 py-2 text-sm font-semibold transition-colors" style="color: #475569;">Đăng nhập</a>
+                    <a href="{{ route('register') }}" class="px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all hover:shadow-md hover:-translate-y-0.5"
+                       style="background: linear-gradient(135deg, #FF4D6D 0%, #E11D48 100%); color: white; box-shadow: 0 4px 12px -2px rgba(225, 29, 72, 0.4);">
                         Bắt đầu
                         <x-heroicon-m-arrow-right class="w-4 h-4"/>
                     </a>

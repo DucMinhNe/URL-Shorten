@@ -1,109 +1,107 @@
 <x-guest-layout :title="'LinkPay — Mỗi click là tiền'">
 <x-public-nav active="home"/>
 
-{{-- ─────────────────────  HERO  ───────────────────── --}}
-<section class="bg-canvas">
-    <div class="max-w-[1280px] mx-auto px-6 pt-16 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+{{-- ─────────────────────  HERO  (by.com.vn style) ───────────────────── --}}
+<section class="relative overflow-hidden" style="background: linear-gradient(180deg, #F0F4FB 0%, #FAFBFE 100%);">
+    {{-- Soft decorative blobs --}}
+    <div class="absolute top-32 -left-32 w-96 h-96 rounded-full opacity-30 blur-3xl" style="background: radial-gradient(circle, #FECACA 0%, transparent 70%);"></div>
+    <div class="absolute -bottom-40 -right-32 w-[500px] h-[500px] rounded-full opacity-30 blur-3xl" style="background: radial-gradient(circle, #BFDBFE 0%, transparent 70%);"></div>
 
-        {{-- LEFT: Editorial copy --}}
-        <div class="lg:col-span-7">
-            <div class="section-label mb-6">
-                <span>Earn from every click · Việt Nam</span>
+    <div class="relative max-w-[1280px] mx-auto px-6 pt-16 pb-24 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+
+        {{-- LEFT --}}
+        <div class="lg:col-span-7 max-w-[640px]">
+            {{-- Pink chip pill --}}
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-6" style="background: #FFE0EA; color: #E11D48;">
+                <span class="w-1.5 h-1.5 rounded-full" style="background: #E11D48;"></span>
+                <span class="text-xs font-bold tracking-wide">Rút gọn link miễn phí</span>
             </div>
 
-            <h1 class="type-hero-display text-ink-deep">
-                Mỗi click là tiền.
-                <span class="block font-light italic text-slate">Liên kết của bạn, lương của bạn.</span>
+            <h1 class="type-hero-display !leading-[1.05]" style="color: #1E293B;">
+                Mỗi click là tiền.<br>
+                <span style="color: #696CFF;">Liên kết của bạn,</span>
+                <span class="italic font-light" style="color: #475569;">lương của bạn.</span>
             </h1>
 
-            <p class="type-subtitle-md text-charcoal mt-6 max-w-[560px]">
-                Rút gọn link, chèn quảng cáo tự động. Hệ thống trả bạn theo mỗi 1.000 lượt xem hợp lệ — chuyển khoản qua Momo, ZaloPay hoặc PayPal trong 24h.
+            <p class="type-subtitle-md mt-5 max-w-[520px]" style="color: #475569;">
+                Tạo link ngắn nhanh chóng. Mỗi <strong style="color: #1E293B;">1.000 view hợp lệ</strong> nhận tiền vào ví — chuyển khoản Momo · ZaloPay · PayPal trong 24h.
             </p>
 
-            <div class="mt-10 flex flex-wrap items-center gap-3">
-                <a href="#shorten" class="btn btn-primary">
-                    Bắt đầu rút gọn miễn phí
-                    <x-heroicon-m-arrow-right class="w-4 h-4"/>
-                </a>
-                <a href="#how" class="btn btn-secondary">
-                    <x-heroicon-m-play-circle class="w-4 h-4"/>
-                    Xem cách hoạt động
-                </a>
-            </div>
-
-            <ul class="mt-10 flex flex-wrap gap-x-8 gap-y-3 type-body-sm text-slate">
-                <li class="flex items-center gap-2">
-                    <x-heroicon-s-check-circle class="w-4 h-4 text-success"/>
-                    Không cần đăng ký
-                </li>
-                <li class="flex items-center gap-2">
-                    <x-heroicon-s-check-circle class="w-4 h-4 text-success"/>
-                    Rút từ 100.000đ
-                </li>
-                <li class="flex items-center gap-2">
-                    <x-heroicon-s-check-circle class="w-4 h-4 text-success"/>
-                    Chống fraud Cloudflare
-                </li>
-            </ul>
-        </div>
-
-        {{-- RIGHT: Shorten form card --}}
-        <div class="lg:col-span-5">
-            <div id="shorten" class="card-feature relative">
-                {{-- Floating badge --}}
-                <div class="absolute -top-3 left-8">
-                    <span class="badge badge-warning">
-                        <x-heroicon-s-bolt class="w-3 h-3"/>
-                        Khởi tạo trong 5 giây
-                    </span>
+            {{-- Big inline input with pink CTA (by.com.vn style) --}}
+            @if(session('shortUrl'))
+                <div class="mt-8 p-4 rounded-2xl border-2 flex items-center gap-3" style="background: #ECFDF5; border-color: #10B981;">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background: #10B981;">
+                        <x-heroicon-s-check class="w-5 h-5 text-white"/>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs font-bold uppercase tracking-wider" style="color: #047857;">Đã rút gọn thành công</div>
+                        <code class="text-base font-mono font-bold truncate block" style="color: #1E293B;">{{ session('shortUrl') }}</code>
+                    </div>
+                    <button onclick="navigator.clipboard.writeText('{{ session('shortUrl') }}'); this.innerHTML='✓ Đã copy'" class="px-4 py-2 rounded-full font-semibold text-sm flex-shrink-0" style="background: #10B981; color: white;">
+                        Copy
+                    </button>
                 </div>
+            @endif
 
-                <h3 class="type-heading-sm">Rút gọn liên kết</h3>
-                <p class="type-body-sm text-slate mt-1">Dán URL gốc, lấy link ngắn — tiền vào ví khi có người click.</p>
-
-                @if(session('shortUrl'))
-                    <div class="mt-6 p-4 rounded-xl bg-[color:var(--color-success-soft)] border border-[color:var(--color-success)]/30">
-                        <div class="type-caption-bold text-success uppercase tracking-wider mb-1">Đã rút gọn ✓</div>
-                        <div class="flex items-center gap-2">
-                            <code class="font-mono text-ink-deep type-body-md-bold truncate flex-1">{{ session('shortUrl') }}</code>
-                            <button onclick="navigator.clipboard.writeText('{{ session('shortUrl') }}'); this.innerHTML='Đã copy ✓'" class="btn btn-ghost !py-2 !px-3 !text-xs">
-                                <x-heroicon-o-clipboard class="w-4 h-4"/>
-                                Copy
-                            </button>
-                        </div>
+            <form id="shorten" method="POST" action="{{ route('shorten.guest') }}" class="mt-8">
+                @csrf
+                <div class="flex items-stretch bg-white rounded-full p-1.5 shadow-lg border border-[#E4E7EB]" style="box-shadow: 0 10px 30px -8px rgba(105, 108, 255, 0.15);">
+                    <div class="flex items-center pl-5 pr-3 flex-shrink-0">
+                        <x-heroicon-o-link class="w-5 h-5" style="color: #94A3B8;"/>
                     </div>
-                @endif
-
-                <form method="POST" action="{{ route('shorten.guest') }}" class="mt-6 space-y-4">
-                    @csrf
-                    <div>
-                        <label class="type-body-sm-bold text-ink-deep block mb-2">URL gốc</label>
-                        <div class="relative">
-                            <x-heroicon-o-link class="w-5 h-5 text-steel absolute left-4 top-1/2 -translate-y-1/2"/>
-                            <input name="original_url" value="{{ old('original_url') }}" type="url" required
-                                   placeholder="https://example.com/bai-viet-cua-toi"
-                                   class="input pl-11 @error('original_url') error @enderror"/>
-                        </div>
-                        @error('original_url') <p class="type-body-sm text-critical mt-2">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div>
-                        <label class="type-body-sm-bold text-ink-deep block mb-2 flex items-center justify-between">
-                            <span>Alias tuỳ chỉnh</span>
-                            <span class="type-caption text-stone font-normal">tuỳ chọn</span>
-                        </label>
-                        <div class="flex items-stretch rounded-lg border border-hairline overflow-hidden focus-within:border-[color:var(--color-fb-blue)] focus-within:border-2">
-                            <span class="bg-surface-soft px-4 flex items-center type-body-sm text-slate font-mono">linkpay.vn/</span>
-                            <input name="custom_alias" value="{{ old('custom_alias') }}" type="text" pattern="[A-Za-z0-9_-]{3,32}"
-                                   placeholder="ten-cua-ban"
-                                   class="flex-1 px-3 type-body-md outline-none bg-canvas font-mono"/>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-full">
-                        Rút gọn ngay
+                    <input name="original_url" value="{{ old('original_url') }}" type="url" required
+                           placeholder="Dán liên kết dài của bạn..."
+                           class="flex-1 py-3 outline-none bg-transparent text-base min-w-0" style="color: #1E293B;"/>
+                    <button type="submit" class="px-7 py-3 rounded-full font-bold text-sm whitespace-nowrap flex items-center gap-2 transition-all hover:shadow-lg hover:-translate-y-0.5"
+                            style="background: linear-gradient(135deg, #FF4D6D 0%, #E11D48 100%); color: white; box-shadow: 0 4px 12px -2px rgba(225, 29, 72, 0.45);">
+                        Rút gọn link
                         <x-heroicon-m-arrow-right class="w-4 h-4"/>
                     </button>
+                </div>
+                @error('original_url') <p class="mt-3 text-sm text-red-600 ml-5">{{ $message }}</p> @enderror
+
+                <div class="mt-3 flex items-center gap-1.5 text-xs ml-5" style="color: #64748B;">
+                    <x-heroicon-o-information-circle class="w-3.5 h-3.5"/>
+                    Nhấn <strong style="color: #1E293B;">Rút gọn link</strong> nghĩa là bạn đã đồng ý với
+                    <a href="#" class="underline underline-offset-2 font-semibold" style="color: #696CFF;">điều khoản sử dụng</a>.
+                </div>
+            </form>
+
+            {{-- Trust bar --}}
+            <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm" style="color: #64748B;">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full flex items-center justify-center" style="background: #DCFCE7;">
+                        <x-heroicon-s-check class="w-4 h-4" style="color: #16A34A;"/>
+                    </div>
+                    Không cần đăng ký
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full flex items-center justify-center" style="background: #DBEAFE;">
+                        <x-heroicon-s-bolt class="w-4 h-4" style="color: #2563EB;"/>
+                    </div>
+                    Tốc độ &lt;200ms
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full flex items-center justify-center" style="background: #FCE7F3;">
+                        <x-heroicon-s-shield-check class="w-4 h-4" style="color: #DB2777;"/>
+                    </div>
+                    Chống spam · bot
+                </div>
+            </div>
+        </div>
+
+        {{-- RIGHT: Cartoon illustration --}}
+        <div class="lg:col-span-5">
+            <x-landing-illustration class=""/>
+        </div>
+    </div>
+</section>
+
+{{-- Hidden form section keeps the old #shorten anchor for buttons that link here --}}
+<div class="hidden">
+    <form method="POST" action="{{ route('shorten.guest') }}">
+        @csrf
+        <input name="original_url" value=""><button type="submit"></button>
 
                     @guest
                         <p class="type-caption text-stone text-center pt-1">
@@ -112,17 +110,34 @@
                         </p>
                     @endguest
                 </form>
-            </div>
+</div>
 
-            {{-- Live counter chip --}}
-            <div class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-surface-soft rounded-full type-body-sm">
-                <span class="w-2 h-2 rounded-full bg-success pulse-dot"></span>
-                <span class="text-slate"><span class="font-bold text-ink-deep" id="live-count">4.523</span> lượt rút gọn hôm nay</span>
-            </div>
-        </div>
+{{-- Ticker (real-time payouts) --}}
+<section class="bg-white border-y border-[#E4E7EB] overflow-hidden">
+    <div class="flex animate-marquee whitespace-nowrap py-3.5">
+        @php
+            $payouts_top = [
+                ['nguyen****@gmail', '250.000đ', 'Momo'],
+                ['hoa***@yahoo', '100.000đ', 'ZaloPay'],
+                ['minh***@hotmail', '$12 USD', 'PayPal'],
+            ];
+        @endphp
+        @for ($i = 0; $i < 2; $i++)
+            @foreach($payouts_top as $p)
+                <span class="inline-flex items-center gap-2 mx-6 text-sm">
+                    <span class="w-2 h-2 rounded-full" style="background: #10B981;"></span>
+                    <span style="color: #64748B;">{{ $p[0] }}</span>
+                    <span class="font-bold" style="color: #1E293B;">nhận {{ $p[1] }}</span>
+                    <span style="color: #94A3B8;">qua {{ $p[2] }}</span>
+                    <span style="color: #CBD5E1;">·</span>
+                </span>
+            @endforeach
+        @endfor
     </div>
+</section>
 
-    {{-- Ticker --}}
+@php $skip_old_ticker = true; @endphp
+@if(false)
     <div class="bg-surface-soft border-y border-hairline-soft overflow-hidden">
         <div class="flex animate-marquee whitespace-nowrap py-3.5">
             @php
@@ -150,7 +165,7 @@
             @endfor
         </div>
     </div>
-</section>
+@endif
 
 {{-- ─────────────────────  HOW IT WORKS  ───────────────────── --}}
 <section id="how" class="bg-canvas py-20 lg:py-28">
