@@ -1,4 +1,5 @@
-<x-guest-layout :title="'LinkPay — Mỗi click là tiền'">
+<x-guest-layout :title="'LinkPay — Mỗi click là tiền'"
+    description="Rút gọn link miễn phí và kiếm tiền theo mỗi lượt view hợp lệ. Tạo link có alias, mật khẩu, QR code và thống kê chi tiết. Rút về MoMo, ZaloPay, PayPal trong 24h.">
 <x-public-nav active="home"/>
 
 {{-- ─────────────────────  HERO  (by.com.vn style) ───────────────────── --}}
@@ -51,7 +52,7 @@
                     </div>
                     <input name="original_url" value="{{ old('original_url') }}" type="url" required
                            placeholder="Dán liên kết dài của bạn..."
-                           class="flex-1 py-3 outline-none bg-transparent text-base min-w-0" style="color: #1E293B;"/>
+                           class="flex-1 py-3 border-0 outline-none focus:ring-0 bg-transparent text-base min-w-0" style="color: #1E293B;"/>
                     <button type="submit" class="px-7 py-3 rounded-full font-bold text-sm whitespace-nowrap flex items-center gap-2 transition-all hover:shadow-lg hover:-translate-y-0.5"
                             style="background: linear-gradient(135deg, #FF4D6D 0%, #E11D48 100%); color: white; box-shadow: 0 4px 12px -2px rgba(225, 29, 72, 0.45);">
                         Rút gọn link
@@ -190,23 +191,29 @@
 {{-- ─────────────────────  STATS BAND  ───────────────────── --}}
 <section class="py-20">
     <div class="max-w-[1280px] mx-auto px-6">
+        @php
+            $vv = $stats['valid_views'] ?? 0;
+            $vvDisplay = $vv >= 1000
+                ? rtrim(rtrim(number_format($vv / 1000, 1), '0'), '.').'K+'
+                : number_format($vv);
+        @endphp
         <div class="card-promo-dark !p-10 md:!p-16">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-on-dark">
                 <div>
-                    <div class="type-caption-bold text-stone uppercase tracking-wider mb-3">Lượt click đã trả</div>
-                    <div class="type-display-lg text-on-dark">17.6K+</div>
+                    <div class="type-caption-bold text-stone uppercase tracking-wider mb-3">View hợp lệ đã trả</div>
+                    <div class="type-display-lg text-on-dark">{{ $vvDisplay }}</div>
                 </div>
                 <div>
                     <div class="type-caption-bold text-stone uppercase tracking-wider mb-3">VND / 1.000 view</div>
-                    <div class="type-display-lg text-on-dark">5.000đ</div>
+                    <div class="type-display-lg text-on-dark">{{ number_format($stats['rate_per_1000'] ?? 5000) }}đ</div>
                 </div>
                 <div>
-                    <div class="type-caption-bold text-stone uppercase tracking-wider mb-3">Duyệt rút tiền</div>
-                    <div class="type-display-lg text-on-dark">&lt; 24h</div>
+                    <div class="type-caption-bold text-stone uppercase tracking-wider mb-3">Liên kết đang chạy</div>
+                    <div class="type-display-lg text-on-dark">{{ number_format($stats['active_links'] ?? 0) }}</div>
                 </div>
                 <div>
                     <div class="type-caption-bold text-stone uppercase tracking-wider mb-3">Phương thức</div>
-                    <div class="type-display-lg text-on-dark">3</div>
+                    <div class="type-display-lg text-on-dark">{{ $stats['payout_methods'] ?? 3 }}</div>
                     <div class="type-body-sm text-stone mt-1">Momo · Zalo · PayPal</div>
                 </div>
             </div>
@@ -324,16 +331,6 @@
         </div>
 
         <div class="space-y-3">
-            @php
-                $faqs = [
-                    ['q' => 'Bao lâu mới có thể rút tiền?', 'a' => 'Khi balance đạt 100.000đ (Momo/Zalo) hoặc $4 (PayPal), bạn gửi yêu cầu rút. Admin duyệt và chuyển trong vòng 24h.'],
-                    ['q' => 'Ai chi tiền? Quảng cáo từ đâu?', 'a' => 'Đối tác quảng cáo trả phí khi banner của họ được hiển thị trên trang interstitial. LinkPay giữ một phần để vận hành, phần còn lại trả cho người tạo link theo CPM cố định 5.000đ/1.000 view.'],
-                    ['q' => 'Tôi có thể tự click link của mình để kiếm tiền không?', 'a' => 'Không. Hệ thống tự nhận diện self-click qua user account và IP. Click không hợp lệ vẫn được ghi nhận nhưng không cộng tiền.'],
-                    ['q' => 'Link rút gọn có hết hạn không?', 'a' => 'Mặc định không hết hạn. Bạn có thể tự tắt link bất kỳ lúc nào từ dashboard. Admin có quyền chặn link vi phạm chính sách.'],
-                    ['q' => 'Có phí ẩn không?', 'a' => 'Hoàn toàn không. 0đ phí tạo link, 0đ phí rút tiền. Bạn chỉ phải chịu phí ngân hàng nếu PayPal có (~$0.30 cho giao dịch quốc tế).'],
-                ];
-            @endphp
-
             @foreach($faqs as $faq)
                 <details class="group card-icon-feature !p-0" >
                     <summary class="flex items-center justify-between p-6 cursor-pointer list-none">
@@ -347,6 +344,13 @@
                     </div>
                 </details>
             @endforeach
+        </div>
+
+        <div class="mt-8 text-center">
+            <a href="{{ route('faq') }}" class="btn btn-ghost">
+                Xem tất cả câu hỏi
+                <x-heroicon-m-arrow-right class="w-4 h-4"/>
+            </a>
         </div>
     </div>
 </section>

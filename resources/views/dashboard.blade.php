@@ -195,6 +195,46 @@
                     @endif
                 </div>
 
+                {{-- Recent activity feed --}}
+                <div class="card-feature !p-0 overflow-hidden">
+                    <div class="p-6 pb-4 border-b border-hairline-soft">
+                        <div class="section-label mb-1"><span>Thời gian thực</span></div>
+                        <h3 class="type-heading-sm">Hoạt động gần đây</h3>
+                    </div>
+                    @if($recentClicks->isEmpty())
+                        <div class="p-8 text-center">
+                            <x-heroicon-o-cursor-arrow-rays class="w-10 h-10 text-stone mx-auto"/>
+                            <p class="type-body-sm text-slate mt-2">Chưa có lượt click nào. Chia sẻ link để bắt đầu!</p>
+                        </div>
+                    @else
+                        <div class="divide-y divide-hairline-soft">
+                            @foreach($recentClicks as $c)
+                                @php
+                                    $device = \App\Support\UserAgentParser::deviceType($c->user_agent);
+                                    $source = \App\Support\UserAgentParser::refererSource($c->referer);
+                                    $icon = $device === 'Mobile' ? 'heroicon-o-device-phone-mobile' : ($device === 'Tablet' ? 'heroicon-o-device-tablet' : 'heroicon-o-computer-desktop');
+                                @endphp
+                                <div class="px-6 py-3 flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 {{ $c->is_valid ? 'bg-[color:var(--color-success-soft)] text-success' : 'bg-surface-soft text-stone' }}">
+                                        <x-dynamic-component :component="$icon" class="w-4 h-4"/>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="type-body-sm-bold text-ink-deep truncate">
+                                            <span class="font-mono">/{{ $c->slug }}</span>
+                                        </div>
+                                        <div class="type-caption text-stone truncate">{{ $device }} · {{ $source }} · {{ $c->created_at->diffForHumans() }}</div>
+                                    </div>
+                                    @if($c->is_valid)
+                                        <span class="type-caption-bold text-success flex-shrink-0">+{{ number_format($c->earnings) }}đ</span>
+                                    @else
+                                        <span class="badge badge-neutral flex-shrink-0 !py-0.5">Bỏ qua</span>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
                 <div class="card-feature !p-6">
                     <div class="section-label mb-3"><span>Mẹo tăng thu nhập</span></div>
                     <h3 class="type-heading-sm">Chia sẻ vào nhóm lớn</h3>

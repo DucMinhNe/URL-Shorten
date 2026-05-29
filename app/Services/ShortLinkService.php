@@ -44,7 +44,7 @@ class ShortLinkService
         throw new RuntimeException('Không tạo được slug duy nhất.');
     }
 
-    public function create(?int $userId, string $originalUrl, ?string $customAlias = null, ?string $password = null): ShortLink
+    public function create(?int $userId, string $originalUrl, ?string $customAlias = null, ?string $password = null, ?string $expiresAt = null, ?int $maxClicks = null): ShortLink
     {
         $this->assertOriginalUrlAllowed($originalUrl);
 
@@ -66,6 +66,8 @@ class ShortLinkService
                 'original_url' => $originalUrl,
                 'password' => $password ? Hash::make($password) : null,
                 'status' => 'active',
+                'expires_at' => $expiresAt ?: null,
+                'max_clicks' => $maxClicks ?: null,
             ]);
         } catch (QueryException $e) {
             // Race on slug uniqueness — surface a friendly error.

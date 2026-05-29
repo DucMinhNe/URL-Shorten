@@ -17,6 +17,8 @@ class UpdateShortLinkRequest extends FormRequest
             'original_url' => ['required', 'url:http,https', 'max:2048'],
             'password' => ['nullable', 'string', 'min:4', 'max:64'],
             'status' => ['required', 'in:active,disabled'],
+            'expires_at' => ['nullable', 'date'],
+            'max_clicks' => ['nullable', 'integer', 'min:1', 'max:100000000'],
         ];
     }
 }

@@ -58,6 +58,34 @@
                 @error('password') <p class="type-body-sm text-critical mt-2">{{ $message }}</p> @enderror
             </div>
 
+            <div class="border-t border-hairline-soft pt-6" x-data="{ open: {{ old('expires_at') || old('max_clicks') ? 'true' : 'false' }} }">
+                <button type="button" x-on:click="open = !open" class="w-full flex items-center justify-between type-body-sm-bold text-ink-deep">
+                    <span class="flex items-center gap-2"><x-heroicon-o-adjustments-horizontal class="w-4 h-4"/> Tuỳ chọn nâng cao</span>
+                    <x-heroicon-o-chevron-down class="w-4 h-4 transition-transform" ::class="open && 'rotate-180'"/>
+                </button>
+                <div x-show="open" x-cloak x-transition class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <label for="expires_at" class="type-caption-bold text-charcoal block mb-2 flex items-center gap-2">
+                            <x-heroicon-o-clock class="w-4 h-4"/> Ngày hết hạn
+                        </label>
+                        <input id="expires_at" name="expires_at" type="datetime-local" value="{{ old('expires_at') }}"
+                               class="input @error('expires_at') error @enderror"/>
+                        <p class="type-caption text-stone mt-1.5">Sau thời điểm này link ngừng hoạt động. Để trống = không hết hạn.</p>
+                        @error('expires_at') <p class="type-body-sm text-critical mt-1.5">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label for="max_clicks" class="type-caption-bold text-charcoal block mb-2 flex items-center gap-2">
+                            <x-heroicon-o-flag class="w-4 h-4"/> Giới hạn click
+                        </label>
+                        <input id="max_clicks" name="max_clicks" type="number" min="1" value="{{ old('max_clicks') }}"
+                               placeholder="VD: 1000"
+                               class="input @error('max_clicks') error @enderror"/>
+                        <p class="type-caption text-stone mt-1.5">Đạt số click này thì link tự ngừng. Để trống = không giới hạn.</p>
+                        @error('max_clicks') <p class="type-body-sm text-critical mt-1.5">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
             <div class="flex items-center justify-end gap-3 pt-2">
                 <a href="{{ route('links.index') }}" class="btn btn-ghost">Huỷ</a>
                 <button type="submit" class="btn btn-primary">

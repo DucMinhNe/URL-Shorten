@@ -52,6 +52,20 @@ class DashboardController extends Controller
             'total_earned' => $user->total_earned,
         ];
 
-        return view('dashboard', compact('stats', 'labels', 'totals', 'earnings', 'days', 'growthRate'));
+        // Hoạt động gần đây — click mới nhất trên các link của user (data thật).
+        $recentClicks = Click::join('short_links', 'clicks.short_link_id', '=', 'short_links.id')
+            ->where('short_links.user_id', $user->id)
+            ->orderByDesc('clicks.created_at')
+            ->limit(6)
+            ->get([
+                'short_links.slug as slug',
+                'clicks.user_agent as user_agent',
+                'clicks.referer as referer',
+                'clicks.is_valid as is_valid',
+                'clicks.earnings as earnings',
+                'clicks.created_at as created_at',
+            ]);
+
+        return view('dashboard', compact('stats', 'labels', 'totals', 'earnings', 'days', 'growthRate', 'recentClicks'));
     }
 }

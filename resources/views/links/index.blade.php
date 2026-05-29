@@ -1,7 +1,8 @@
 <x-app-layout :title="'Liên kết của tôi'">
     <x-slot name="header">Liên kết của tôi</x-slot>
 
-    <div class="max-w-[1400px] mx-auto space-y-6">
+    <div class="max-w-[1400px] mx-auto space-y-6"
+         x-data="{ qrOpen: false, qrImg: '', qrPng: '', qrSvg: '', qrUrl: '' }">
 
         {{-- Header --}}
         <div class="flex items-end justify-between flex-wrap gap-4">
@@ -124,8 +125,9 @@
                         @foreach($links as $link)
                             @php
                                 $shortUrl = url('/'.$link->slug);
-                                $statusBadge = ['active'=>'badge-success','disabled'=>'badge-neutral','blocked'=>'badge-critical'][$link->status] ?? 'badge-neutral';
-                                $statusLabel = ['active'=>'Hoạt động','disabled'=>'Đã tắt','blocked'=>'Bị chặn'][$link->status] ?? $link->status;
+                                $dStatus = $link->displayStatus();
+                                $statusBadge = ['active'=>'badge-success','disabled'=>'badge-neutral','blocked'=>'badge-critical','expired'=>'badge-warning','limit_reached'=>'badge-warning'][$dStatus] ?? 'badge-neutral';
+                                $statusLabel = ['active'=>'Hoạt động','disabled'=>'Đã tắt','blocked'=>'Bị chặn','expired'=>'Hết hạn','limit_reached'=>'Đạt giới hạn'][$dStatus] ?? $dStatus;
                                 $validRate = $link->total_clicks > 0 ? round($link->valid_views / $link->total_clicks * 100, 1) : 0;
                             @endphp
                             <tr class="hover:bg-surface-soft transition-colors group">
@@ -162,9 +164,21 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center justify-end gap-1">
-                                        <button onclick="navigator.clipboard.writeText('{{ $shortUrl }}'); this.classList.add('text-success')" class="btn-icon-ghost" title="Copy short URL">
-                                            <x-heroicon-o-clipboard class="w-4 h-4"/>
+                                        <button type="button"
+                                                x-data="{ copied: false }"
+                                                x-on:click="navigator.clipboard.writeText('{{ $shortUrl }}'); copied = true; setTimeout(() => copied = false, 1500)"
+                                                class="btn-icon-ghost" :class="copied && 'text-success'" title="Copy short URL">
+                                            <template x-if="!copied"><x-heroicon-o-clipboard class="w-4 h-4"/></template>
+                                            <template x-if="copied"><x-heroicon-o-check class="w-4 h-4"/></template>
                                         </button>
+                                        <button type="button"
+                                                x-on:click="qrImg='{{ route('links.qr', $link) }}'; qrPng='{{ route('links.qr', ['link' => $link, 'download' => 1]) }}'; qrSvg='{{ route('links.qr', ['link' => $link, 'format' => 'svg', 'download' => 1]) }}'; qrUrl='{{ $shortUrl }}'; qrOpen=true"
+                                                class="btn-icon-ghost" title="QR code">
+                                            <x-heroicon-o-qr-code class="w-4 h-4"/>
+                                        </button>
+                                        <a href="{{ route('links.stats', $link) }}" class="btn-icon-ghost" title="Thống kê">
+                                            <x-heroicon-o-chart-bar class="w-4 h-4"/>
+                                        </a>
                                         <a href="{{ route('links.edit', $link) }}" class="btn-icon-ghost" title="Sửa">
                                             <x-heroicon-o-pencil-square class="w-4 h-4"/>
                                         </a>
@@ -186,5 +200,25 @@
         @if($links->hasPages())
             <div>{{ $links->links() }}</div>
         @endif
+
+        {{-- Shared QR modal --}}
+        <div x-show="qrOpen" x-cloak x-transition.opacity
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-deep/60 backdrop-blur-sm"
+             x-on:click="qrOpen = false" x-on:keydown.escape.window="qrOpen = false">
+            <div class="bg-canvas rounded-3xl border border-hairline-soft shadow-xl max-w-[400px] w-full p-8 text-center" x-on:click.stop>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="type-heading-sm text-ink-deep">QR code</h3>
+                    <button type="button" x-on:click="qrOpen = false" class="btn-icon-ghost"><x-heroicon-m-x-mark class="w-5 h-5"/></button>
+                </div>
+                <div class="rounded-2xl border border-hairline-soft p-4 bg-white inline-block">
+                    <img :src="qrImg" alt="QR code" width="280" height="280" class="w-[280px] h-[280px]"/>
+                </div>
+                <p class="font-mono type-body-sm text-slate mt-4 break-all" x-text="qrUrl"></p>
+                <div class="flex items-center justify-center gap-2 mt-5">
+                    <a :href="qrPng" class="btn btn-primary !py-2"><x-heroicon-o-arrow-down-tray class="w-4 h-4"/> PNG</a>
+                    <a :href="qrSvg" class="btn btn-ghost !py-2"><x-heroicon-o-arrow-down-tray class="w-4 h-4"/> SVG</a>
+                </div>
+            </div>
+        </div>
     </div>
 </x-app-layout>

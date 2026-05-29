@@ -11,9 +11,16 @@
 
 @if($meta)
     {{-- Real ad creative: photo background + brand overlay + Vietnamese copy + CTA --}}
+    @php
+        $imgPath = ltrim($meta['image'], '/');
+        $webpPath = preg_replace('/\.(jpe?g|png)$/i', '.webp', $imgPath);
+    @endphp
     <a href="{{ $ad->target_url ?? '#' }}" target="_blank" rel="noopener" class="block absolute inset-0 group">
-        {{-- Background photo --}}
-        <img src="{{ asset(ltrim($meta['image'], '/')) }}" alt="{{ $meta['brand'] }}" class="w-full h-full object-cover">
+        {{-- Background photo (WebP + JPG fallback) --}}
+        <picture class="absolute inset-0 block w-full h-full">
+            <source srcset="{{ asset($webpPath) }}" type="image/webp">
+            <img src="{{ asset($imgPath) }}" alt="{{ $meta['brand'] }}" decoding="async" class="w-full h-full object-cover">
+        </picture>
 
         {{-- Brand-colored gradient overlay (left side strong, fade right) --}}
         <div class="absolute inset-0" style="background: linear-gradient(90deg, {{ $meta['color'] }}EE 0%, {{ $meta['color'] }}AA 40%, {{ $meta['color'] }}55 70%, transparent 100%);"></div>
@@ -42,10 +49,10 @@
     {{-- Fallback: simple banner image (no overlay metadata) --}}
     @if($ad->target_url)
         <a href="{{ $ad->target_url }}" target="_blank" rel="noopener" class="block absolute inset-0">
-            <img src="{{ $ad->content }}" alt="{{ $ad->name }}" class="absolute inset-0 w-full h-full object-cover">
+            <img src="{{ $ad->content }}" alt="{{ $ad->name }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover">
         </a>
     @else
-        <img src="{{ $ad->content }}" alt="{{ $ad->name }}" class="absolute inset-0 w-full h-full object-cover">
+        <img src="{{ $ad->content }}" alt="{{ $ad->name }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover">
     @endif
 @elseif($ad->type === 'html')
     <div class="absolute inset-0 overflow-hidden">{!! $ad->content !!}</div>

@@ -98,6 +98,41 @@
                 @error('password') <p class="type-body-sm text-critical mt-2">{{ $message }}</p> @enderror
             </div>
 
+            <div class="border-t border-hairline-soft pt-6">
+                <div class="type-body-sm-bold text-ink-deep mb-3 flex items-center gap-2">
+                    <x-heroicon-o-adjustments-horizontal class="w-4 h-4"/> Tuỳ chọn nâng cao
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="expires_at" class="type-caption-bold text-charcoal block mb-2 flex items-center gap-2">
+                            <x-heroicon-o-clock class="w-4 h-4"/> Ngày hết hạn
+                        </label>
+                        <input id="expires_at" name="expires_at" type="datetime-local"
+                               value="{{ old('expires_at', $link->expires_at?->format('Y-m-d\TH:i')) }}"
+                               class="input @error('expires_at') error @enderror"/>
+                        <p class="type-caption text-stone mt-1.5">Để trống = không hết hạn.</p>
+                        @error('expires_at') <p class="type-body-sm text-critical mt-1.5">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label for="max_clicks" class="type-caption-bold text-charcoal block mb-2 flex items-center gap-2">
+                            <x-heroicon-o-flag class="w-4 h-4"/> Giới hạn click
+                        </label>
+                        <input id="max_clicks" name="max_clicks" type="number" min="1"
+                               value="{{ old('max_clicks', $link->max_clicks) }}"
+                               placeholder="VD: 1000"
+                               class="input @error('max_clicks') error @enderror"/>
+                        <p class="type-caption text-stone mt-1.5">
+                            @if($link->max_clicks)
+                                Đã dùng {{ number_format($link->total_clicks) }}/{{ number_format($link->max_clicks) }}. Để trống = bỏ giới hạn.
+                            @else
+                                Để trống = không giới hạn.
+                            @endif
+                        </p>
+                        @error('max_clicks') <p class="type-body-sm text-critical mt-1.5">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
             <div class="flex items-center justify-end gap-3 pt-2 border-t border-hairline-soft -mx-8 px-8 -mb-8 pb-8 bg-surface-soft mt-8 rounded-b-[32px]">
                 <a href="{{ route('links.index') }}" class="btn btn-ghost">Huỷ</a>
                 <button type="submit" class="btn btn-primary">

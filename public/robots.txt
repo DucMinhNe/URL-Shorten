@@ -1,2 +1,14 @@
 User-agent: *
-Disallow:
+Allow: /$
+Allow: /faq
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /links
+Disallow: /payout
+Disallow: /profile
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+
+Sitemap: https://demoweb.page.gd/sitemap.xml

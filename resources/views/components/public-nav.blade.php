@@ -19,7 +19,7 @@
                 <a href="{{ route('home') }}" class="pill-tab {{ $active === 'home' ? 'active' : '' }}">Trang chủ</a>
                 <a href="#how" class="pill-tab {{ $active === 'how' ? 'active' : '' }}">Cách hoạt động</a>
                 <a href="#pricing" class="pill-tab {{ $active === 'pricing' ? 'active' : '' }}">Bảng giá</a>
-                <a href="#faq" class="pill-tab {{ $active === 'faq' ? 'active' : '' }}">FAQ</a>
+                <a href="{{ route('faq') }}" class="pill-tab {{ $active === 'faq' ? 'active' : '' }}">FAQ</a>
             </nav>
 
             <div class="flex items-center gap-2">

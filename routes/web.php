@@ -12,12 +12,34 @@ use App\Http\Controllers\ShortLinkController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
+
+Route::get('/sitemap.xml', function () {
+    $base = rtrim(config('app.url'), '/');
+    $urls = [
+        ['loc' => $base.'/', 'priority' => '1.0', 'freq' => 'daily'],
+        ['loc' => $base.'/faq', 'priority' => '0.7', 'freq' => 'weekly'],
+        ['loc' => $base.'/login', 'priority' => '0.5', 'freq' => 'monthly'],
+        ['loc' => $base.'/register', 'priority' => '0.6', 'freq' => 'monthly'],
+    ];
+
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+    $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
+    foreach ($urls as $u) {
+        $xml .= "  <url><loc>{$u['loc']}</loc><changefreq>{$u['freq']}</changefreq><priority>{$u['priority']}</priority></url>\n";
+    }
+    $xml .= '</urlset>';
+
+    return response($xml, 200, ['Content-Type' => 'application/xml']);
+})->name('sitemap');
 Route::post('/shorten', [HomeController::class, 'shortenGuest'])
     ->middleware('throttle:10,1')
     ->name('shorten.guest');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/links/{link}/stats', [ShortLinkController::class, 'stats'])->name('links.stats');
+    Route::get('/links/{link}/qr', [ShortLinkController::class, 'qr'])->name('links.qr');
     Route::resource('links', ShortLinkController::class)->except('show');
     Route::get('/payout', [PayoutController::class, 'index'])->name('payout.index');
     Route::post('/payout', [PayoutController::class, 'store'])->name('payout.store');
