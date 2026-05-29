@@ -97,21 +97,6 @@
     </div>
 </section>
 
-{{-- Hidden form section keeps the old #shorten anchor for buttons that link here --}}
-<div class="hidden">
-    <form method="POST" action="{{ route('shorten.guest') }}">
-        @csrf
-        <input name="original_url" value=""><button type="submit"></button>
-
-                    @guest
-                        <p class="type-caption text-stone text-center pt-1">
-                            <a href="{{ route('register') }}" class="text-ink-deep font-bold underline underline-offset-2">Đăng ký miễn phí</a>
-                            để kiếm tiền từ liên kết của bạn
-                        </p>
-                    @endguest
-                </form>
-</div>
-
 {{-- Ticker (real-time payouts) --}}
 <section class="bg-white border-y border-[#E4E7EB] overflow-hidden">
     <div class="flex animate-marquee whitespace-nowrap py-3.5">
@@ -135,37 +120,6 @@
         @endfor
     </div>
 </section>
-
-@php $skip_old_ticker = true; @endphp
-@if(false)
-    <div class="bg-surface-soft border-y border-hairline-soft overflow-hidden">
-        <div class="flex animate-marquee whitespace-nowrap py-3.5">
-            @php
-                $payouts = [
-                    ['👤', 'nguyen****@gmail', '250.000đ', 'Momo'],
-                    ['👤', 'hoa***@yahoo', '100.000đ', 'ZaloPay'],
-                    ['👤', 'minh***@hotmail', '$12 USD', 'PayPal'],
-                    ['👤', 'phuc***@gmail', '500.000đ', 'Momo'],
-                    ['👤', 'linh***@outlook', '150.000đ', 'ZaloPay'],
-                    ['👤', 'tuan***@gmail', '300.000đ', 'Momo'],
-                    ['👤', 'hieu***@yahoo', '$8 USD', 'PayPal'],
-                    ['👤', 'mai***@gmail', '200.000đ', 'ZaloPay'],
-                ];
-            @endphp
-            @for ($i = 0; $i < 2; $i++)
-                @foreach($payouts as $p)
-                    <span class="inline-flex items-center gap-2 mx-6 type-body-sm font-mono">
-                        <x-heroicon-s-banknotes class="w-4 h-4 text-success"/>
-                        <span class="text-slate">{{ $p[1] }}</span>
-                        <span class="text-ink-deep font-bold">nhận {{ $p[2] }}</span>
-                        <span class="text-stone">qua {{ $p[3] }}</span>
-                        <span class="text-stone">·</span>
-                    </span>
-                @endforeach
-            @endfor
-        </div>
-    </div>
-@endif
 
 {{-- ─────────────────────  HOW IT WORKS  ───────────────────── --}}
 <section id="how" class="bg-canvas py-20 lg:py-28">

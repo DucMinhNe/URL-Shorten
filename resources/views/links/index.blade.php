@@ -41,21 +41,57 @@
         @endif
 
         {{-- Filter bar --}}
-        <div class="card-feature !p-3 !rounded-2xl flex flex-wrap items-center gap-3">
-            <div class="flex items-center gap-2 search-pill !flex-1 !min-w-[200px] max-w-[300px]">
+        @php
+            $currentStatus = request('status', 'all');
+            $currentSort = request('sort', 'latest');
+            $currentQ = trim((string) request('q', ''));
+            $sortLabels = ['latest' => 'Mới nhất', 'clicks' => 'Click nhiều', 'earnings' => 'Doanh thu cao'];
+        @endphp
+        <form method="GET" action="{{ route('links.index') }}" class="card-feature !p-3 !rounded-2xl flex flex-wrap items-center gap-3"
+              x-data="{ open: false }">
+            <div class="flex items-center gap-2 search-pill !flex-1 !min-w-[200px] max-w-[320px]">
                 <x-heroicon-o-magnifying-glass class="w-4 h-4 text-steel ml-2"/>
-                <input type="text" placeholder="Tìm theo slug hoặc URL..." class="bg-transparent border-0 outline-none flex-1 type-body-sm"/>
+                <input type="text" name="q" value="{{ $currentQ }}"
+                       placeholder="Tìm theo slug hoặc URL..."
+                       class="bg-transparent border-0 outline-none flex-1 type-body-sm"/>
+                @if($currentQ !== '')
+                    <a href="{{ route('links.index') }}" class="btn-icon-ghost mr-1" title="Xoá tìm kiếm">
+                        <x-heroicon-m-x-mark class="w-4 h-4"/>
+                    </a>
+                @endif
             </div>
+
+            <input type="hidden" name="sort" value="{{ $currentSort }}">
+
             <div class="flex items-center gap-2 flex-wrap">
-                <button class="pill-tab active !py-1.5 !px-3 type-caption-bold">Tất cả</button>
-                <button class="pill-tab !py-1.5 !px-3 type-caption-bold">Hoạt động</button>
-                <button class="pill-tab !py-1.5 !px-3 type-caption-bold">Đã tắt</button>
+                @foreach(['all' => 'Tất cả', 'active' => 'Hoạt động', 'disabled' => 'Đã tắt'] as $key => $label)
+                    @php $url = route('links.index', array_filter(['q' => $currentQ ?: null, 'status' => $key === 'all' ? null : $key, 'sort' => $currentSort !== 'latest' ? $currentSort : null])); @endphp
+                    <a href="{{ $url }}" class="pill-tab !py-1.5 !px-3 type-caption-bold {{ $currentStatus === $key ? 'active' : '' }}">
+                        {{ $label }}
+                    </a>
+                @endforeach
             </div>
-            <button class="pill-tab !py-1.5 !px-3 type-caption-bold ml-auto">
-                <x-heroicon-o-arrows-up-down class="w-3.5 h-3.5"/>
-                Mới nhất
-            </button>
-        </div>
+
+            <div class="ml-auto relative" x-data="{ open: false }">
+                <button type="button" x-on:click="open = !open" class="pill-tab !py-1.5 !px-3 type-caption-bold">
+                    <x-heroicon-o-arrows-up-down class="w-3.5 h-3.5"/>
+                    {{ $sortLabels[$currentSort] ?? 'Sắp xếp' }}
+                </button>
+                <div x-show="open" x-cloak x-transition x-on:click.outside="open = false"
+                     class="absolute right-0 mt-2 w-48 bg-canvas rounded-xl border border-hairline-soft shadow-lg z-10 overflow-hidden">
+                    @foreach($sortLabels as $key => $label)
+                        @php $url = route('links.index', array_filter(['q' => $currentQ ?: null, 'status' => $currentStatus !== 'all' ? $currentStatus : null, 'sort' => $key !== 'latest' ? $key : null])); @endphp
+                        <a href="{{ $url }}" class="block px-4 py-2 type-body-sm hover:bg-surface-soft {{ $currentSort === $key ? 'text-primary-deep font-bold bg-primary-soft' : 'text-charcoal' }}">
+                            {{ $label }}
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+
+            <noscript>
+                <button type="submit" class="btn btn-primary !py-1.5">Lọc</button>
+            </noscript>
+        </form>
 
         {{-- Table --}}
         <div class="card-feature !p-0 overflow-hidden">

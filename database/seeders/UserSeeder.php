@@ -30,6 +30,6 @@ class UserSeeder extends Seeder
             'payout_account' => '0901234567',
             'status' => 'active',
         ]);
-        User::factory()->count(48)->create();
+        User::factory()->count(998)->create();
     }
 }

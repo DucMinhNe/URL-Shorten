@@ -14,10 +14,13 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
 {
     use HasFactory, Notifiable;
 
+    // Sensitive fields (is_admin, balance, total_earned, status, role_id) are mass-assignable
+    // for Filament admin + seeders only. Controllers MUST use FormRequest::validated()
+    // — never $request->all() — when filling User to avoid privilege escalation.
     protected $fillable = [
         'name','email','password','google_id','avatar',
         'balance','total_earned','status','payout_method',
-        'payout_account','preferred_locale','is_admin',
+        'payout_account','preferred_locale','is_admin','role_id',
     ];
 
     protected $hidden = ['password','remember_token'];
@@ -51,5 +54,20 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
     public function walletTransactions(): HasMany
     {
         return $this->hasMany(WalletTransaction::class);
+    }
+
+    public function role(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function supportTickets(): HasMany
+    {
+        return $this->hasMany(SupportTicket::class);
+    }
+
+    public function reportedLinks(): HasMany
+    {
+        return $this->hasMany(ReportedLink::class, 'reporter_user_id');
     }
 }

@@ -20,7 +20,7 @@ class ClickSeeder extends Seeder
             return;
         }
 
-        $rate = 250;  // VND per click — bumped for demo so user balances look meaningful
+        $rate = 500;  // VND per click — bumped for demo so user balances look meaningful
         $hotLinks = $links->random((int) ($links->count() * 0.3));
         $coldLinks = $links->diff($hotLinks);
 
@@ -34,7 +34,7 @@ class ClickSeeder extends Seeder
         for ($d = 89; $d >= 0; $d--) {
             $date = $now->copy()->subDays($d);
             $multiplier = in_array($date->dayOfWeek, [0, 6]) ? 1.5 : 1.0;
-            $daily = (int) (rand(100, 250) * $multiplier);
+            $daily = (int) (rand(180, 450) * $multiplier);
 
             for ($c = 0; $c < $daily; $c++) {
                 $link = (rand(0, 10) < 6) ? $hotLinks->random() : $coldLinks->random();

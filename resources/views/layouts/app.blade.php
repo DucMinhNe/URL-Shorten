@@ -10,16 +10,32 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <script src="{{ asset('js/app.js') }}" defer></script>
     @stack('head')
+
+    <style>[x-cloak]{display:none!important}</style>
 </head>
 <body class="bg-surface-soft min-h-screen">
-    <div class="flex min-h-screen">
+    <div x-data="{ menuOpen: false }" class="flex min-h-screen">
+
+        {{-- MOBILE OVERLAY --}}
+        <div x-show="menuOpen" x-cloak x-transition.opacity
+             x-on:click="menuOpen = false"
+             class="fixed inset-0 z-30 bg-ink-deep/60 backdrop-blur-sm lg:hidden"
+             aria-hidden="true"></div>
 
         {{-- SIDEBAR --}}
-        <aside class="hidden lg:flex flex-col w-60 bg-canvas border-r border-hairline-soft">
-            <div class="h-16 px-6 flex items-center border-b border-hairline-soft">
+        <aside
+            x-cloak
+            class="fixed lg:static inset-y-0 left-0 z-40 flex flex-col w-60 bg-canvas border-r border-hairline-soft transform transition-transform duration-200 ease-out"
+            :class="menuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+        >
+            <div class="h-16 px-6 flex items-center justify-between border-b border-hairline-soft">
                 <x-brand size="md"/>
+                <button type="button" x-on:click="menuOpen = false" class="btn-icon-ghost lg:hidden" aria-label="Đóng menu">
+                    <x-heroicon-m-x-mark class="w-4 h-4"/>
+                </button>
             </div>
 
             @php
@@ -33,7 +49,7 @@
                 };
             @endphp
 
-            <nav class="flex-1 px-3 py-6 space-y-1">
+            <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
                 <div class="px-3 mb-2 type-caption-bold uppercase tracking-wider text-stone">Tổng quan</div>
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl type-body-sm-bold {{ $isActive('dashboard') ? 'bg-primary-soft text-primary-deep' : 'text-charcoal hover:bg-surface-soft' }}">
                     <x-heroicon-o-squares-2x2 class="w-5 h-5"/>
@@ -87,26 +103,26 @@
 
         {{-- MAIN --}}
         <div class="flex-1 min-w-0 flex flex-col">
-            <header class="h-16 bg-canvas border-b border-hairline-soft px-6 lg:px-8 flex items-center justify-between sticky top-0 z-30">
-                <div class="flex items-center gap-3">
-                    <button class="btn-icon-circ lg:hidden" aria-label="Menu">
+            <header class="h-16 bg-canvas border-b border-hairline-soft px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-20">
+                <div class="flex items-center gap-3 min-w-0">
+                    <button type="button" x-on:click="menuOpen = true" class="btn-icon-circ lg:hidden" aria-label="Mở menu">
                         <x-heroicon-o-bars-3 class="w-5 h-5"/>
                     </button>
                     @isset($header)
-                        <div class="type-heading-sm text-ink-deep">{{ $header }}</div>
+                        <div class="type-heading-sm text-ink-deep truncate">{{ $header }}</div>
                     @endisset
                 </div>
 
-                <div class="flex items-center gap-3">
-                    {{-- Search --}}
-                    <div class="hidden md:flex items-center gap-2 search-pill !w-64">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    {{-- Search (real form posts to /links?q=) --}}
+                    <form method="GET" action="{{ route('links.index') }}" class="hidden md:flex items-center gap-2 search-pill !w-64">
                         <x-heroicon-o-magnifying-glass class="w-4 h-4 text-steel ml-2"/>
-                        <input type="text" placeholder="Tìm liên kết..." class="bg-transparent border-0 outline-none flex-1 type-body-sm"/>
-                        <kbd class="type-caption text-stone bg-canvas rounded px-1.5 py-0.5 border border-hairline-soft">⌘K</kbd>
-                    </div>
+                        <input type="text" name="q" value="{{ request('q') }}" placeholder="Tìm liên kết..."
+                               class="bg-transparent border-0 outline-none flex-1 type-body-sm w-full"/>
+                    </form>
 
                     {{-- Balance pill --}}
-                    <a href="{{ route('payout.index') }}" class="hidden md:flex items-center gap-2 px-3 py-2 rounded-full bg-primary-soft text-primary-deep type-body-sm-bold">
+                    <a href="{{ route('payout.index') }}" class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-full bg-primary-soft text-primary-deep type-body-sm-bold">
                         <x-heroicon-s-banknotes class="w-4 h-4"/>
                         {{ number_format(auth()->user()->balance ?? 0) }}đ
                     </a>
@@ -119,7 +135,7 @@
                 </div>
             </header>
 
-            <main class="flex-1 px-6 lg:px-8 py-8">
+            <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
                 {{ $slot }}
             </main>
         </div>

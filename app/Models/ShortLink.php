@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ShortLink extends Model
@@ -19,6 +20,8 @@ class ShortLink extends Model
     public function user(): BelongsTo { return $this->belongsTo(User::class); }
     public function clicks(): HasMany { return $this->hasMany(Click::class); }
     public function adImpressions(): HasMany { return $this->hasMany(AdImpression::class); }
+    public function reports(): HasMany { return $this->hasMany(ReportedLink::class); }
+    public function tags(): BelongsToMany { return $this->belongsToMany(Tag::class, 'short_link_tag'); }
 
     public function isActive(): bool { return $this->status === 'active'; }
     public function hasPassword(): bool { return ! empty($this->password); }

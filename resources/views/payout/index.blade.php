@@ -133,11 +133,14 @@
                         <div class="section-label mb-1"><span>Lịch sử</span></div>
                         <h3 class="type-heading-sm">{{ $requests->total() }} yêu cầu</h3>
                     </div>
+                    @php $currentStatus = request('status', 'all'); @endphp
                     <div class="flex gap-2 flex-wrap">
-                        <button class="pill-tab active !py-1.5 !px-3 type-caption-bold">Tất cả</button>
-                        <button class="pill-tab !py-1.5 !px-3 type-caption-bold">Pending</button>
-                        <button class="pill-tab !py-1.5 !px-3 type-caption-bold">Paid</button>
-                        <button class="pill-tab !py-1.5 !px-3 type-caption-bold">Rejected</button>
+                        @foreach(['all' => 'Tất cả', 'pending' => 'Đang chờ', 'paid' => 'Đã chuyển', 'rejected' => 'Từ chối'] as $key => $label)
+                            <a href="{{ route('payout.index', $key === 'all' ? [] : ['status' => $key]) }}"
+                               class="pill-tab !py-1.5 !px-3 type-caption-bold {{ $currentStatus === $key ? 'active' : '' }}">
+                                {{ $label }}
+                            </a>
+                        @endforeach
                     </div>
                 </div>
 

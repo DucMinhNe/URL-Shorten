@@ -78,9 +78,12 @@
                     <h2 class="type-heading-sm text-ink-deep">Click & Doanh thu theo ngày</h2>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button class="pill-tab !py-1 !px-3 type-caption-bold">7 ngày</button>
-                    <button class="pill-tab active !py-1 !px-3 type-caption-bold">30 ngày</button>
-                    <button class="pill-tab !py-1 !px-3 type-caption-bold">90 ngày</button>
+                    @foreach([7 => '7 ngày', 30 => '30 ngày', 90 => '90 ngày'] as $d => $label)
+                        <a href="{{ route('dashboard', ['days' => $d]) }}"
+                           class="pill-tab !py-1 !px-3 type-caption-bold {{ $days === $d ? 'active' : '' }}">
+                            {{ $label }}
+                        </a>
+                    @endforeach
                 </div>
             </div>
 
@@ -91,18 +94,25 @@
             <div class="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-hairline-soft">
                 <div>
                     <div class="type-caption-bold uppercase tracking-wider text-stone">TB / ngày</div>
-                    <div class="type-heading-sm text-ink-deep mt-1">{{ $stats['total_clicks'] > 0 ? number_format($stats['total_clicks'] / 30) : 0 }}</div>
-                    <div class="type-caption text-slate">click</div>
+                    <div class="type-heading-sm text-ink-deep mt-1">{{ number_format(array_sum($totals) / max(1, $days)) }}</div>
+                    <div class="type-caption text-slate">click trong {{ $days }} ngày</div>
                 </div>
                 <div>
                     <div class="type-caption-bold uppercase tracking-wider text-stone">TB doanh thu</div>
-                    <div class="type-heading-sm text-ink-deep mt-1">{{ number_format($stats['total_earned'] / max(1, 30)) }}đ</div>
+                    <div class="type-heading-sm text-ink-deep mt-1">{{ number_format(array_sum($earnings) / max(1, $days)) }}đ</div>
                     <div class="type-caption text-slate">mỗi ngày</div>
                 </div>
                 <div>
                     <div class="type-caption-bold uppercase tracking-wider text-stone">Tốc độ</div>
-                    <div class="type-heading-sm text-success mt-1">+12.4%</div>
-                    <div class="type-caption text-slate">so với 30 ngày trước</div>
+                    @if($growthRate === null)
+                        <div class="type-heading-sm text-stone mt-1">—</div>
+                        <div class="type-caption text-slate">chưa đủ dữ liệu</div>
+                    @else
+                        <div class="type-heading-sm {{ $growthRate >= 0 ? 'text-success' : 'text-critical' }} mt-1">
+                            {{ $growthRate >= 0 ? '+' : '' }}{{ $growthRate }}%
+                        </div>
+                        <div class="type-caption text-slate">so với {{ $days }} ngày trước</div>
+                    @endif
                 </div>
             </div>
         </div>

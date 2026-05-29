@@ -10,23 +10,39 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $days = collect(range(29, 0))->map(fn ($d) => now()->subDays($d)->format('Y-m-d'));
 
-        $clicksByDay = Click::join('short_links', 'clicks.short_link_id', '=', 'short_links.id')
-            ->where('short_links.user_id', $user->id)
-            ->where('clicks.created_at', '>=', now()->subDays(30))
+        $days = (int) $request->input('days', 30);
+        if (! in_array($days, [7, 30, 90], true)) {
+            $days = 30;
+        }
+
+        $window = collect(range($days - 1, 0))->map(fn ($d) => now()->subDays($d)->format('Y-m-d'));
+
+        $base = fn () => Click::join('short_links', 'clicks.short_link_id', '=', 'short_links.id')
+            ->where('short_links.user_id', $user->id);
+
+        $clicksByDay = $base()
+            ->where('clicks.created_at', '>=', now()->subDays($days))
             ->selectRaw('DATE(clicks.created_at) as d, COUNT(*) as total')
             ->groupBy('d')->pluck('total', 'd');
 
-        $earnedByDay = Click::join('short_links', 'clicks.short_link_id', '=', 'short_links.id')
-            ->where('short_links.user_id', $user->id)
-            ->where('clicks.created_at', '>=', now()->subDays(30))
+        $earnedByDay = $base()
+            ->where('clicks.created_at', '>=', now()->subDays($days))
             ->selectRaw('DATE(clicks.created_at) as d, SUM(earnings) as earned')
             ->groupBy('d')->pluck('earned', 'd');
 
-        $labels = $days->map(fn ($d) => substr($d, 5))->toArray();
-        $totals = $days->map(fn ($d) => (int) ($clicksByDay[$d] ?? 0))->toArray();
-        $earnings = $days->map(fn ($d) => (int) ($earnedByDay[$d] ?? 0))->toArray();
+        $labels = $window->map(fn ($d) => substr($d, 5))->toArray();
+        $totals = $window->map(fn ($d) => (int) ($clicksByDay[$d] ?? 0))->toArray();
+        $earnings = $window->map(fn ($d) => (int) ($earnedByDay[$d] ?? 0))->toArray();
+
+        // Growth rate vs previous equivalent window.
+        $currentClicks = array_sum($totals);
+        $previousClicks = (int) $base()
+            ->whereBetween('clicks.created_at', [now()->subDays($days * 2), now()->subDays($days)])
+            ->count();
+        $growthRate = $previousClicks > 0
+            ? round(($currentClicks - $previousClicks) / $previousClicks * 100, 1)
+            : null;
 
         $stats = [
             'total_links' => $user->shortLinks()->count(),
@@ -36,6 +52,6 @@ class DashboardController extends Controller
             'total_earned' => $user->total_earned,
         ];
 
-        return view('dashboard', compact('stats', 'labels', 'totals', 'earnings'));
+        return view('dashboard', compact('stats', 'labels', 'totals', 'earnings', 'days', 'growthRate'));
     }
 }

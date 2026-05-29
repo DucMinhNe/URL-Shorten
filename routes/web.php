@@ -12,7 +12,9 @@ use App\Http\Controllers\ShortLinkController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::post('/shorten', [HomeController::class, 'shortenGuest'])->name('shorten.guest');
+Route::post('/shorten', [HomeController::class, 'shortenGuest'])
+    ->middleware('throttle:10,1')
+    ->name('shorten.guest');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -37,7 +39,9 @@ require __DIR__.'/auth.php';
 // Redirect / interstitial routes — MUST be last so /{slug} wildcard doesn't shadow named routes.
 Route::get('/{slug}', [RedirectController::class, 'show'])
     ->where('slug', '[A-Za-z0-9_-]+')->name('link.show');
-Route::post('/{slug}/unlock', [RedirectController::class, 'unlock'])->name('link.unlock');
+Route::post('/{slug}/unlock', [RedirectController::class, 'unlock'])
+    ->middleware('throttle:5,1')
+    ->name('link.unlock');
 Route::post('/{slug}/verify', [InterstitialController::class, 'verify'])
     ->middleware('throttle:60,1')
     ->name('link.verify');

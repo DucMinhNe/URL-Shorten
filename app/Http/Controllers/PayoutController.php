@@ -12,7 +12,15 @@ class PayoutController extends Controller
 
     public function index(Request $request)
     {
-        $requests = $request->user()->payoutRequests()->latest()->paginate(15);
+        $query = $request->user()->payoutRequests();
+
+        $status = $request->input('status');
+        if (in_array($status, ['pending', 'approved', 'paid', 'rejected'], true)) {
+            $query->where('status', $status);
+        }
+
+        $requests = $query->latest()->paginate(15)->withQueryString();
+
         return view('payout.index', compact('requests'));
     }
 
@@ -26,8 +34,8 @@ class PayoutController extends Controller
                 $request->account_info,
             );
         } catch (\Throwable $e) {
-            return back()->withErrors(['amount' => __($e->getMessage())])->withInput();
+            return back()->withErrors(['amount' => $e->getMessage()])->withInput();
         }
-        return redirect()->route('payout.index')->with('status', __('Payout request submitted'));
+        return redirect()->route('payout.index')->with('status', 'Đã gửi yêu cầu rút tiền. Admin sẽ duyệt trong 24h.');
     }
 }

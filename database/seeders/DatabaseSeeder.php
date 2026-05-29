@@ -12,11 +12,20 @@ class DatabaseSeeder extends Seeder
             SettingSeeder::class,
             BlacklistDomainSeeder::class,
             UserSeeder::class,
+            RoleSeeder::class,
             AdCampaignSeeder::class,
             ShortLinkSeeder::class,
+            TagSeeder::class,
             ClickSeeder::class,
             PayoutRequestSeeder::class,
             WalletTransactionSeeder::class,
+            ReportedLinkSeeder::class,
+            SupportTicketSeeder::class,
+            AnnouncementSeeder::class,
+            PromoCodeSeeder::class,
+            EmailTemplateSeeder::class,
+            FaqSeeder::class,
+            AuditLogSeeder::class,
         ]);
     }
 }

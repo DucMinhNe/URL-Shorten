@@ -25,3 +25,14 @@ Thumbs.db
 .env.testing
 /storage/app/private/*
 !/storage/app/private/.gitkeep
+
+# Local deploy notes — chứa credentials, KHÔNG được commit
+DEPLOY-FTP.md
+READY-TO-DEPLOY.md
+.env.production
+.env.dev.backup
+/.screenshots
+/backups
+/deploy
+/.htaccess
+

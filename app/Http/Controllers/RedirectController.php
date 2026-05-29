@@ -28,6 +28,12 @@ class RedirectController extends Controller
         $picked = $ads->pickForInterstitial();
         $token = (string) Str::uuid();
 
+        // Bind token to session so /{slug}/verify can detect replay / direct API call.
+        session()->put("interstitial:{$token}", [
+            'slug' => $slug,
+            'issued_at' => now()->timestamp,
+        ]);
+
         foreach ($picked as $ad) {
             if ($ad) {
                 AdImpression::create([
@@ -53,8 +59,9 @@ class RedirectController extends Controller
     public function unlock(UnlockLinkRequest $request, string $slug)
     {
         $link = ShortLink::where('slug', $slug)->firstOrFail();
+        abort_if(! $link->isActive(), 410);
         if (! $link->hasPassword() || ! Hash::check($request->password, $link->password)) {
-            return back()->withErrors(['password' => __('Invalid password')]);
+            return back()->withErrors(['password' => __('Mật khẩu không đúng.')]);
         }
         session()->put("unlocked:{$slug}", true);
 

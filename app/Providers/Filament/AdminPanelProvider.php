@@ -29,7 +29,6 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->brandName('LinkPay Admin')
             ->favicon(asset('favicon.ico'))
-            ->viteTheme('resources/css/filament/admin/theme.css')
             ->darkMode(false)
             ->colors([
                 'primary' => [
