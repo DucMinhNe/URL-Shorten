@@ -9,7 +9,7 @@
 
 Hệ thống cho phép user rút gọn URL, mỗi link rút gọn khi được click sẽ qua **trang trung gian (interstitial)** hiển thị quảng cáo trong 5 giây cùng captcha xác thực, rồi redirect đến URL gốc. Mỗi 1.000 view hợp lệ user nhận tiền theo rate cố định do admin cấu hình. User có thể request rút tiền qua **Momo/ZaloPay/PayPal**, admin duyệt thủ công. Quảng cáo do **admin nhập tay** (banner/HTML), không có self-service portal cho advertiser.
 
-**Mục tiêu:** Đồ án sinh viên — đầy đủ chức năng để demo, code sạch, seeder data phong phú. Không tối ưu scale.
+**Mục tiêu:** Đầy đủ chức năng để demo, code sạch, seeder data phong phú. Không tối ưu scale.
 
 ---
 
@@ -576,7 +576,7 @@ Admin xem trong Filament → PayoutRequestResource:
 | **Rate limit per IP** | Laravel `RateLimiter` cho route `/{slug}/verify`: 60/phút theo IP. Chống spam. |
 | **Banned user** | User bị ban không login được, link bị mark blocked. |
 
-**Không làm:** VPN/proxy detection (đắt, không hợp lý cho đồ án); user-agent heuristic (false positive cao).
+**Không làm:** VPN/proxy detection (đắt, không hợp lý ở giai đoạn này); user-agent heuristic (false positive cao).
 
 ---
 

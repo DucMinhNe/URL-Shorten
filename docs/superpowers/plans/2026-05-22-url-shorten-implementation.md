@@ -4042,7 +4042,7 @@ git commit -m "style: pint format"
 - [ ] **Step 1: Write README**
 
 ```markdown
-# URL Shortener with Ads — Đồ án Laravel 12
+# URL Shortener with Ads
 
 ## Tính năng
 - Rút gọn URL với custom alias, password protect

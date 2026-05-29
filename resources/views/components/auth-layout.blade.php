@@ -62,7 +62,7 @@
                     <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-orange-400 flex items-center justify-center type-body-md-bold text-on-dark">KN</div>
                     <div>
                         <div class="type-body-sm-bold text-on-dark">Khoa N.</div>
-                        <div class="type-caption text-stone">Sinh viên IT · Đà Nẵng</div>
+                        <div class="type-caption text-stone">Content Creator · Đà Nẵng</div>
                     </div>
                 </div>
             </div>

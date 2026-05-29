@@ -1,6 +1,6 @@
-# URL Shortener with Ads — Đồ án Laravel 12
+# URL Shortener with Ads
 
-Hệ thống rút gọn link kèm quảng cáo, trả tiền cho người dùng theo lượt view hợp lệ. Build cho đồ án sinh viên.
+Hệ thống rút gọn link kèm quảng cáo, trả tiền cho người dùng theo lượt view hợp lệ. Xây dựng trên Laravel 12 + Filament.
 
 ## Tính năng
 
