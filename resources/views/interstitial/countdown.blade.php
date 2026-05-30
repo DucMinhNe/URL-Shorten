@@ -4,246 +4,164 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Đang chuyển hướng... · LinkPay</title>
+<link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 <style>
-    :root {
-        --ink-darkest: #07070C;
-        --ink-deep: #0E0E14;
-        --ink: #161620;
-        --ink-line: #232331;
-        --ink-card: rgba(22, 22, 32, .72);
-        --brand: #696CFF;
-        --brand-deep: #4B4ECF;
-        --gold: #FFD60A;
-        --gold-deep: #FFAB00;
+    :root{
+        --bg:#08080B; --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.16);
+        --fg:#F2F2F5; --mut:#9AA0AE; --mut2:#5A6070;
+        --cy:#67E8F9; --vi:#A78BFA; --pk:#ECA8D6; --am:#FBBF24; --gr:#34D399;
     }
-    html, body { font-family: 'Public Sans', system-ui, sans-serif; }
-    body {
-        background: #07070C;
-        color: #E7E7EE;
-        min-height: 100vh;
-    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;}
+    a{color:inherit;text-decoration:none;}
+    img{display:block;}
+    .mono{font-family:'JetBrains Mono',monospace;}
+    .serif{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;}
+    .grad{background:linear-gradient(110deg,var(--cy),var(--vi) 50%,var(--pk));-webkit-background-clip:text;background-clip:text;color:transparent;}
+    .glow{position:fixed;border-radius:9999px;filter:blur(130px);pointer-events:none;z-index:0;}
+    .wrapx{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column;}
+    .pillx{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);border-radius:999px;padding:7px 14px;font-size:12px;font-weight:600;color:var(--mut);}
+    .eyebrow-chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:999px;padding:6px 13px;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);}
+    .card-x{background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:30px;position:relative;overflow:hidden;}
 
-    .mono { font-family: 'JetBrains Mono', monospace; }
+    /* countdown ring */
+    .ring-track{stroke:rgba(255,255,255,.07);}
+    .ring-prog{stroke:url(#rg);transition:stroke-dashoffset 1s linear;filter:drop-shadow(0 0 14px rgba(167,139,250,.5));}
+    .cd-num{font-weight:700;letter-spacing:-.04em;font-feature-settings:'tnum';line-height:1;}
+    @keyframes tick{0%{transform:scale(1);}50%{transform:scale(.95);opacity:.85;}100%{transform:scale(1);}}
+    .tick{animation:tick .3s ease-out;}
 
-    /* Mesh gradient background */
-    .mesh-bg {
-        position: fixed; inset: 0; z-index: 0;
-        background:
-            radial-gradient(at 20% 10%, rgba(105,108,255,.25) 0px, transparent 50%),
-            radial-gradient(at 80% 80%, rgba(255,171,0,.12) 0px, transparent 50%),
-            radial-gradient(at 60% 30%, rgba(255,62,29,.08) 0px, transparent 50%),
-            #07070C;
-    }
-    .grid-overlay {
-        position: fixed; inset: 0; z-index: 1;
-        background-image:
-            linear-gradient(to right, rgba(255,255,255,.02) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255,255,255,.02) 1px, transparent 1px);
-        background-size: 64px 64px;
-        pointer-events: none;
-    }
+    /* robot captcha */
+    .robot{display:flex;align-items:center;gap:12px;width:100%;max-width:320px;padding:13px 16px;border-radius:16px;
+        background:rgba(255,255,255,.03);border:1px solid var(--line2);cursor:pointer;transition:.2s;color:var(--fg);font-family:inherit;}
+    .robot:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.24);}
+    .robot-box{width:24px;height:24px;border-radius:7px;border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.25s;}
+    .robot-box.ok{background:linear-gradient(135deg,var(--gr),var(--cy));border-color:transparent;}
 
-    /* Glass card */
-    .glass {
-        background: linear-gradient(180deg, rgba(255,255,255,.04) 0%, rgba(255,255,255,.01) 100%);
-        border: 1px solid rgba(255,255,255,.06);
-        backdrop-filter: blur(20px) saturate(1.2);
-        -webkit-backdrop-filter: blur(20px) saturate(1.2);
-        box-shadow:
-            0 24px 60px -12px rgba(0,0,0,.8),
-            0 0 0 1px rgba(255,255,255,.04),
-            inset 0 1px 0 rgba(255,255,255,.05);
-    }
+    /* skip button */
+    .skip{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;font-weight:700;font-size:16px;
+        padding:16px 24px;border-radius:18px;border:1px solid var(--line2);background:rgba(255,255,255,.04);color:var(--mut);
+        cursor:not-allowed;transition:all .35s cubic-bezier(.16,1,.3,1);font-family:inherit;}
+    .skip.ready{background:linear-gradient(110deg,#A5F3FC,#C4B5FD 55%,#FBCFE8);color:#0B0B14;border-color:transparent;cursor:pointer;
+        box-shadow:0 0 0 4px rgba(167,139,250,.12),0 18px 46px -10px rgba(167,139,250,.6);animation:glowpulse 2.2s ease-in-out infinite;}
+    .skip.ready:hover{transform:translateY(-2px);box-shadow:0 0 0 5px rgba(167,139,250,.2),0 22px 52px -10px rgba(167,139,250,.7);}
+    @keyframes glowpulse{0%,100%{box-shadow:0 0 0 4px rgba(167,139,250,.12),0 18px 46px -10px rgba(167,139,250,.6);}50%{box-shadow:0 0 0 8px rgba(167,139,250,.18),0 18px 46px -10px rgba(103,232,249,.7);}}
 
-    /* Countdown ring */
-    .ring-bg { stroke: rgba(255,255,255,.06); }
-    .ring-fg { stroke: url(#ringGradient); transition: stroke-dashoffset 1s linear; filter: drop-shadow(0 0 12px rgba(105,108,255,.4)); }
-
-    /* Skip button */
-    .skip-btn {
-        position: relative;
-        background: linear-gradient(180deg, #2A2A38 0%, #1A1A24 100%);
-        color: rgba(255,255,255,.4);
-        cursor: not-allowed;
-        border: 1px solid rgba(255,255,255,.08);
-        transition: all .4s cubic-bezier(.16,1,.3,1);
-    }
-    .skip-btn.ready {
-        background: linear-gradient(135deg, #FFD60A 0%, #FFAB00 100%);
-        color: #0A0A0F;
-        cursor: pointer;
-        border: 1px solid #FFD60A;
-        box-shadow:
-            0 0 0 4px rgba(255,214,10,.15),
-            0 8px 32px -6px rgba(255,171,0,.6),
-            inset 0 1px 0 rgba(255,255,255,.4);
-        animation: ready-glow 2s ease-in-out infinite;
-    }
-    .skip-btn.ready:hover {
-        transform: translateY(-2px);
-        box-shadow:
-            0 0 0 4px rgba(255,214,10,.25),
-            0 12px 36px -6px rgba(255,171,0,.7),
-            inset 0 1px 0 rgba(255,255,255,.4);
-    }
-    @keyframes ready-glow {
-        0%, 100% { box-shadow: 0 0 0 4px rgba(255,214,10,.15), 0 8px 32px -6px rgba(255,171,0,.6), inset 0 1px 0 rgba(255,255,255,.4); }
-        50% { box-shadow: 0 0 0 8px rgba(255,214,10,.2), 0 8px 32px -6px rgba(255,171,0,.8), inset 0 1px 0 rgba(255,255,255,.4); }
-    }
-
-    /* Number tick */
-    @keyframes count-tick {
-        0% { transform: scale(1); }
-        50% { transform: scale(.96); opacity: .8; }
-        100% { transform: scale(1); }
-    }
-    .tick { animation: count-tick .3s ease-out; }
-
-    /* Ad card */
-    .ad-card {
-        background: rgba(255,255,255,.03);
-        border: 1px solid rgba(255,255,255,.06);
-        backdrop-filter: blur(12px);
-    }
-    .ad-card:hover { border-color: rgba(255,255,255,.12); }
-
-    /* Twinkle stars */
-    @keyframes twinkle {
-        0%, 100% { opacity: .3; transform: scale(.8); }
-        50% { opacity: 1; transform: scale(1.2); }
-    }
-    .star { position: absolute; width: 2px; height: 2px; background: white; border-radius: 50%; }
+    .lnk{color:var(--mut);transition:.2s;}.lnk:hover{color:var(--fg);}
+    @media(max-width:980px){ .stage{flex-direction:column!important;} .adcol{width:100%!important;} .nav-host{display:none!important;} }
 </style>
 </head>
 <body>
 
-<div class="mesh-bg"></div>
-<div class="grid-overlay"></div>
+{{-- glow blobs (landing style) --}}
+<div class="glow" style="width:520px;height:520px;background:var(--vi);opacity:.16;top:-160px;left:-120px;"></div>
+<div class="glow" style="width:460px;height:460px;background:var(--cy);opacity:.12;bottom:-180px;left:30%;"></div>
+<div class="glow" style="width:420px;height:420px;background:var(--pk);opacity:.10;top:10%;right:-140px;"></div>
 
-{{-- Decorative stars --}}
-<div class="fixed inset-0 z-[1] pointer-events-none">
-    @foreach ([[10,15,2],[18,40,3],[30,8,2.5],[50,80,2],[70,20,4],[85,60,2.5],[92,90,3],[5,75,2]] as $i => $s)
-        <div class="star" style="top: {{ $s[0] }}%; left: {{ $s[1] }}%; animation: twinkle {{ $s[2] }}s ease-in-out infinite; animation-delay: {{ $i * .3 }}s;"></div>
-    @endforeach
-</div>
+<div class="wrapx">
 
-<div class="relative z-10 min-h-screen flex flex-col">
-
-    {{-- ───────── TOP NAV STRIP ───────── --}}
-    <header class="px-4 lg:px-8 py-5 flex items-center justify-between gap-4 border-b border-white/[.04]">
-        <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
-            <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-                <rect x="2" y="2" width="28" height="28" rx="8" fill="#fff"/>
-                <path d="M11 18.5 L21 13.5" stroke="#696CFF" stroke-width="2.8" stroke-linecap="round"/>
-                <circle cx="11" cy="18.5" r="3.2" fill="#696CFF"/>
-                <circle cx="21" cy="13.5" r="3.2" fill="#696CFF"/>
-            </svg>
-            <span class="font-bold text-white text-base tracking-tight">LinkPay</span>
+    {{-- ───────── NAV ───────── --}}
+    <header style="padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);">
+        <a href="{{ route('home') }}" style="display:flex;align-items:center;gap:9px;font-weight:700;font-size:17px;letter-spacing:-.01em;">
+            <span style="width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--cy),var(--vi));display:inline-flex;align-items:center;justify-content:center;color:#0B0B14;font-weight:800;font-size:12px;">LP</span>
+            Link<span class="grad">Pay</span>
         </a>
 
-        <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[.04] border border-white/[.06]">
-            <span class="w-1.5 h-1.5 rounded-full bg-green-400" style="animation: twinkle 1.4s ease-in-out infinite;"></span>
-            <span class="text-xs text-white/40 mono">Chuyển đến</span>
-            <span class="text-sm text-white font-semibold mono truncate max-w-[300px]">{{ parse_url($link->original_url, PHP_URL_HOST) }}</span>
+        <div class="nav-host pillx">
+            <span style="width:7px;height:7px;border-radius:50%;background:var(--gr);box-shadow:0 0 10px var(--gr);"></span>
+            <span class="mono" style="font-size:12px;color:var(--mut2);">Chuyển đến</span>
+            <span class="mono" style="font-size:13px;color:var(--fg);font-weight:600;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ parse_url($link->original_url, PHP_URL_HOST) }}</span>
         </div>
 
-        <div class="text-[10px] mono uppercase tracking-[0.2em] text-white/30">
-            <span class="hidden sm:inline">QC · </span>Sponsored
+        <div class="mono" style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut2);">
+            <span style="display:none;@media(min-width:640px){display:inline;}">QC · </span>Sponsored
         </div>
     </header>
 
     {{-- ───────── MAIN STAGE ───────── --}}
-    <main class="flex-1 flex flex-col lg:flex-row items-stretch gap-6 lg:gap-10 px-4 lg:px-10 py-8 lg:py-14 max-w-[1500px] mx-auto w-full">
+    <main class="stage" style="flex:1;display:flex;align-items:stretch;gap:40px;padding:48px 24px;max-width:1400px;margin:0 auto;width:100%;">
 
-        {{-- LEFT: Countdown stage (focal point) --}}
-        <div class="lg:flex-1 flex items-center justify-center">
-            <div class="glass rounded-[32px] p-8 lg:p-12 max-w-[520px] w-full text-center relative overflow-hidden">
+        {{-- LEFT: countdown --}}
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+            <div class="card-x" style="padding:48px 40px;max-width:520px;width:100%;text-align:center;">
+                <div class="glow" style="position:absolute;width:280px;height:280px;background:var(--vi);opacity:.18;top:-140px;left:50%;transform:translateX(-50%);"></div>
 
-                {{-- Decorative top glow --}}
-                <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-[#696CFF] opacity-20 blur-3xl pointer-events-none"></div>
-
-                <div class="relative z-10">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[.06] border border-white/[.06] text-[10px] uppercase tracking-[0.2em] text-white/60 mono">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#FFD60A] animate-pulse"></span>
+                <div style="position:relative;z-index:1;">
+                    <div class="eyebrow-chip">
+                        <span style="width:6px;height:6px;border-radius:50%;background:var(--am);" class="tw-pulse"></span>
                         Đang tải liên kết
                     </div>
 
-                    {{-- Big circular countdown --}}
-                    <div class="my-8 lg:my-10 inline-block relative">
-                        <svg class="w-56 h-56 lg:w-64 lg:h-64 transform -rotate-90" viewBox="0 0 220 220">
+                    {{-- ring + number --}}
+                    <div style="margin:36px auto;position:relative;width:248px;height:248px;">
+                        <svg width="248" height="248" viewBox="0 0 220 220" style="transform:rotate(-90deg);">
                             <defs>
-                                <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#9B9DFF"/>
-                                    <stop offset="50%" stop-color="#696CFF"/>
-                                    <stop offset="100%" stop-color="#FFD60A"/>
+                                <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#67E8F9"/>
+                                    <stop offset="55%" stop-color="#A78BFA"/>
+                                    <stop offset="100%" stop-color="#ECA8D6"/>
                                 </linearGradient>
                             </defs>
-                            <circle cx="110" cy="110" r="96" fill="none" class="ring-bg" stroke-width="6"/>
-                            <circle id="ring-fg" cx="110" cy="110" r="96" fill="none" class="ring-fg" stroke-width="6" stroke-linecap="round"
-                                    stroke-dasharray="603.2" stroke-dashoffset="0"/>
+                            <circle cx="110" cy="110" r="96" fill="none" class="ring-track" stroke-width="5"/>
+                            <circle id="ring-fg" cx="110" cy="110" r="96" fill="none" class="ring-prog" stroke-width="5" stroke-linecap="round" stroke-dasharray="603.2" stroke-dashoffset="0"/>
                         </svg>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center">
-                            <span id="countdown" class="text-7xl lg:text-8xl font-black text-white" style="font-feature-settings: 'tnum';">{{ $seconds }}</span>
-                            <span class="text-[10px] mono uppercase tracking-[0.3em] text-white/40 mt-2">giây còn lại</span>
+                        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                            <span id="countdown" class="cd-num" style="font-size:84px;">{{ $seconds }}</span>
+                            <span class="mono" style="font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--mut2);margin-top:6px;">giây còn lại</span>
                         </div>
                     </div>
 
-                    {{-- Status text --}}
-                    <p id="status-text" class="text-white/70 text-sm mb-6 min-h-[20px]">Vui lòng chờ <strong class="text-white">{{ $seconds }}</strong> giây và xác thực bạn không phải bot</p>
+                    <p id="status-text" style="color:var(--mut);font-size:14px;margin:0 0 24px;min-height:20px;">Vui lòng chờ <strong style="color:var(--fg);">{{ $seconds }}</strong> giây và xác thực bạn không phải bot</p>
 
-                    {{-- Custom captcha-style checkbox (no third-party warning text) --}}
-                    <div class="flex justify-center mb-6">
-                        <button type="button" id="robot-check"
-                                class="group flex items-center gap-3 px-5 py-3.5 rounded-xl bg-white/[.04] border border-white/[.08] hover:bg-white/[.06] hover:border-white/[.14] transition-all w-full max-w-[300px]">
-                            <span id="robot-box" class="w-6 h-6 rounded-md border-2 border-white/30 flex items-center justify-center transition-all flex-shrink-0">
-                                <svg id="robot-check-icon" class="w-4 h-4 text-[#0A0A0F] hidden" viewBox="0 0 20 20" fill="currentColor">
+                    {{-- captcha --}}
+                    <div style="display:flex;justify-content:center;margin-bottom:24px;">
+                        <button type="button" id="robot-check" class="robot">
+                            <span id="robot-box" class="robot-box">
+                                <svg id="robot-check-icon" width="14" height="14" viewBox="0 0 20 20" fill="#0B0B14" style="display:none;">
                                     <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"/>
                                 </svg>
-                                <svg id="robot-spinner" class="w-4 h-4 text-white/60 hidden animate-spin" viewBox="0 0 24 24" fill="none">
-                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="32" stroke-linecap="round"/>
+                                <svg id="robot-spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" style="display:none;" class="tw-spin">
+                                    <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.7)" stroke-width="3" stroke-dasharray="32" stroke-linecap="round"/>
                                 </svg>
                             </span>
-                            <span id="robot-label" class="text-sm font-semibold text-white/80 flex-1 text-left">Tôi không phải là robot</span>
-                            <svg class="w-5 h-5 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <span id="robot-label" style="font-size:14px;font-weight:600;color:var(--fg);flex:1;text-align:left;">Tôi không phải là robot</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                             </svg>
                         </button>
                     </div>
 
-                    {{-- Skip button --}}
+                    {{-- skip --}}
                     <form id="verify-form" method="POST" action="{{ route('link.verify', $link->slug) }}">
                         @csrf
                         <input type="hidden" name="impression_token" value="{{ $token }}">
-                        <button id="skip-btn" type="button" disabled
-                                class="skip-btn w-full font-bold text-base px-8 py-4 rounded-2xl flex items-center justify-center gap-2.5">
+                        <button id="skip-btn" type="button" disabled class="skip">
                             <span id="skip-label">Đợi {{ $seconds }} giây</span>
-                            <svg id="skip-icon" class="w-5 h-5 transition-transform" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z"/>
+                            <svg id="skip-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M6.194 12.753a.75.75 0 001.06.053L16.5 4.44v2.81a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75h-4.5a.75.75 0 000 1.5h2.553l-9.056 8.194a.75.75 0 00-.053 1.06z"/>
                             </svg>
                         </button>
                     </form>
 
-                    <p class="text-xs text-white/30 mt-5 mono">
-                        Bằng việc tiếp tục, bạn đồng ý <a href="#" class="text-white/60 hover:text-white underline-offset-4 underline">điều khoản</a>
+                    <p class="mono" style="font-size:12px;color:var(--mut2);margin-top:20px;">
+                        Bằng việc tiếp tục, bạn đồng ý <a href="#" class="lnk" style="text-decoration:underline;text-underline-offset:3px;">điều khoản</a>
                     </p>
                 </div>
             </div>
         </div>
 
-        {{-- RIGHT: Ad column — uses real brand data from JSON content field --}}
-        <div class="lg:w-[420px] xl:w-[480px] flex flex-col gap-4">
-            <div class="flex items-center justify-between">
-                <span class="text-[10px] mono uppercase tracking-[0.25em] text-white/30">Quảng cáo</span>
-                <a href="#" class="text-[10px] mono text-white/30 hover:text-white/60">Tại sao tôi thấy quảng cáo?</a>
+        {{-- RIGHT: Ad column — real brand data from JSON content field --}}
+        <div class="adcol" style="width:440px;display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span class="mono" style="font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--mut2);">Quảng cáo</span>
+                <a href="#" class="mono lnk" style="font-size:10px;">Tại sao tôi thấy quảng cáo?</a>
             </div>
 
             @php
-                // Decode brand metadata from each ad slot
                 $parseAd = function($ad) use ($token) {
                     if (!$ad) return null;
                     $meta = json_decode($ad->content ?? '', true);
@@ -264,51 +182,45 @@
                 $bottomAd = $parseAd($ads['bottom']);
             @endphp
 
-            {{-- Featured top ad: photo + brand-color gradient + Vietnamese copy --}}
+            {{-- Featured top ad --}}
             @if($topAd)
-                <a href="{{ $topAd['target'] ?? '#' }}" target="_blank" rel="noopener"
-                   class="block rounded-3xl overflow-hidden group transition-all relative" style="box-shadow: 0 8px 32px -8px rgba(0,0,0,.5);">
-                    <div class="relative" style="aspect-ratio: 4/3;">
-                        <img src="{{ asset(ltrim($topAd['image'], '/')) }}" alt="{{ $topAd['brand'] }}" class="absolute inset-0 w-full h-full object-cover">
-                        {{-- Brand color gradient overlay --}}
-                        <div class="absolute inset-0" style="background: linear-gradient(135deg, {{ $topAd['color'] }}E6 0%, {{ $topAd['color'] }}99 50%, transparent 100%);"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-
-                        {{-- Top: Featured badge + Brand badge --}}
-                        <div class="absolute top-4 left-4 right-4 flex items-center justify-between">
-                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-[10px] font-bold uppercase tracking-wider" style="color: {{ $topAd['color'] }};">
-                                <span class="w-1.5 h-1.5 rounded-full" style="background: {{ $topAd['color'] }};"></span>
-                                {{ $topAd['brand'] }}
-                            </div>
-                            <div class="px-2 py-1 rounded-full bg-black/40 backdrop-blur-md text-[9px] uppercase tracking-wider text-white/80 font-bold">Featured</div>
+                <a href="{{ $topAd['target'] }}" target="_blank" rel="noopener"
+                   style="display:block;border-radius:24px;overflow:hidden;position:relative;box-shadow:0 12px 40px -10px rgba(0,0,0,.6);border:1px solid var(--line);" class="group">
+                    <div style="position:relative;aspect-ratio:4/3;">
+                        <img src="{{ asset(ltrim($topAd['image'], '/')) }}" alt="{{ $topAd['brand'] }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(135deg,{{ $topAd['color'] }}E6 0%,{{ $topAd['color'] }}99 50%,transparent 100%);"></div>
+                        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6),transparent 60%);"></div>
+                        <div style="position:absolute;top:16px;left:16px;right:16px;display:flex;align-items:center;justify-content:space-between;">
+                            <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#fff;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:{{ $topAd['color'] }};">
+                                <span style="width:6px;height:6px;border-radius:50%;background:{{ $topAd['color'] }};"></span>{{ $topAd['brand'] }}
+                            </span>
+                            <span class="mono" style="padding:4px 9px;border-radius:999px;background:rgba(0,0,0,.4);backdrop-filter:blur(8px);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.8);font-weight:700;">Featured</span>
                         </div>
-
-                        {{-- Bottom: Headline + Sub + CTA --}}
-                        <div class="absolute bottom-5 left-5 right-5">
-                            <div class="text-white text-2xl font-black tracking-tight leading-none drop-shadow-lg">{{ $topAd['headline'] }}</div>
-                            <div class="text-white/95 text-xs mt-2 font-medium drop-shadow leading-snug">{{ $topAd['sub'] }}</div>
-                            <div class="mt-4 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white text-xs font-bold group-hover:gap-2.5 transition-all" style="color: {{ $topAd['color'] }};">
+                        <div style="position:absolute;bottom:20px;left:20px;right:20px;">
+                            <div style="color:#fff;font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1;text-shadow:0 2px 12px rgba(0,0,0,.5);">{{ $topAd['headline'] }}</div>
+                            <div style="color:rgba(255,255,255,.95);font-size:12px;margin-top:8px;font-weight:500;">{{ $topAd['sub'] }}</div>
+                            <div style="margin-top:16px;display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border-radius:999px;background:#fff;font-size:12px;font-weight:800;color:{{ $topAd['color'] }};">
                                 {{ $topAd['cta'] }}
-                                <svg class="w-3 h-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"/></svg>
+                                <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"/></svg>
                             </div>
                         </div>
                     </div>
                 </a>
             @endif
 
-            {{-- Two smaller ads side-by-side --}}
-            <div class="grid grid-cols-2 gap-3">
+            {{-- Two smaller ads --}}
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                 @foreach ([$sideAd, $bottomAd] as $small)
                     @if($small)
-                        <a href="{{ $small['target'] ?? '#' }}" target="_blank" rel="noopener"
-                           class="block rounded-2xl overflow-hidden group transition-all relative" style="box-shadow: 0 4px 16px -4px rgba(0,0,0,.4);">
-                            <div class="relative" style="aspect-ratio: 1/1;">
-                                <img src="{{ asset(ltrim($small['image'], '/')) }}" alt="{{ $small['brand'] }}" class="absolute inset-0 w-full h-full object-cover">
-                                <div class="absolute inset-0" style="background: linear-gradient(180deg, transparent 0%, {{ $small['color'] }}AA 70%, {{ $small['color'] }}EE 100%);"></div>
-                                <div class="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-white text-[9px] font-bold uppercase tracking-wider" style="color: {{ $small['color'] }};">{{ $small['brand'] }}</div>
-                                <div class="absolute bottom-3 left-3 right-3">
-                                    <div class="text-white text-sm font-black tracking-tight leading-none drop-shadow">{{ $small['headline'] }}</div>
-                                    <div class="text-white/90 text-[10px] mt-1 font-medium line-clamp-2 leading-snug">{{ $small['sub'] }}</div>
+                        <a href="{{ $small['target'] }}" target="_blank" rel="noopener"
+                           style="display:block;border-radius:18px;overflow:hidden;position:relative;box-shadow:0 6px 20px -6px rgba(0,0,0,.5);border:1px solid var(--line);">
+                            <div style="position:relative;aspect-ratio:1/1;">
+                                <img src="{{ asset(ltrim($small['image'], '/')) }}" alt="{{ $small['brand'] }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+                                <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,{{ $small['color'] }}AA 70%,{{ $small['color'] }}EE 100%);"></div>
+                                <div style="position:absolute;top:9px;left:9px;padding:3px 8px;border-radius:999px;background:#fff;font-size:9px;font-weight:800;text-transform:uppercase;color:{{ $small['color'] }};">{{ $small['brand'] }}</div>
+                                <div style="position:absolute;bottom:12px;left:12px;right:12px;">
+                                    <div style="color:#fff;font-size:14px;font-weight:800;letter-spacing:-.01em;line-height:1.05;text-shadow:0 1px 8px rgba(0,0,0,.5);">{{ $small['headline'] }}</div>
+                                    <div style="color:rgba(255,255,255,.9);font-size:10px;margin-top:4px;font-weight:500;">{{ $small['sub'] }}</div>
                                 </div>
                             </div>
                         </a>
@@ -316,10 +228,9 @@
                 @endforeach
             </div>
 
-            {{-- Trust strip below ads --}}
-            <div class="mt-auto pt-4 flex items-center justify-between text-[11px] text-white/40 mono">
-                <span class="flex items-center gap-1.5">
-                    <svg class="w-3 h-3 text-green-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001z"/></svg>
+            <div class="mono" style="margin-top:auto;padding-top:16px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--mut2);">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="var(--gr)"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001z"/></svg>
                     Link đã quét virus
                 </span>
                 <span>Creator nhận tiền từ click này</span>
@@ -328,15 +239,22 @@
     </main>
 
     {{-- ───────── FOOTER ───────── --}}
-    <footer class="px-4 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] mono text-white/30 border-t border-white/[.04]">
-        <span>© LinkPay · Cảm ơn 5 giây của bạn ❤️</span>
-        <div class="flex items-center gap-4">
-            <a href="#" class="hover:text-white/70">Báo cáo</a>
-            <a href="#" class="hover:text-white/70">Điều khoản</a>
-            <a href="#" class="hover:text-[#FFD60A] font-bold">Tắt QC Pro 49k/tháng →</a>
+    <footer class="mono" style="padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--mut2);border-top:1px solid var(--line);">
+        <span>© LinkPay · Cảm ơn {{ $seconds }} giây của bạn ❤️</span>
+        <div style="display:flex;align-items:center;gap:18px;">
+            <a href="#" class="lnk">Báo cáo</a>
+            <a href="#" class="lnk">Điều khoản</a>
+            <a href="{{ route('premium.index') }}" class="lnk" style="color:var(--am);font-weight:700;">Tắt QC với Premium →</a>
         </div>
     </footer>
 </div>
+
+<style>
+    @keyframes tw-pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+    .tw-pulse{animation:tw-pulse 1.4s ease-in-out infinite;}
+    @keyframes tw-spin{to{transform:rotate(360deg);}}
+    .tw-spin{animation:tw-spin .8s linear infinite;}
+</style>
 
 <script>
 (() => {
@@ -346,35 +264,32 @@
     const status = document.getElementById('status-text');
     const btn = document.getElementById('skip-btn');
     const lbl = document.getElementById('skip-label');
-    const RING_C = 2 * Math.PI * 96;  // ~603.2
+    const RING_C = 2 * Math.PI * 96;
 
     ringFg.setAttribute('stroke-dasharray', RING_C);
     ringFg.style.strokeDashoffset = 0;
 
     let c = TOTAL;
     let captchaOk = false;
+    const G = '#34D399', A = '#FBBF24';
 
     function refresh() {
         if (c > 0 && !captchaOk) {
             lbl.textContent = `Đợi ${c} giây`;
-            status.innerHTML = `Vui lòng chờ <strong class="text-white">${c}</strong> giây và xác thực bạn không phải bot`;
-            btn.classList.remove('ready');
-            btn.disabled = true;
+            status.innerHTML = `Vui lòng chờ <strong style="color:#F2F2F5">${c}</strong> giây và xác thực bạn không phải bot`;
+            btn.classList.remove('ready'); btn.disabled = true;
         } else if (c > 0 && captchaOk) {
             lbl.textContent = `Đợi ${c} giây`;
-            status.innerHTML = `<span class="text-green-400">✓</span> Xác thực thành công · Chờ thêm <strong class="text-white">${c}</strong> giây`;
-            btn.classList.remove('ready');
-            btn.disabled = true;
+            status.innerHTML = `<span style="color:${G}">✓</span> Xác thực thành công · Chờ thêm <strong style="color:#F2F2F5">${c}</strong> giây`;
+            btn.classList.remove('ready'); btn.disabled = true;
         } else if (c <= 0 && !captchaOk) {
             lbl.textContent = 'Hoàn tất xác thực để tiếp tục';
-            status.innerHTML = '<span class="text-[#FFD60A]">↓</span> Vui lòng hoàn thành captcha bên dưới';
-            btn.classList.remove('ready');
-            btn.disabled = true;
+            status.innerHTML = `<span style="color:${A}">↓</span> Vui lòng hoàn thành xác thực bên dưới`;
+            btn.classList.remove('ready'); btn.disabled = true;
         } else {
-            lbl.textContent = 'Bỏ qua quảng cáo · Đến đích';
-            status.innerHTML = '<span class="text-green-400">✓</span> Sẵn sàng chuyển hướng';
-            btn.classList.add('ready');
-            btn.disabled = false;
+            lbl.textContent = 'Bỏ qua · Đến đích';
+            status.innerHTML = `<span style="color:${G}">✓</span> Sẵn sàng chuyển hướng`;
+            btn.classList.add('ready'); btn.disabled = false;
         }
     }
 
@@ -388,7 +303,7 @@
         if (c <= 0) clearInterval(interval);
     }, 1000);
 
-    // Custom "I am not a robot" checkbox
+    // captcha
     const robotCheck = document.getElementById('robot-check');
     const robotBox = document.getElementById('robot-box');
     const robotIcon = document.getElementById('robot-check-icon');
@@ -399,16 +314,13 @@
     robotCheck.addEventListener('click', () => {
         if (captchaOk || robotCheck.disabled) return;
         robotCheck.disabled = true;
-        robotSpinner.classList.remove('hidden');
+        robotSpinner.style.display = 'block';
         robotLabel.textContent = 'Đang xác thực...';
-
-        // Simulate verification delay (200-600ms)
         setTimeout(() => {
-            robotSpinner.classList.add('hidden');
-            robotIcon.classList.remove('hidden');
-            robotBox.classList.remove('border-white/30');
-            robotBox.classList.add('bg-green-500', 'border-green-500');
-            robotLabel.innerHTML = '<span class="text-green-400">✓</span> Đã xác thực thành công';
+            robotSpinner.style.display = 'none';
+            robotIcon.style.display = 'block';
+            robotBox.classList.add('ok');
+            robotLabel.innerHTML = '<span style="color:#34D399">✓</span> Đã xác thực thành công';
             captchaToken = 'demo-' + Math.random().toString(36).slice(2);
             captchaOk = true;
             refresh();
@@ -421,10 +333,8 @@
         lbl.textContent = 'Đang chuyển hướng...';
         document.body.style.opacity = '0.4';
         document.body.style.transition = 'opacity .3s';
-
         const fd = new FormData(document.getElementById('verify-form'));
         if (captchaToken) fd.append('cf-turnstile-response', captchaToken);
-
         try {
             const r = await fetch('{{ route('link.verify', $link->slug) }}', {
                 method: 'POST', body: fd, headers: {'X-Requested-With':'XMLHttpRequest'}
