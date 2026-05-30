@@ -24,22 +24,11 @@ class AnnouncementResource extends Resource
     {
         return $form->schema([
             Forms\Components\Section::make('Nội dung')->schema([
-                Forms\Components\TextInput::make('title')->required()->maxLength(120)->columnSpanFull(),
-                Forms\Components\RichEditor::make('body')->required()->columnSpanFull()
+                Forms\Components\TextInput::make('title')->label('Tiêu đề')->required()->maxLength(120)->columnSpanFull(),
+                Forms\Components\RichEditor::make('body')->label('Nội dung')->required()->columnSpanFull()
                     ->disableToolbarButtons(['attachFiles']),
-                Forms\Components\Select::make('type')->options([
-                    'info' => 'Info (xanh dương)',
-                    'success' => 'Success (xanh lá)',
-                    'warning' => 'Warning (vàng)',
-                    'danger' => 'Danger (đỏ)',
-                    'feature' => 'Feature (tím — tính năng mới)',
-                ])->default('info')->required(),
-                Forms\Components\Select::make('target')->options([
-                    'all' => 'Tất cả',
-                    'users' => 'User thường',
-                    'admins' => 'Chỉ admin',
-                    'creators' => 'Creator có link',
-                ])->default('all')->required(),
+                Forms\Components\Select::make('type')->label('Loại')->options(\App\Support\Labels::options('announcement_type'))->default('info')->required(),
+                Forms\Components\Select::make('target')->label('Đối tượng')->options(\App\Support\Labels::options('announcement_target'))->default('all')->required(),
             ])->columns(2),
 
             Forms\Components\Section::make('Hiển thị')->schema([
@@ -56,25 +45,22 @@ class AnnouncementResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('title')->searchable()->limit(50),
-            Tables\Columns\TextColumn::make('type')->badge()->colors([
+            Tables\Columns\TextColumn::make('title')->label('Tiêu đề')->searchable()->limit(50),
+            Tables\Columns\TextColumn::make('type')->label('Loại')->badge()->colors([
                 'info' => 'info', 'success' => 'success', 'warning' => 'warning',
                 'danger' => 'danger', 'purple' => 'feature',
-            ]),
-            Tables\Columns\TextColumn::make('target')->badge(),
-            Tables\Columns\IconColumn::make('is_active')->boolean()->label('Bật'),
-            Tables\Columns\TextColumn::make('starts_at')->dateTime('d/m H:i')->sortable(),
-            Tables\Columns\TextColumn::make('ends_at')->dateTime('d/m H:i')->sortable(),
+            ])->formatStateUsing(fn ($state) => \App\Support\Labels::get('announcement_type', $state)),
+            Tables\Columns\TextColumn::make('target')->label('Đối tượng')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('announcement_target', $state)),
+            Tables\Columns\IconColumn::make('is_active')->boolean()->label('Kích hoạt'),
+            Tables\Columns\TextColumn::make('starts_at')->label('Bắt đầu')->dateTime('d/m H:i')->sortable(),
+            Tables\Columns\TextColumn::make('ends_at')->label('Kết thúc')->dateTime('d/m H:i')->sortable(),
             Tables\Columns\TextColumn::make('view_count')->numeric()->sortable()->label('Lượt xem'),
             Tables\Columns\TextColumn::make('creator.name')->label('Tạo bởi'),
         ])
             ->defaultSort('id', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('type')->options([
-                    'info' => 'Info', 'success' => 'Success', 'warning' => 'Warning',
-                    'danger' => 'Danger', 'feature' => 'Feature',
-                ]),
-                Tables\Filters\TernaryFilter::make('is_active'),
+                Tables\Filters\SelectFilter::make('type')->label('Loại')->options(\App\Support\Labels::options('announcement_type')),
+                Tables\Filters\TernaryFilter::make('is_active')->label('Kích hoạt'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -24,13 +24,13 @@ class FaqCategoryResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('name')->required()->live(onBlur: true)
+            Forms\Components\TextInput::make('name')->label('Tên')->required()->live(onBlur: true)
                 ->afterStateUpdated(fn ($state, $set) => $set('slug', Str::slug($state))),
-            Forms\Components\TextInput::make('slug')->required()->unique(ignoreRecord: true)->alphaDash(),
-            Forms\Components\TextInput::make('icon')->placeholder('heroicon-o-banknotes'),
-            Forms\Components\Textarea::make('description')->rows(2)->columnSpanFull(),
-            Forms\Components\TextInput::make('sort_order')->numeric()->default(0),
-            Forms\Components\Toggle::make('is_published')->default(true),
+            Forms\Components\TextInput::make('slug')->label('Slug')->required()->unique(ignoreRecord: true)->alphaDash(),
+            Forms\Components\TextInput::make('icon')->label('Biểu tượng')->placeholder('heroicon-o-banknotes'),
+            Forms\Components\Textarea::make('description')->label('Mô tả')->rows(2)->columnSpanFull(),
+            Forms\Components\TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0),
+            Forms\Components\Toggle::make('is_published')->label('Hiển thị')->default(true),
         ]);
     }
 
@@ -38,10 +38,10 @@ class FaqCategoryResource extends Resource
     {
         return $table->columns([
             Tables\Columns\TextColumn::make('sort_order')->sortable()->label('#'),
-            Tables\Columns\TextColumn::make('name')->searchable(),
-            Tables\Columns\TextColumn::make('slug')->fontFamily('mono'),
+            Tables\Columns\TextColumn::make('name')->label('Tên')->searchable(),
+            Tables\Columns\TextColumn::make('slug')->label('Slug')->fontFamily('mono'),
             Tables\Columns\TextColumn::make('faqs_count')->counts('faqs')->label('FAQs'),
-            Tables\Columns\IconColumn::make('is_published')->boolean(),
+            Tables\Columns\IconColumn::make('is_published')->label('Hiển thị')->boolean(),
         ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')

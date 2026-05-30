@@ -27,8 +27,8 @@ class BlacklistDomainResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('domain')->required()->unique(ignoreRecord: true),
-            Forms\Components\Textarea::make('reason')->nullable(),
+            Forms\Components\TextInput::make('domain')->label('Tên miền')->required()->unique(ignoreRecord: true),
+            Forms\Components\Textarea::make('reason')->label('Lý do')->nullable(),
         ]);
     }
 
@@ -36,10 +36,10 @@ class BlacklistDomainResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('domain')->searchable(),
-                Tables\Columns\TextColumn::make('reason')->limit(50),
-                Tables\Columns\TextColumn::make('creator.email')->label('Created by')->placeholder('-'),
-                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
+                Tables\Columns\TextColumn::make('domain')->label('Tên miền')->searchable(),
+                Tables\Columns\TextColumn::make('reason')->label('Lý do')->limit(50),
+                Tables\Columns\TextColumn::make('creator.email')->label('Người thêm')->placeholder('-'),
+                Tables\Columns\TextColumn::make('created_at')->label('Ngày tạo')->dateTime()->sortable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

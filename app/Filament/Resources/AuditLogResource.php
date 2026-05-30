@@ -56,25 +56,26 @@ class AuditLogResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('id')->sortable(),
-            Tables\Columns\TextColumn::make('created_at')->dateTime('d/m/Y H:i:s')->sortable(),
+            Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
+            Tables\Columns\TextColumn::make('created_at')->label('Ngày tạo')->dateTime('d/m/Y H:i:s')->sortable(),
             Tables\Columns\TextColumn::make('user.name')->label('Người thực hiện')->searchable()->default('—'),
-            Tables\Columns\TextColumn::make('action')->badge()->searchable(),
+            Tables\Columns\TextColumn::make('action')->label('Hành động')->badge()->searchable(),
             Tables\Columns\TextColumn::make('target_type')
                 ->formatStateUsing(fn ($state) => $state ? class_basename($state) : '—')
                 ->label('Đối tượng'),
             Tables\Columns\TextColumn::make('target_label')->label('Chi tiết')->limit(40),
-            Tables\Columns\TextColumn::make('severity')->badge()->colors([
-                'gray' => 'low', 'info' => 'medium', 'warning' => 'high', 'danger' => 'critical',
-            ]),
+            Tables\Columns\TextColumn::make('severity')->label('Mức độ')->badge()
+                ->formatStateUsing(fn ($state) => \App\Support\Labels::get('severity', $state))
+                ->colors([
+                    'gray' => 'low', 'info' => 'medium', 'warning' => 'high', 'danger' => 'critical',
+                ]),
             Tables\Columns\TextColumn::make('ip_address')->label('IP')->toggleable(isToggledHiddenByDefault: true),
         ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('severity')->options([
-                    'low' => 'Low', 'medium' => 'Medium', 'high' => 'High', 'critical' => 'Critical',
-                ]),
-                Tables\Filters\SelectFilter::make('action')->options(fn () => AuditLog::query()
+                Tables\Filters\SelectFilter::make('severity')->label('Mức độ')
+                    ->options(\App\Support\Labels::options('severity')),
+                Tables\Filters\SelectFilter::make('action')->label('Hành động')->options(fn () => AuditLog::query()
                     ->select('action')->distinct()->pluck('action', 'action')->toArray()),
             ])
             ->actions([

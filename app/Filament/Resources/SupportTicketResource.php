@@ -35,35 +35,19 @@ class SupportTicketResource extends Resource
     {
         return $form->schema([
             Forms\Components\Section::make('Thông tin yêu cầu')->schema([
-                Forms\Components\TextInput::make('ticket_code')->disabled()->dehydrated(false),
-                Forms\Components\Select::make('user_id')->relationship('user', 'email')->searchable()->preload(),
-                Forms\Components\TextInput::make('guest_email')->email(),
-                Forms\Components\TextInput::make('subject')->required()->columnSpanFull(),
-                Forms\Components\Select::make('category')->options([
-                    'payout' => 'Rút tiền',
-                    'account' => 'Tài khoản',
-                    'link_issue' => 'Vấn đề link',
-                    'fraud_report' => 'Báo cáo gian lận',
-                    'feature_request' => 'Đề xuất tính năng',
-                    'bug' => 'Lỗi',
-                    'other' => 'Khác',
-                ])->required(),
-                Forms\Components\Select::make('priority')->options([
-                    'low' => 'Thấp', 'normal' => 'Bình thường', 'high' => 'Cao', 'urgent' => 'Khẩn cấp',
-                ])->default('normal')->required(),
+                Forms\Components\TextInput::make('ticket_code')->label('Mã ticket')->disabled()->dehydrated(false),
+                Forms\Components\Select::make('user_id')->label('Người dùng')->relationship('user', 'email')->searchable()->preload(),
+                Forms\Components\TextInput::make('guest_email')->label('Email khách')->email(),
+                Forms\Components\TextInput::make('subject')->label('Chủ đề')->required()->columnSpanFull(),
+                Forms\Components\Select::make('category')->label('Danh mục')->options(\App\Support\Labels::options('ticket_category'))->required(),
+                Forms\Components\Select::make('priority')->label('Ưu tiên')->options(\App\Support\Labels::options('priority'))->default('normal')->required(),
             ])->columns(2),
 
             Forms\Components\Section::make('Trạng thái xử lý')->schema([
-                Forms\Components\Select::make('status')->options([
-                    'open' => 'Mở',
-                    'in_progress' => 'Đang xử lý',
-                    'waiting_user' => 'Chờ user',
-                    'resolved' => 'Đã giải quyết',
-                    'closed' => 'Đóng',
-                ])->required()->default('open'),
+                Forms\Components\Select::make('status')->label('Trạng thái')->options(\App\Support\Labels::options('ticket_status'))->required()->default('open'),
                 Forms\Components\Select::make('assigned_to')->label('Giao cho admin')
                     ->options(fn () => User::where('is_admin', true)->pluck('name', 'id'))->searchable(),
-                Forms\Components\DateTimePicker::make('resolved_at')->seconds(false),
+                Forms\Components\DateTimePicker::make('resolved_at')->label('Giải quyết lúc')->seconds(false),
             ])->columns(3),
         ]);
     }
@@ -71,36 +55,27 @@ class SupportTicketResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('ticket_code')->searchable()->copyable()->fontFamily('mono'),
-            Tables\Columns\TextColumn::make('subject')->searchable()->limit(40),
-            Tables\Columns\TextColumn::make('user.email')->searchable()->default(fn ($record) => $record->guest_email ?? '—'),
-            Tables\Columns\TextColumn::make('category')->badge(),
-            Tables\Columns\TextColumn::make('priority')->badge()->colors([
+            Tables\Columns\TextColumn::make('ticket_code')->label('Mã ticket')->searchable()->copyable()->fontFamily('mono'),
+            Tables\Columns\TextColumn::make('subject')->label('Chủ đề')->searchable()->limit(40),
+            Tables\Columns\TextColumn::make('user.email')->label('Email')->searchable()->default(fn ($record) => $record->guest_email ?? '—'),
+            Tables\Columns\TextColumn::make('category')->label('Danh mục')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('ticket_category', $state)),
+            Tables\Columns\TextColumn::make('priority')->label('Ưu tiên')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('priority', $state))->colors([
                 'gray' => 'low', 'info' => 'normal', 'warning' => 'high', 'danger' => 'urgent',
             ]),
-            Tables\Columns\TextColumn::make('status')->badge()->colors([
+            Tables\Columns\TextColumn::make('status')->label('Trạng thái')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('ticket_status', $state))->colors([
                 'warning' => 'open', 'info' => 'in_progress', 'gray' => 'waiting_user',
                 'success' => 'resolved', 'gray' => 'closed',
             ]),
-            Tables\Columns\TextColumn::make('reply_count')->label('Replies')->alignCenter(),
+            Tables\Columns\TextColumn::make('reply_count')->label('Số phản hồi')->alignCenter(),
             Tables\Columns\TextColumn::make('assignee.name')->label('Giao cho')->default('—'),
-            Tables\Columns\TextColumn::make('last_reply_at')->dateTime('d/m H:i')->sortable(),
-            Tables\Columns\TextColumn::make('created_at')->dateTime('d/m/Y')->sortable(),
+            Tables\Columns\TextColumn::make('last_reply_at')->label('Phản hồi cuối')->dateTime('d/m H:i')->sortable(),
+            Tables\Columns\TextColumn::make('created_at')->label('Ngày tạo')->dateTime('d/m/Y')->sortable(),
         ])
             ->defaultSort('last_reply_at', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('status')->options([
-                    'open' => 'Mở', 'in_progress' => 'Đang xử lý', 'waiting_user' => 'Chờ user',
-                    'resolved' => 'Đã giải quyết', 'closed' => 'Đóng',
-                ]),
-                Tables\Filters\SelectFilter::make('priority')->options([
-                    'low' => 'Thấp', 'normal' => 'Bình thường', 'high' => 'Cao', 'urgent' => 'Khẩn cấp',
-                ]),
-                Tables\Filters\SelectFilter::make('category')->options([
-                    'payout' => 'Rút tiền', 'account' => 'Tài khoản', 'link_issue' => 'Link',
-                    'fraud_report' => 'Gian lận', 'feature_request' => 'Đề xuất',
-                    'bug' => 'Bug', 'other' => 'Khác',
-                ]),
+                Tables\Filters\SelectFilter::make('status')->label('Trạng thái')->options(\App\Support\Labels::options('ticket_status')),
+                Tables\Filters\SelectFilter::make('priority')->label('Ưu tiên')->options(\App\Support\Labels::options('priority')),
+                Tables\Filters\SelectFilter::make('category')->label('Danh mục')->options(\App\Support\Labels::options('ticket_category')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

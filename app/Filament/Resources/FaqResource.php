@@ -24,16 +24,16 @@ class FaqResource extends Resource
     {
         return $form->schema([
             Forms\Components\Section::make('Câu hỏi')->schema([
-                Forms\Components\Select::make('category_id')->relationship('category', 'name')->searchable()->preload(),
-                Forms\Components\TextInput::make('question')->required()->maxLength(255)->columnSpanFull(),
-                Forms\Components\RichEditor::make('answer')->required()->columnSpanFull()
+                Forms\Components\Select::make('category_id')->label('Danh mục')->relationship('category', 'name')->searchable()->preload(),
+                Forms\Components\TextInput::make('question')->label('Câu hỏi')->required()->maxLength(255)->columnSpanFull(),
+                Forms\Components\RichEditor::make('answer')->label('Trả lời')->required()->columnSpanFull()
                     ->disableToolbarButtons(['attachFiles']),
-                Forms\Components\TagsInput::make('tags'),
+                Forms\Components\TagsInput::make('tags')->label('Thẻ'),
             ]),
             Forms\Components\Section::make('Hiển thị')->schema([
-                Forms\Components\TextInput::make('sort_order')->numeric()->default(0),
-                Forms\Components\Toggle::make('is_published')->default(true),
-                Forms\Components\Toggle::make('is_featured'),
+                Forms\Components\TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0),
+                Forms\Components\Toggle::make('is_published')->label('Hiển thị')->default(true),
+                Forms\Components\Toggle::make('is_featured')->label('Nổi bật'),
             ])->columns(3),
         ]);
     }
@@ -41,20 +41,20 @@ class FaqResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('id')->sortable(),
-            Tables\Columns\TextColumn::make('question')->searchable()->limit(60)->wrap(),
-            Tables\Columns\TextColumn::make('category.name')->badge()->color('info'),
+            Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
+            Tables\Columns\TextColumn::make('question')->label('Câu hỏi')->searchable()->limit(60)->wrap(),
+            Tables\Columns\TextColumn::make('category.name')->label('Danh mục')->badge()->color('info'),
             Tables\Columns\TextColumn::make('view_count')->label('Lượt xem')->numeric()->sortable(),
             Tables\Columns\TextColumn::make('helpful_count')->label('👍')->sortable(),
             Tables\Columns\TextColumn::make('not_helpful_count')->label('👎')->sortable(),
-            Tables\Columns\IconColumn::make('is_published')->boolean(),
-            Tables\Columns\IconColumn::make('is_featured')->boolean(),
+            Tables\Columns\IconColumn::make('is_published')->label('Hiển thị')->boolean(),
+            Tables\Columns\IconColumn::make('is_featured')->label('Nổi bật')->boolean(),
         ])
             ->defaultSort('sort_order')
             ->filters([
-                Tables\Filters\SelectFilter::make('category_id')->relationship('category', 'name'),
-                Tables\Filters\TernaryFilter::make('is_published'),
-                Tables\Filters\TernaryFilter::make('is_featured'),
+                Tables\Filters\SelectFilter::make('category_id')->label('Danh mục')->relationship('category', 'name'),
+                Tables\Filters\TernaryFilter::make('is_published')->label('Hiển thị'),
+                Tables\Filters\TernaryFilter::make('is_featured')->label('Nổi bật'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

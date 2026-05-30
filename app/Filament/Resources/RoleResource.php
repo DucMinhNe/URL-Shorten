@@ -23,17 +23,17 @@ class RoleResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('name')->required()->maxLength(64),
-            Forms\Components\TextInput::make('slug')->required()->unique(ignoreRecord: true)->alphaDash(),
-            Forms\Components\Textarea::make('description')->rows(2),
-            Forms\Components\TextInput::make('level')->numeric()->default(0)->helperText('Cao hơn = quyền lớn hơn'),
-            Forms\Components\Select::make('color')->options([
+            Forms\Components\TextInput::make('name')->label('Tên')->required()->maxLength(64),
+            Forms\Components\TextInput::make('slug')->label('Slug')->required()->unique(ignoreRecord: true)->alphaDash(),
+            Forms\Components\Textarea::make('description')->label('Mô tả')->rows(2),
+            Forms\Components\TextInput::make('level')->label('Cấp')->numeric()->default(0)->helperText('Cao hơn = quyền lớn hơn'),
+            Forms\Components\Select::make('color')->label('Màu')->options([
                 'slate' => 'Slate', 'gray' => 'Gray', 'red' => 'Red', 'orange' => 'Orange',
                 'amber' => 'Amber', 'yellow' => 'Yellow', 'lime' => 'Lime', 'green' => 'Green',
                 'emerald' => 'Emerald', 'cyan' => 'Cyan', 'blue' => 'Blue', 'indigo' => 'Indigo',
                 'violet' => 'Violet', 'purple' => 'Purple', 'pink' => 'Pink', 'rose' => 'Rose',
             ])->default('slate'),
-            Forms\Components\TagsInput::make('permissions')
+            Forms\Components\TagsInput::make('permissions')->label('Quyền')
                 ->helperText('Ví dụ: users.manage, payouts.approve, settings.edit, * (tất cả)'),
             Forms\Components\Toggle::make('is_system')->label('Vai trò hệ thống (không thể xoá)'),
         ]);
@@ -42,17 +42,17 @@ class RoleResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('id')->sortable(),
-            Tables\Columns\TextColumn::make('name')->searchable(),
-            Tables\Columns\TextColumn::make('slug')->badge()->color(fn ($record) => $record->color),
-            Tables\Columns\TextColumn::make('level')->sortable()->alignCenter(),
+            Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
+            Tables\Columns\TextColumn::make('name')->label('Tên')->searchable(),
+            Tables\Columns\TextColumn::make('slug')->label('Slug')->badge()->color(fn ($record) => $record->color),
+            Tables\Columns\TextColumn::make('level')->label('Cấp')->sortable()->alignCenter(),
             Tables\Columns\TextColumn::make('users_count')->counts('users')->label('Users'),
             Tables\Columns\IconColumn::make('is_system')->boolean()->label('Hệ thống'),
-            Tables\Columns\TextColumn::make('created_at')->dateTime('d/m/Y')->sortable(),
+            Tables\Columns\TextColumn::make('created_at')->label('Ngày tạo')->dateTime('d/m/Y')->sortable(),
         ])
             ->defaultSort('level', 'desc')
             ->filters([
-                Tables\Filters\TernaryFilter::make('is_system'),
+                Tables\Filters\TernaryFilter::make('is_system')->label('Hệ thống'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

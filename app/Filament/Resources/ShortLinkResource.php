@@ -39,32 +39,42 @@ class ShortLinkResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('user_id')
+                    ->label('Người dùng')
                     ->relationship('user', 'name')
                     ->default(null),
                 Forms\Components\TextInput::make('slug')
+                    ->label('Slug')
                     ->required()
                     ->maxLength(32),
                 Forms\Components\Textarea::make('original_url')
+                    ->label('URL gốc')
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('title')
+                    ->label('Tiêu đề')
                     ->maxLength(255)
                     ->default(null),
                 Forms\Components\TextInput::make('password')
+                    ->label('Mật khẩu')
                     ->password()
                     ->maxLength(255)
                     ->default(null),
-                Forms\Components\TextInput::make('status')
+                Forms\Components\Select::make('status')
+                    ->label('Trạng thái')
+                    ->options(\App\Support\Labels::options('link_status'))
                     ->required(),
                 Forms\Components\TextInput::make('total_clicks')
+                    ->label('Lượt click')
                     ->required()
                     ->numeric()
                     ->default(0),
                 Forms\Components\TextInput::make('valid_views')
+                    ->label('View hợp lệ')
                     ->required()
                     ->numeric()
                     ->default(0),
                 Forms\Components\TextInput::make('total_earned')
+                    ->label('Doanh thu')
                     ->required()
                     ->numeric()
                     ->default(0),
@@ -74,16 +84,16 @@ class ShortLinkResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('slug')->copyable()->searchable(),
-            Tables\Columns\TextColumn::make('user.email')->label('Owner')->searchable(),
-            Tables\Columns\TextColumn::make('original_url')->limit(40)->tooltip(fn($record)=>$record->original_url),
-            Tables\Columns\TextColumn::make('total_clicks')->numeric()->sortable(),
-            Tables\Columns\TextColumn::make('valid_views')->numeric()->sortable(),
-            Tables\Columns\TextColumn::make('total_earned')->money('VND', divideBy:1)->sortable(),
-            Tables\Columns\TextColumn::make('status')->badge()->colors(['success'=>'active','warning'=>'disabled','danger'=>'blocked']),
-            Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
+            Tables\Columns\TextColumn::make('slug')->label('Slug')->copyable()->searchable(),
+            Tables\Columns\TextColumn::make('user.email')->label('Email')->searchable(),
+            Tables\Columns\TextColumn::make('original_url')->label('URL gốc')->limit(40)->tooltip(fn($record)=>$record->original_url),
+            Tables\Columns\TextColumn::make('total_clicks')->label('Lượt click')->numeric()->sortable(),
+            Tables\Columns\TextColumn::make('valid_views')->label('View hợp lệ')->numeric()->sortable(),
+            Tables\Columns\TextColumn::make('total_earned')->label('Doanh thu')->money('VND', divideBy:1)->sortable(),
+            Tables\Columns\TextColumn::make('status')->label('Trạng thái')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('link_status', $state))->colors(['success'=>'active','warning'=>'disabled','danger'=>'blocked']),
+            Tables\Columns\TextColumn::make('created_at')->label('Ngày tạo')->dateTime()->sortable(),
         ])->filters([
-            Tables\Filters\SelectFilter::make('status')->options(['active'=>'Active','disabled'=>'Disabled','blocked'=>'Blocked']),
+            Tables\Filters\SelectFilter::make('status')->label('Trạng thái')->options(\App\Support\Labels::options('link_status')),
         ])->headerActions([
             \App\Filament\Support\ExportsCsv::action('lien-ket', [
                 'ID' => 'id',

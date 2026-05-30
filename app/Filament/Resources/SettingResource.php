@@ -27,22 +27,20 @@ class SettingResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('key')->required()->disabled(fn($record)=>$record !== null),
-            Forms\Components\Textarea::make('value')->required()->rows(2),
-            Forms\Components\Select::make('type')->options([
-                'string'=>'String','integer'=>'Integer','boolean'=>'Boolean','json'=>'JSON',
-            ])->required(),
-            Forms\Components\TextInput::make('description')->nullable(),
+            Forms\Components\TextInput::make('key')->label('Khoá')->required()->disabled(fn($record)=>$record !== null),
+            Forms\Components\Textarea::make('value')->label('Giá trị')->required()->rows(2),
+            Forms\Components\Select::make('type')->label('Loại')->options(\App\Support\Labels::options('setting_type'))->required(),
+            Forms\Components\TextInput::make('description')->label('Mô tả')->nullable(),
         ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('key')->searchable(),
-            Tables\Columns\TextColumn::make('value')->limit(50),
-            Tables\Columns\TextColumn::make('type')->badge(),
-            Tables\Columns\TextColumn::make('description')->limit(40),
+            Tables\Columns\TextColumn::make('key')->label('Khoá')->searchable(),
+            Tables\Columns\TextColumn::make('value')->label('Giá trị')->limit(50),
+            Tables\Columns\TextColumn::make('type')->label('Loại')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('setting_type', $state)),
+            Tables\Columns\TextColumn::make('description')->label('Mô tả')->limit(40),
         ])
             ->actions([
                 Tables\Actions\EditAction::make(),

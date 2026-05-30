@@ -24,26 +24,26 @@ class EmailTemplateResource extends Resource
     {
         return $form->schema([
             Forms\Components\Section::make('Định danh')->schema([
-                Forms\Components\TextInput::make('key')->required()->unique(ignoreRecord: true)
+                Forms\Components\TextInput::make('key')->label('Mã')->required()->unique(ignoreRecord: true)
                     ->alphaDash()->helperText('ví dụ: welcome, payout_paid, link_disabled'),
-                Forms\Components\TextInput::make('name')->required()->columnSpan(2),
-                Forms\Components\Select::make('locale')->options(['vi' => 'Tiếng Việt', 'en' => 'English'])->default('vi'),
+                Forms\Components\TextInput::make('name')->label('Tên')->required()->columnSpan(2),
+                Forms\Components\Select::make('locale')->label('Ngôn ngữ')->options(['vi' => 'Tiếng Việt', 'en' => 'English'])->default('vi'),
             ])->columns(4),
 
             Forms\Components\Section::make('Nội dung')->schema([
-                Forms\Components\TextInput::make('subject')->required()->columnSpanFull(),
-                Forms\Components\RichEditor::make('body_html')->required()->columnSpanFull()
+                Forms\Components\TextInput::make('subject')->label('Tiêu đề')->required()->columnSpanFull(),
+                Forms\Components\RichEditor::make('body_html')->label('Nội dung HTML')->required()->columnSpanFull()
                     ->disableToolbarButtons(['attachFiles']),
-                Forms\Components\Textarea::make('body_text')->rows(4)->columnSpanFull()
+                Forms\Components\Textarea::make('body_text')->label('Nội dung văn bản')->rows(4)->columnSpanFull()
                     ->helperText('Bản plain-text cho email client cũ'),
-                Forms\Components\TagsInput::make('variables')
+                Forms\Components\TagsInput::make('variables')->label('Biến')
                     ->helperText('Variables sử dụng được trong template: {{ user_name }}, {{ amount }}, etc.'),
             ]),
 
             Forms\Components\Section::make('Gửi')->schema([
-                Forms\Components\TextInput::make('from_name'),
-                Forms\Components\TextInput::make('from_email')->email(),
-                Forms\Components\Toggle::make('is_active')->default(true),
+                Forms\Components\TextInput::make('from_name')->label('Tên người gửi'),
+                Forms\Components\TextInput::make('from_email')->label('Email người gửi')->email(),
+                Forms\Components\Toggle::make('is_active')->label('Kích hoạt')->default(true),
             ])->columns(3),
         ]);
     }
@@ -51,18 +51,18 @@ class EmailTemplateResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('key')->fontFamily('mono')->badge()->color('info')->searchable(),
-            Tables\Columns\TextColumn::make('name')->searchable()->limit(40),
-            Tables\Columns\TextColumn::make('subject')->limit(50),
-            Tables\Columns\TextColumn::make('locale')->badge(),
-            Tables\Columns\IconColumn::make('is_active')->boolean(),
+            Tables\Columns\TextColumn::make('key')->label('Mã')->fontFamily('mono')->badge()->color('info')->searchable(),
+            Tables\Columns\TextColumn::make('name')->label('Tên')->searchable()->limit(40),
+            Tables\Columns\TextColumn::make('subject')->label('Tiêu đề')->limit(50),
+            Tables\Columns\TextColumn::make('locale')->label('Ngôn ngữ')->badge(),
+            Tables\Columns\IconColumn::make('is_active')->label('Kích hoạt')->boolean(),
             Tables\Columns\TextColumn::make('sent_count')->label('Đã gửi')->numeric()->sortable(),
-            Tables\Columns\TextColumn::make('last_sent_at')->dateTime('d/m H:i')->placeholder('—'),
+            Tables\Columns\TextColumn::make('last_sent_at')->label('Gửi lần cuối')->dateTime('d/m H:i')->placeholder('—'),
         ])
             ->defaultSort('id', 'desc')
             ->filters([
-                Tables\Filters\TernaryFilter::make('is_active'),
-                Tables\Filters\SelectFilter::make('locale')->options(['vi' => 'Tiếng Việt', 'en' => 'English']),
+                Tables\Filters\TernaryFilter::make('is_active')->label('Kích hoạt'),
+                Tables\Filters\SelectFilter::make('locale')->label('Ngôn ngữ')->options(['vi' => 'Tiếng Việt', 'en' => 'English']),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

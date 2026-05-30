@@ -39,25 +39,36 @@ class PayoutRequestResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('user_id')
+                    ->label('Người dùng')
                     ->relationship('user', 'name')
                     ->required(),
                 Forms\Components\TextInput::make('amount')
+                    ->label('Số tiền')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('method')
+                Forms\Components\Select::make('method')
+                    ->label('Phương thức')
+                    ->options(\App\Support\Labels::options('method'))
                     ->required(),
                 Forms\Components\TextInput::make('account_info')
+                    ->label('Tài khoản nhận')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('status')
+                Forms\Components\Select::make('status')
+                    ->label('Trạng thái')
+                    ->options(\App\Support\Labels::options('payout_status'))
                     ->required(),
                 Forms\Components\Textarea::make('admin_note')
+                    ->label('Ghi chú admin')
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('processed_by')
+                    ->label('Người xử lý')
                     ->numeric()
                     ->default(null),
-                Forms\Components\DateTimePicker::make('processed_at'),
+                Forms\Components\DateTimePicker::make('processed_at')
+                    ->label('Đã xử lý'),
                 Forms\Components\TextInput::make('transaction_ref')
+                    ->label('Mã giao dịch')
                     ->maxLength(255)
                     ->default(null),
             ]);
@@ -66,20 +77,18 @@ class PayoutRequestResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('id'),
-            Tables\Columns\TextColumn::make('user.email')->searchable(),
-            Tables\Columns\TextColumn::make('amount')->money('VND', divideBy:1),
-            Tables\Columns\TextColumn::make('method')->badge(),
-            Tables\Columns\TextColumn::make('account_info')->copyable(),
-            Tables\Columns\TextColumn::make('status')->badge()->colors([
+            Tables\Columns\TextColumn::make('id')->label('ID'),
+            Tables\Columns\TextColumn::make('user.email')->label('Email')->searchable(),
+            Tables\Columns\TextColumn::make('amount')->label('Số tiền')->money('VND', divideBy:1),
+            Tables\Columns\TextColumn::make('method')->label('Phương thức')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('method', $state)),
+            Tables\Columns\TextColumn::make('account_info')->label('Tài khoản nhận')->copyable(),
+            Tables\Columns\TextColumn::make('status')->label('Trạng thái')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('payout_status', $state))->colors([
                 'warning'=>'pending','primary'=>'approved','success'=>'paid','danger'=>'rejected'
             ]),
-            Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
-            Tables\Columns\TextColumn::make('processed_at')->dateTime()->sortable(),
+            Tables\Columns\TextColumn::make('created_at')->label('Ngày tạo')->dateTime()->sortable(),
+            Tables\Columns\TextColumn::make('processed_at')->label('Đã xử lý')->dateTime()->sortable(),
         ])->filters([
-            Tables\Filters\SelectFilter::make('status')->options([
-                'pending'=>'Pending','approved'=>'Approved','paid'=>'Paid','rejected'=>'Rejected',
-            ])->default('pending'),
+            Tables\Filters\SelectFilter::make('status')->label('Trạng thái')->options(\App\Support\Labels::options('payout_status'))->default('pending'),
         ])->headerActions([
             \App\Filament\Support\ExportsCsv::action('rut-tien', [
                 'ID' => 'id',

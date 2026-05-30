@@ -37,14 +37,14 @@ class UserResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('name')->required(),
-            Forms\Components\TextInput::make('email')->email()->required()->unique(ignoreRecord: true),
-            Forms\Components\TextInput::make('balance')->numeric()->default(0)->suffix('VND'),
-            Forms\Components\TextInput::make('total_earned')->numeric()->disabled(),
-            Forms\Components\Select::make('status')->options(['active'=>'Active','banned'=>'Banned'])->required(),
-            Forms\Components\Toggle::make('is_admin'),
-            Forms\Components\Select::make('payout_method')->options(['momo'=>'Momo','zalo'=>'ZaloPay','paypal'=>'PayPal'])->nullable(),
-            Forms\Components\TextInput::make('payout_account')->nullable(),
+            Forms\Components\TextInput::make('name')->label('Tên')->required(),
+            Forms\Components\TextInput::make('email')->label('Email')->email()->required()->unique(ignoreRecord: true),
+            Forms\Components\TextInput::make('balance')->label('Số dư')->numeric()->default(0)->suffix('VND'),
+            Forms\Components\TextInput::make('total_earned')->label('Doanh thu')->numeric()->disabled(),
+            Forms\Components\Select::make('status')->label('Trạng thái')->options(\App\Support\Labels::options('user_status'))->required(),
+            Forms\Components\Toggle::make('is_admin')->label('Admin'),
+            Forms\Components\Select::make('payout_method')->label('Phương thức rút')->options(\App\Support\Labels::options('method'))->nullable(),
+            Forms\Components\TextInput::make('payout_account')->label('Tài khoản rút')->nullable(),
         ]);
     }
 
@@ -52,18 +52,18 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->sortable(),
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('email')->searchable(),
-                Tables\Columns\TextColumn::make('balance')->money('VND', divideBy: 1)->sortable(),
-                Tables\Columns\TextColumn::make('total_earned')->money('VND', divideBy: 1)->sortable(),
-                Tables\Columns\IconColumn::make('is_admin')->boolean(),
-                Tables\Columns\TextColumn::make('status')->badge()->colors(['success'=>'active','danger'=>'banned']),
-                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
+                Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
+                Tables\Columns\TextColumn::make('name')->label('Tên')->searchable(),
+                Tables\Columns\TextColumn::make('email')->label('Email')->searchable(),
+                Tables\Columns\TextColumn::make('balance')->label('Số dư')->money('VND', divideBy: 1)->sortable(),
+                Tables\Columns\TextColumn::make('total_earned')->label('Doanh thu')->money('VND', divideBy: 1)->sortable(),
+                Tables\Columns\IconColumn::make('is_admin')->label('Admin')->boolean(),
+                Tables\Columns\TextColumn::make('status')->label('Trạng thái')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('user_status', $state))->colors(['success'=>'active','danger'=>'banned']),
+                Tables\Columns\TextColumn::make('created_at')->label('Ngày tạo')->dateTime()->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')->options(['active'=>'Active','banned'=>'Banned']),
-                Tables\Filters\TernaryFilter::make('is_admin'),
+                Tables\Filters\SelectFilter::make('status')->label('Trạng thái')->options(\App\Support\Labels::options('user_status')),
+                Tables\Filters\TernaryFilter::make('is_admin')->label('Admin'),
             ])
             ->headerActions([
                 \App\Filament\Support\ExportsCsv::action('nguoi-dung', [
