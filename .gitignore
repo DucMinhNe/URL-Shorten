@@ -36,3 +36,7 @@ READY-TO-DEPLOY.md
 /deploy
 /.htaccess
 
+
+# Deploy secrets (mess.io.vn FTP creds) — never push to public GitHub
+DEPLOY-MESS.md
+.deploy/
