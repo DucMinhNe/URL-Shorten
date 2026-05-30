@@ -153,6 +153,55 @@
 .lp-copy{cursor:pointer;transition:.15s;}
 .lp-copy:hover{color:var(--lp-violet);}
 
+/* ---- no-build utility shim --------------------------------------------- */
+/* The compiled app.css is frozen; these are utilities used on dark/public
+   sections that aren't in that build. Plain CSS so they work without Vite. */
+.text-white\/50{color:rgba(255,255,255,.5);}
+.text-white\/60{color:rgba(255,255,255,.6);}
+.text-white\/70{color:rgba(255,255,255,.7);}
+.text-white\/80{color:rgba(255,255,255,.8);}
+.text-white\/90{color:rgba(255,255,255,.9);}
+.bg-white\/5{background:rgba(255,255,255,.05);}
+.bg-white\/10{background:rgba(255,255,255,.1);}
+.bg-white\/15{background:rgba(255,255,255,.15);}
+.bg-white\/20{background:rgba(255,255,255,.2);}
+.border-white\/10{border-color:rgba(255,255,255,.1);}
+.border-white\/15{border-color:rgba(255,255,255,.15);}
+.border-white\/20{border-color:rgba(255,255,255,.2);}
+.h-24{height:6rem;}.h-28{height:7rem;}.h-32{height:8rem;}.h-36{height:9rem;}.h-40{height:10rem;}
+.rounded-t-2xl{border-top-left-radius:1rem;border-top-right-radius:1rem;}
+.bg-app-soft{background:#FAFBFE;}
+.text-4xl{font-size:2.25rem;line-height:2.5rem;}
+.text-5xl{font-size:3rem;line-height:1;}
+.mt-7{margin-top:1.75rem;}
+.opacity-40{opacity:.4;}
+/* arbitrary max-widths introduced by new pages (not in frozen build) */
+.max-w-\[560px\]{max-width:560px;}
+.max-w-\[620px\]{max-width:620px;}
+.max-w-\[680px\]{max-width:680px;}
+.max-w-\[760px\]{max-width:760px;}
+.max-w-\[820px\]{max-width:820px;}
+.max-w-\[1000px\]{max-width:1000px;}
+.max-w-\[1100px\]{max-width:1100px;}
+.type-display-md{font-size:2rem;line-height:1.1;font-weight:800;letter-spacing:-.02em;}
+/* responsive utilities used by new pages (safe re-declarations) */
+@media (min-width:640px){
+    .sm\:flex-row{flex-direction:row;}
+    .sm\:items-end{align-items:flex-end;}
+    .sm\:items-center{align-items:center;}
+    .sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+@media (min-width:768px){
+    .md\:flex-row{flex-direction:row;}
+    .md\:items-center{align-items:center;}
+    .md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media (min-width:1024px){
+    .lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr));}
+}
+
 @media (prefers-reduced-motion: reduce){
     .lp-spark path.line{animation:none;stroke-dashoffset:0;}
     .lp-rise{animation:none;opacity:1;transform:none;}

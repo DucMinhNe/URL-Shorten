@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
+Route::get('/leaderboard', [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('leaderboard');
 
 Route::get('/sitemap.xml', function () {
     $base = rtrim(config('app.url'), '/');
@@ -48,6 +49,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('links', ShortLinkController::class)->except('show');
     Route::get('/payout', [PayoutController::class, 'index'])->name('payout.index');
     Route::post('/payout', [PayoutController::class, 'store'])->name('payout.store');
+
+    Route::get('/referral', [\App\Http\Controllers\ReferralController::class, 'index'])->name('referral.index');
+    Route::get('/premium', [\App\Http\Controllers\PremiumController::class, 'index'])->name('premium.index');
+    Route::post('/premium/upgrade', [\App\Http\Controllers\PremiumController::class, 'upgrade'])->name('premium.upgrade');
+    Route::get('/api-tokens', [\App\Http\Controllers\ApiTokenController::class, 'index'])->name('api-tokens.index');
+    Route::post('/api-tokens', [\App\Http\Controllers\ApiTokenController::class, 'store'])->name('api-tokens.store');
+    Route::delete('/api-tokens/{token}', [\App\Http\Controllers\ApiTokenController::class, 'destroy'])->name('api-tokens.destroy');
 });
 
 Route::middleware('auth')->group(function () {

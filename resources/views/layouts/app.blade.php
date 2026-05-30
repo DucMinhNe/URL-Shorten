@@ -74,6 +74,27 @@
                     Rút tiền
                 </a>
 
+                <div class="px-3 mt-6 mb-2 type-caption-bold uppercase tracking-wider text-stone">Phát triển</div>
+                <a href="{{ route('referral.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl type-body-sm-bold {{ $isActive('referral') ? 'bg-primary-soft text-primary-deep' : 'text-charcoal hover:bg-surface-soft' }}">
+                    <x-heroicon-o-gift class="w-5 h-5"/>
+                    Mời bạn bè
+                </a>
+                <a href="{{ route('leaderboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl type-body-sm-bold {{ $isActive('leaderboard') ? 'bg-primary-soft text-primary-deep' : 'text-charcoal hover:bg-surface-soft' }}">
+                    <x-heroicon-o-trophy class="w-5 h-5"/>
+                    Bảng xếp hạng
+                </a>
+                <a href="{{ route('api-tokens.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl type-body-sm-bold {{ $isActive('api-tokens') ? 'bg-primary-soft text-primary-deep' : 'text-charcoal hover:bg-surface-soft' }}">
+                    <x-heroicon-o-code-bracket class="w-5 h-5"/>
+                    API
+                </a>
+                <a href="{{ route('premium.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl type-body-sm-bold {{ $isActive('premium') ? 'bg-primary-soft text-primary-deep' : 'text-charcoal hover:bg-surface-soft' }}">
+                    <x-heroicon-o-sparkles class="w-5 h-5 {{ auth()->user()?->isPremium() ? 'text-[color:var(--lp-amber,#F59E0B)]' : '' }}"/>
+                    Premium
+                    @if(auth()->user()?->isPremium())
+                        <span class="ml-auto lp-tag lp-tag-amber !py-0.5">PRO</span>
+                    @endif
+                </a>
+
                 <div class="px-3 mt-6 mb-2 type-caption-bold uppercase tracking-wider text-stone">Tài khoản</div>
                 <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl type-body-sm-bold {{ $isActive('profile') ? 'bg-primary-soft text-primary-deep' : 'text-charcoal hover:bg-surface-soft' }}">
                     <x-heroicon-o-user-circle class="w-5 h-5"/>

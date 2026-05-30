@@ -18,8 +18,13 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
+        // Ghi nhớ mã giới thiệu từ ?ref= để gán khi người dùng đăng ký.
+        if ($ref = $request->query('ref')) {
+            $request->session()->put('ref_code', $ref);
+        }
+
         return view('auth.register');
     }
 
@@ -36,10 +41,17 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        // Gán người giới thiệu nếu có mã ref hợp lệ trong session.
+        $referrer = null;
+        if ($code = $request->session()->pull('ref_code')) {
+            $referrer = User::where('referral_code', $code)->first();
+        }
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'referred_by' => $referrer?->id,
         ]);
 
         event(new Registered($user));

@@ -21,6 +21,7 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
         'name','email','password','google_id','avatar',
         'balance','total_earned','status','payout_method',
         'payout_account','preferred_locale','is_admin','role_id',
+        'referral_code','referred_by','referral_earned','is_premium','premium_until',
     ];
 
     protected $hidden = ['password','remember_token'];
@@ -31,9 +32,46 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'is_premium' => 'boolean',
+            'premium_until' => 'datetime',
             'balance' => 'integer',
             'total_earned' => 'integer',
+            'referral_earned' => 'integer',
         ];
+    }
+
+    /** Premium còn hiệu lực? (cờ bật + chưa hết hạn). */
+    public function isPremium(): bool
+    {
+        return $this->is_premium && (! $this->premium_until || $this->premium_until->isFuture());
+    }
+
+    /** Lấy mã giới thiệu, tạo mới nếu chưa có. */
+    public function referralCode(): string
+    {
+        if (! $this->referral_code) {
+            do {
+                $code = strtoupper(\Illuminate\Support\Str::random(7));
+            } while (static::where('referral_code', $code)->exists());
+            $this->forceFill(['referral_code' => $code])->save();
+        }
+
+        return $this->referral_code;
+    }
+
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(User::class, 'referred_by');
+    }
+
+    public function referrer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'referred_by');
+    }
+
+    public function apiTokens(): HasMany
+    {
+        return $this->hasMany(ApiToken::class);
     }
 
     public function canAccessPanel(Panel $panel): bool
