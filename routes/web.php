@@ -71,6 +71,10 @@ Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('local
 
 require __DIR__.'/auth.php';
 
+// Track click quảng cáo trên trang chờ (2 segment nên không đụng /{slug}).
+Route::get('/go/{campaign}/{token}', [InterstitialController::class, 'adClick'])
+    ->whereNumber('campaign')->name('ad.click');
+
 // Redirect / interstitial routes — MUST be last so /{slug} wildcard doesn't shadow named routes.
 Route::get('/{slug}', [RedirectController::class, 'show'])
     ->where('slug', '[A-Za-z0-9_-]+')->name('link.show');

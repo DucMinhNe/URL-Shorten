@@ -244,18 +244,19 @@
 
             @php
                 // Decode brand metadata from each ad slot
-                $parseAd = function($ad) {
+                $parseAd = function($ad) use ($token) {
                     if (!$ad) return null;
                     $meta = json_decode($ad->content ?? '', true);
                     if (!is_array($meta) || !isset($meta['image'])) return null;
                     return [
+                        'id'       => $ad->id,
                         'image'    => $meta['image'],
                         'headline' => $meta['headline'],
                         'sub'      => $meta['sub'],
                         'cta'      => $meta['cta'],
                         'brand'    => $meta['brand'],
                         'color'    => $meta['color'],
-                        'target'   => $ad->target_url,
+                        'target'   => route('ad.click', ['campaign' => $ad->id, 'token' => $token]),
                     ];
                 };
                 $topAd = $parseAd($ads['top']);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdCampaign;
 use App\Models\AdImpression;
 use App\Models\ShortLink;
 use App\Services\CaptchaService;
@@ -10,6 +11,21 @@ use Illuminate\Http\Request;
 
 class InterstitialController extends Controller
 {
+    /** Track click quảng cáo rồi chuyển tới trang đích của campaign. */
+    public function adClick(AdCampaign $campaign, string $token)
+    {
+        $updated = AdImpression::where('impression_token', $token)
+            ->where('ad_campaign_id', $campaign->id)
+            ->where('was_clicked', false)
+            ->update(['was_clicked' => true]);
+
+        if ($updated) {
+            $campaign->increment('clicks_count');
+        }
+
+        return redirect()->away($campaign->target_url ?: route('home'));
+    }
+
     private const MIN_DWELL_SECONDS = 4;
 
     public function __construct(

@@ -6,13 +6,14 @@ use App\Http\Requests\UnlockLinkRequest;
 use App\Models\AdImpression;
 use App\Models\ShortLink;
 use App\Services\AdServingService;
+use App\Services\ClickTrackingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class RedirectController extends Controller
 {
-    public function show(Request $request, string $slug, AdServingService $ads)
+    public function show(Request $request, string $slug, AdServingService $ads, ClickTrackingService $tracker)
     {
         $link = ShortLink::where('slug', $slug)->first();
         abort_if(! $link, 404);
@@ -29,6 +30,17 @@ class RedirectController extends Controller
 
         if ($link->hasPassword() && ! session()->has("unlocked:{$slug}")) {
             return view('interstitial.password', ['slug' => $slug]);
+        }
+
+        // LinkPay Premium: link của chủ Premium bỏ qua trang chờ quảng cáo,
+        // redirect thẳng nhưng vẫn ghi nhận click + cộng tiền.
+        if ($link->user?->isPremium()) {
+            $tracker->record(
+                $link, $request->ip(), $request->userAgent(), true,
+                $request->user()?->id, $request->headers->get('referer'),
+            );
+
+            return redirect()->away($link->original_url);
         }
 
         $picked = $ads->pickForInterstitial();
