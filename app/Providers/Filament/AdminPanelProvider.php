@@ -74,7 +74,11 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 \App\Filament\Widgets\StatsOverview::class,
+                \App\Filament\Widgets\RevenueTrendChart::class,
+                \App\Filament\Widgets\UserGrowthChart::class,
                 \App\Filament\Widgets\ClicksChart::class,
+                \App\Filament\Widgets\AdPerformanceChart::class,
+                \App\Filament\Widgets\TopEarnersTable::class,
                 \App\Filament\Widgets\PendingPayouts::class,
             ])
             ->middleware([

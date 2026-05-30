@@ -15,7 +15,7 @@ class SupportTicketResource extends Resource
 {
     protected static ?string $model = SupportTicket::class;
     protected static ?string $navigationIcon = 'heroicon-o-lifebuoy';
-    protected static ?string $navigationGroup = 'Hỗ trợ';
+    protected static ?string $navigationGroup = 'Nội dung';
     protected static ?string $navigationLabel = 'Yêu cầu hỗ trợ';
     protected static ?string $modelLabel = 'ticket';
     protected static ?string $pluralModelLabel = 'tickets';

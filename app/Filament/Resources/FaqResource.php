@@ -14,7 +14,7 @@ class FaqResource extends Resource
 {
     protected static ?string $model = Faq::class;
     protected static ?string $navigationIcon = 'heroicon-o-question-mark-circle';
-    protected static ?string $navigationGroup = 'Trợ giúp';
+    protected static ?string $navigationGroup = 'Nội dung';
     protected static ?string $navigationLabel = 'Câu hỏi FAQ';
     protected static ?string $modelLabel = 'FAQ';
     protected static ?string $pluralModelLabel = 'FAQs';

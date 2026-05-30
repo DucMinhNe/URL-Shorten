@@ -15,7 +15,7 @@ class FaqCategoryResource extends Resource
 {
     protected static ?string $model = FaqCategory::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Trợ giúp';
+    protected static ?string $navigationGroup = 'Nội dung';
     protected static ?string $navigationLabel = 'Chủ đề FAQ';
     protected static ?string $modelLabel = 'chủ đề';
     protected static ?string $pluralModelLabel = 'chủ đề';

@@ -14,7 +14,7 @@ class PromoCodeResource extends Resource
 {
     protected static ?string $model = PromoCode::class;
     protected static ?string $navigationIcon = 'heroicon-o-ticket';
-    protected static ?string $navigationGroup = 'Marketing';
+    protected static ?string $navigationGroup = 'Quảng cáo';
     protected static ?string $navigationLabel = 'Mã khuyến mãi';
     protected static ?string $modelLabel = 'mã khuyến mãi';
     protected static ?string $pluralModelLabel = 'mã khuyến mãi';

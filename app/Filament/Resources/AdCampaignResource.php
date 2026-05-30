@@ -18,7 +18,7 @@ class AdCampaignResource extends Resource
     protected static ?string $model = AdCampaign::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';
-    protected static ?string $navigationGroup = 'Nội dung';
+    protected static ?string $navigationGroup = 'Quảng cáo';
     protected static ?string $navigationLabel = 'Quảng cáo';
     protected static ?string $modelLabel = 'campaign';
     protected static ?string $pluralModelLabel = 'campaigns';

@@ -6,7 +6,10 @@ use Filament\Widgets\ChartWidget;
 
 class ClicksChart extends ChartWidget
 {
-    protected static ?string $heading = 'Clicks (last 30 days)';
+    protected static ?string $heading = 'Click (30 ngày qua)';
+    protected static ?int $sort = 2;
+    protected int|string|array $columnSpan = 'full';
+    protected static ?string $maxHeight = '260px';
 
     protected function getData(): array
     {

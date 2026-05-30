@@ -18,11 +18,21 @@ class ShortLinkResource extends Resource
     protected static ?string $model = ShortLink::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-link';
-    protected static ?string $navigationGroup = 'Nội dung';
+    protected static ?string $navigationGroup = 'Liên kết & Click';
     protected static ?string $navigationLabel = 'Liên kết';
     protected static ?string $modelLabel = 'liên kết';
     protected static ?string $pluralModelLabel = 'liên kết';
     protected static ?int $navigationSort = 1;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return number_format(static::getModel()::count());
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'primary';
+    }
 
     public static function form(Form $form): Form
     {
@@ -74,12 +84,39 @@ class ShortLinkResource extends Resource
             Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
         ])->filters([
             Tables\Filters\SelectFilter::make('status')->options(['active'=>'Active','disabled'=>'Disabled','blocked'=>'Blocked']),
+        ])->headerActions([
+            \App\Filament\Support\ExportsCsv::action('lien-ket', [
+                'ID' => 'id',
+                'Slug' => 'slug',
+                'Chủ sở hữu' => 'user.email',
+                'URL gốc' => 'original_url',
+                'Trạng thái' => 'status',
+                'Tổng click' => 'total_clicks',
+                'Lượt xem hợp lệ' => 'valid_views',
+                'Tổng kiếm được' => 'total_earned',
+                'Tạo lúc' => 'created_at',
+            ], fn () => \App\Models\ShortLink::with('user')->latest()->get()),
         ])->actions([
-            Tables\Actions\Action::make('block')->visible(fn($record)=>$record->status!=='blocked')
-                ->color('danger')->action(fn($record)=>$record->update(['status'=>'blocked'])),
-            Tables\Actions\Action::make('activate')->visible(fn($record)=>$record->status!=='active')
+            Tables\Actions\Action::make('block')->label('Chặn')->icon('heroicon-o-no-symbol')
+                ->visible(fn($record)=>$record->status!=='blocked')
+                ->color('danger')->requiresConfirmation()
+                ->action(fn($record)=>$record->update(['status'=>'blocked'])),
+            Tables\Actions\Action::make('activate')->label('Kích hoạt')->icon('heroicon-o-check-circle')
+                ->visible(fn($record)=>$record->status!=='active')
                 ->color('success')->action(fn($record)=>$record->update(['status'=>'active'])),
             Tables\Actions\DeleteAction::make(),
+        ])->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\BulkAction::make('bulkBlock')->label('Chặn các link đã chọn')
+                    ->icon('heroicon-o-no-symbol')->color('danger')->requiresConfirmation()
+                    ->action(fn (\Illuminate\Support\Collection $records) => $records->each->update(['status' => 'blocked']))
+                    ->deselectRecordsAfterCompletion(),
+                Tables\Actions\BulkAction::make('bulkActivate')->label('Kích hoạt các link đã chọn')
+                    ->icon('heroicon-o-check-circle')->color('success')->requiresConfirmation()
+                    ->action(fn (\Illuminate\Support\Collection $records) => $records->each->update(['status' => 'active']))
+                    ->deselectRecordsAfterCompletion(),
+                Tables\Actions\DeleteBulkAction::make()->label('Xóa các link đã chọn'),
+            ]),
         ]);
     }
 

@@ -14,7 +14,7 @@ class ReportedLinkResource extends Resource
 {
     protected static ?string $model = ReportedLink::class;
     protected static ?string $navigationIcon = 'heroicon-o-flag';
-    protected static ?string $navigationGroup = 'Kiểm duyệt';
+    protected static ?string $navigationGroup = 'Liên kết & Click';
     protected static ?string $navigationLabel = 'Báo cáo link';
     protected static ?string $modelLabel = 'báo cáo';
     protected static ?string $pluralModelLabel = 'báo cáo';

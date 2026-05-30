@@ -8,7 +8,9 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class PendingPayouts extends BaseWidget
 {
-    protected static ?string $heading = 'Pending payouts (latest 10)';
+    protected static ?string $heading = 'Yêu cầu rút tiền đang chờ (mới nhất 10)';
+    protected static ?int $sort = 7;
+    protected int|string|array $columnSpan = 'full';
 
     public function table(Table $table): Table
     {
@@ -21,7 +23,8 @@ class PendingPayouts extends BaseWidget
                 Tables\Columns\TextColumn::make('created_at')->since(),
             ])
             ->actions([
-                Tables\Actions\Action::make('open')->url(fn($record)=>\App\Filament\Resources\PayoutRequestResource::getUrl('edit',['record'=>$record])),
+                Tables\Actions\Action::make('open')->label('Mở')->icon('heroicon-o-arrow-top-right-on-square')
+                    ->url(fn($record)=>\App\Filament\Resources\PayoutRequestResource::getUrl('edit',['record'=>$record])),
             ]);
     }
 }

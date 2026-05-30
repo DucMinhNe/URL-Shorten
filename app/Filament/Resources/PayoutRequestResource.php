@@ -18,7 +18,7 @@ class PayoutRequestResource extends Resource
     protected static ?string $model = PayoutRequest::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
-    protected static ?string $navigationGroup = 'Tài chính';
+    protected static ?string $navigationGroup = 'Tiền & Thanh toán';
     protected static ?string $navigationLabel = 'Yêu cầu rút tiền';
     protected static ?string $modelLabel = 'yêu cầu rút tiền';
     protected static ?string $pluralModelLabel = 'yêu cầu rút tiền';
@@ -80,6 +80,18 @@ class PayoutRequestResource extends Resource
             Tables\Filters\SelectFilter::make('status')->options([
                 'pending'=>'Pending','approved'=>'Approved','paid'=>'Paid','rejected'=>'Rejected',
             ])->default('pending'),
+        ])->headerActions([
+            \App\Filament\Support\ExportsCsv::action('rut-tien', [
+                'ID' => 'id',
+                'Email' => 'user.email',
+                'Số tiền' => 'amount',
+                'Phương thức' => 'method',
+                'Tài khoản nhận' => 'account_info',
+                'Trạng thái' => 'status',
+                'Mã giao dịch' => 'transaction_ref',
+                'Tạo lúc' => 'created_at',
+                'Xử lý lúc' => 'processed_at',
+            ], fn () => \App\Models\PayoutRequest::with('user')->latest()->get()),
         ])->actions([
             Tables\Actions\Action::make('markPaid')->visible(fn($record)=>in_array($record->status,['pending','approved']))
                 ->form([Forms\Components\TextInput::make('transaction_ref')->required()->label('Transaction ref')])
@@ -90,6 +102,22 @@ class PayoutRequestResource extends Resource
                 ->action(fn($record,$data)=>app(\App\Services\PayoutService::class)->reject($record, auth()->user(), $data['reason']))
                 ->color('danger')->icon('heroicon-o-x-mark')
                 ->requiresConfirmation(),
+        ])->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\BulkAction::make('bulkMarkPaid')->label('Duyệt & đánh dấu đã trả')
+                    ->icon('heroicon-o-check-badge')->color('success')->requiresConfirmation()
+                    ->modalDescription('Đánh dấu các yêu cầu đang chờ/đã duyệt là ĐÃ TRẢ. Mã giao dịch tự sinh.')
+                    ->action(function (\Illuminate\Support\Collection $records) {
+                        $service = app(\App\Services\PayoutService::class);
+                        $admin = auth()->user();
+                        $records
+                            ->filter(fn ($r) => in_array($r->status, ['pending', 'approved']))
+                            ->each(function ($r) use ($service, $admin) {
+                                $service->markPaid($r, $admin, 'BULK-' . now()->format('YmdHis') . '-' . $r->id);
+                            });
+                    })
+                    ->deselectRecordsAfterCompletion(),
+            ]),
         ]);
     }
 
