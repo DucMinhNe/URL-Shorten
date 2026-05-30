@@ -130,6 +130,16 @@
                         </p>
                         @error('max_clicks') <p class="type-body-sm text-critical mt-1.5">{{ $message }}</p> @enderror
                     </div>
+                    <div class="sm:col-span-2">
+                        <label for="tags" class="type-caption-bold text-charcoal block mb-2 flex items-center gap-2">
+                            <x-heroicon-o-tag class="w-4 h-4"/> Nhãn (folder)
+                        </label>
+                        <input id="tags" name="tags" type="text"
+                               value="{{ old('tags', $link->tags->pluck('name')->implode(', ')) }}"
+                               placeholder="VD: shopee, affiliate, tài liệu"
+                               class="input"/>
+                        <p class="type-caption text-stone mt-1.5">Phân cách bằng dấu phẩy. Để trống = gỡ hết nhãn.</p>
+                    </div>
                 </div>
             </div>
 

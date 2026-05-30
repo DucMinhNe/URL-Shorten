@@ -21,19 +21,30 @@ class DashboardController extends Controller
         $base = fn () => Click::join('short_links', 'clicks.short_link_id', '=', 'short_links.id')
             ->where('short_links.user_id', $user->id);
 
-        $clicksByDay = $base()
+        $byDay = $base()
             ->where('clicks.created_at', '>=', now()->subDays($days))
-            ->selectRaw('DATE(clicks.created_at) as d, COUNT(*) as total')
-            ->groupBy('d')->pluck('total', 'd');
-
-        $earnedByDay = $base()
-            ->where('clicks.created_at', '>=', now()->subDays($days))
-            ->selectRaw('DATE(clicks.created_at) as d, SUM(earnings) as earned')
-            ->groupBy('d')->pluck('earned', 'd');
+            ->selectRaw('DATE(clicks.created_at) as d, COUNT(*) as total, SUM(is_valid) as valid, SUM(earnings) as earned')
+            ->groupBy('d')->get()->keyBy('d');
 
         $labels = $window->map(fn ($d) => substr($d, 5))->toArray();
-        $totals = $window->map(fn ($d) => (int) ($clicksByDay[$d] ?? 0))->toArray();
-        $earnings = $window->map(fn ($d) => (int) ($earnedByDay[$d] ?? 0))->toArray();
+        $totals = $window->map(fn ($d) => (int) ($byDay[$d]->total ?? 0))->toArray();
+        $valids = $window->map(fn ($d) => (int) ($byDay[$d]->valid ?? 0))->toArray();
+        $earnings = $window->map(fn ($d) => (int) ($byDay[$d]->earned ?? 0))->toArray();
+
+        // Sparkline ngắn (14 ngày cuối) cho các thẻ KPI.
+        $sparkClicks = array_slice($totals, -14);
+        $sparkValids = array_slice($valids, -14);
+        $sparkEarnings = array_slice($earnings, -14);
+
+        // Thu nhập tháng này vs tháng trước (cho thẻ + delta).
+        $earnedThisMonth = (int) $base()
+            ->where('clicks.created_at', '>=', now()->startOfMonth())->sum('earnings');
+        $earnedLastMonth = (int) $base()
+            ->whereBetween('clicks.created_at', [now()->subMonthNoOverflow()->startOfMonth(), now()->startOfMonth()])
+            ->sum('earnings');
+        $monthDelta = $earnedLastMonth > 0
+            ? round(($earnedThisMonth - $earnedLastMonth) / $earnedLastMonth * 100, 1)
+            : null;
 
         // Growth rate vs previous equivalent window.
         $currentClicks = array_sum($totals);
@@ -66,6 +77,9 @@ class DashboardController extends Controller
                 'clicks.created_at as created_at',
             ]);
 
-        return view('dashboard', compact('stats', 'labels', 'totals', 'earnings', 'days', 'growthRate', 'recentClicks'));
+        return view('dashboard', compact(
+            'stats', 'labels', 'totals', 'valids', 'earnings', 'days', 'growthRate', 'recentClicks',
+            'sparkClicks', 'sparkValids', 'sparkEarnings', 'earnedThisMonth', 'earnedLastMonth', 'monthDelta',
+        ));
     }
 }

@@ -2,7 +2,28 @@
     <x-slot name="header">Liên kết của tôi</x-slot>
 
     <div class="max-w-[1400px] mx-auto space-y-6"
-         x-data="{ qrOpen: false, qrImg: '', qrPng: '', qrSvg: '', qrUrl: '' }">
+         x-data="{
+            qrOpen: false, qrImg: '', qrPng: '', qrSvg: '', qrUrl: '',
+            selected: [],
+            allOnPage: @js($links->getCollection()->pluck('id')->all()),
+            toggleAll(e) { this.selected = e.target.checked ? [...this.allOnPage] : []; },
+            isAll() { return this.allOnPage.length && this.selected.length === this.allOnPage.length; },
+            runBulk(action) {
+                if (!this.selected.length) return;
+                if (action === 'delete' && !confirm('Xoá ' + this.selected.length + ' liên kết đã chọn? Thống kê click sẽ mất.')) return;
+                const f = document.getElementById('bulkForm');
+                f.querySelector('[name=action]').value = action;
+                f.querySelector('.ids').innerHTML = this.selected.map(id => '<input type=hidden name=\'ids[]\' value=\'' + id + '\'>').join('');
+                f.submit();
+            }
+         }">
+
+        {{-- Hidden bulk form --}}
+        <form id="bulkForm" method="POST" action="{{ route('links.bulk') }}" class="hidden">
+            @csrf
+            <input type="hidden" name="action" value="">
+            <span class="ids"></span>
+        </form>
 
         {{-- Header --}}
         <div class="flex items-end justify-between flex-wrap gap-4">
@@ -13,10 +34,20 @@
                     {{ $links->total() }} liên kết · {{ number_format(auth()->user()->shortLinks()->sum('total_clicks')) }} click · {{ number_format(auth()->user()->shortLinks()->sum('total_earned')) }}đ doanh thu
                 </p>
             </div>
-            <a href="{{ route('links.create') }}" class="btn btn-primary">
-                <x-heroicon-m-plus class="w-4 h-4"/>
-                Tạo liên kết mới
-            </a>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('links.export') }}" class="btn btn-ghost" title="Tải CSV">
+                    <x-heroicon-o-arrow-down-tray class="w-4 h-4"/>
+                    <span class="hidden sm:inline">Export CSV</span>
+                </a>
+                <a href="{{ route('links.bulk-create') }}" class="btn btn-ghost">
+                    <x-heroicon-o-queue-list class="w-4 h-4"/>
+                    <span class="hidden sm:inline">Rút gọn hàng loạt</span>
+                </a>
+                <a href="{{ route('links.create') }}" class="lp-btn-grad">
+                    <x-heroicon-m-plus class="w-4 h-4"/>
+                    Tạo liên kết mới
+                </a>
+            </div>
         </div>
 
         {{-- Flash --}}
@@ -94,6 +125,20 @@
             </noscript>
         </form>
 
+        {{-- Tag filter strip --}}
+        @if($userTags->isNotEmpty())
+            @php $currentTag = trim((string) request('tag', '')); @endphp
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="type-caption-bold uppercase tracking-wider text-stone mr-1">Nhãn:</span>
+                <a href="{{ route('links.index', array_filter(['q' => $currentQ ?: null, 'status' => $currentStatus !== 'all' ? $currentStatus : null, 'sort' => $currentSort !== 'latest' ? $currentSort : null])) }}"
+                   class="lp-tag lp-tag-slate {{ $currentTag === '' ? 'on' : '' }}">Tất cả</a>
+                @foreach($userTags as $tag)
+                    <a href="{{ route('links.index', ['tag' => $tag->slug]) }}"
+                       class="lp-tag lp-tag-{{ $tag->color }} {{ $currentTag === $tag->slug ? 'on' : '' }}">#{{ $tag->name }}</a>
+                @endforeach
+            </div>
+        @endif
+
         {{-- Table --}}
         <div class="card-feature !p-0 overflow-hidden">
             @if($links->isEmpty())
@@ -112,7 +157,10 @@
                 <table class="w-full">
                     <thead class="bg-surface-soft border-b border-hairline-soft">
                         <tr class="type-caption-bold uppercase tracking-wider text-stone">
-                            <th class="text-left px-6 py-3">Liên kết ngắn</th>
+                            <th class="pl-6 pr-2 py-3 w-10">
+                                <input type="checkbox" class="lp-check" x-on:change="toggleAll($event)" :checked="isAll()" title="Chọn tất cả">
+                            </th>
+                            <th class="text-left px-2 py-3">Liên kết ngắn</th>
                             <th class="text-left px-6 py-3 hidden md:table-cell">URL gốc</th>
                             <th class="text-right px-6 py-3 hidden sm:table-cell">Click</th>
                             <th class="text-right px-6 py-3 hidden lg:table-cell">View hợp lệ</th>
@@ -130,8 +178,11 @@
                                 $statusLabel = ['active'=>'Hoạt động','disabled'=>'Đã tắt','blocked'=>'Bị chặn','expired'=>'Hết hạn','limit_reached'=>'Đạt giới hạn'][$dStatus] ?? $dStatus;
                                 $validRate = $link->total_clicks > 0 ? round($link->valid_views / $link->total_clicks * 100, 1) : 0;
                             @endphp
-                            <tr class="hover:bg-surface-soft transition-colors group">
-                                <td class="px-6 py-4">
+                            <tr class="hover:bg-surface-soft transition-colors group" :class="selected.includes({{ $link->id }}) && 'bg-primary-soft/40'">
+                                <td class="pl-6 pr-2 py-4">
+                                    <input type="checkbox" class="lp-check" value="{{ $link->id }}" x-model.number="selected">
+                                </td>
+                                <td class="px-2 py-4">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-xl bg-surface-soft flex items-center justify-center flex-shrink-0">
                                             @if($link->password)
@@ -142,7 +193,12 @@
                                         </div>
                                         <div class="min-w-0">
                                             <a href="{{ $shortUrl }}" target="_blank" class="font-mono type-body-sm-bold text-ink-deep hover:text-primary truncate block">/{{ $link->slug }}</a>
-                                            <div class="type-caption text-stone">{{ $link->created_at->diffForHumans() }}</div>
+                                            <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                                                <span class="type-caption text-stone">{{ $link->created_at->diffForHumans() }}</span>
+                                                @foreach($link->tags as $tag)
+                                                    <a href="{{ route('links.index', ['tag' => $tag->slug]) }}" class="lp-tag lp-tag-{{ $tag->color }}">#{{ $tag->name }}</a>
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
@@ -182,6 +238,12 @@
                                         <a href="{{ route('links.edit', $link) }}" class="btn-icon-ghost" title="Sửa">
                                             <x-heroicon-o-pencil-square class="w-4 h-4"/>
                                         </a>
+                                        <form method="POST" action="{{ route('links.clone', $link) }}" class="inline">
+                                            @csrf
+                                            <button class="btn-icon-ghost" title="Nhân bản">
+                                                <x-heroicon-o-document-duplicate class="w-4 h-4"/>
+                                            </button>
+                                        </form>
                                         <form method="POST" action="{{ route('links.destroy', $link) }}" class="inline" onsubmit="return confirm('Xoá liên kết này? Toàn bộ thống kê click sẽ mất.')">
                                             @csrf @method('DELETE')
                                             <button class="btn-icon-ghost text-critical hover:bg-[color:var(--color-critical-soft)]" title="Xoá">
@@ -200,6 +262,24 @@
         @if($links->hasPages())
             <div>{{ $links->links() }}</div>
         @endif
+
+        {{-- Floating bulk-action bar --}}
+        <div class="lp-bulkbar" :class="selected.length && 'show'" x-cloak>
+            <span class="cnt" x-text="selected.length + ' đã chọn'"></span>
+            <button type="button" x-on:click="selected = []" class="!bg-transparent !px-2" title="Bỏ chọn">
+                <x-heroicon-m-x-mark class="w-4 h-4"/>
+            </button>
+            <span class="sep"></span>
+            <button type="button" class="ok" x-on:click="runBulk('activate')">
+                <x-heroicon-m-check-circle class="w-4 h-4"/> Bật
+            </button>
+            <button type="button" x-on:click="runBulk('disable')">
+                <x-heroicon-m-pause-circle class="w-4 h-4"/> Tắt
+            </button>
+            <button type="button" class="danger" x-on:click="runBulk('delete')">
+                <x-heroicon-m-trash class="w-4 h-4"/> Xoá
+            </button>
+        </div>
 
         {{-- Shared QR modal --}}
         <div x-show="qrOpen" x-cloak x-transition.opacity

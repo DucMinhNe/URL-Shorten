@@ -1,0 +1,159 @@
+/* ============================================================================
+   LinkPay Pro — enhancement layer (no-build, plain CSS)
+   Loaded AFTER app.css. Adds vibrant gradients, animated KPIs, sparklines,
+   toasts, bulk-action bar, leaderboard, progress + micro-interactions.
+   Harmonises the light Sneat app with the dark editorial landing palette.
+   ============================================================================ */
+:root{
+    --lp-violet:#696CFF;  --lp-violet-d:#5457E5;
+    --lp-cyan:#06B6D4;    --lp-cyan-d:#0E7490;
+    --lp-pink:#EC4899;    --lp-pink-d:#BE185D;
+    --lp-amber:#F59E0B;   --lp-amber-d:#B45309;
+    --lp-green:#10B981;   --lp-green-d:#047857;
+    --lp-ink:#1E2233;
+    --lp-grad: linear-gradient(110deg,#06B6D4 0%,#696CFF 48%,#EC4899 100%);
+    --lp-grad-warm: linear-gradient(120deg,#F59E0B 0%,#EC4899 100%);
+    --lp-grad-cool: linear-gradient(120deg,#06B6D4 0%,#696CFF 100%);
+    --lp-grad-green:linear-gradient(120deg,#10B981 0%,#06B6D4 100%);
+}
+
+/* ---- gradient text + accents ------------------------------------------- */
+.lp-grad-text{background:var(--lp-grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.lp-grad-text-warm{background:var(--lp-grad-warm);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.lp-grad-text-green{background:var(--lp-grad-green);-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+/* ---- KPI cards (gradient top hairline + hover lift + glow) -------------- */
+.lp-kpi{position:relative;overflow:hidden;transition:transform .25s ease, box-shadow .25s ease;}
+.lp-kpi::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--lp-grad);opacity:.9;}
+.lp-kpi:hover{transform:translateY(-3px);box-shadow:0 18px 40px -18px rgba(105,108,255,.45);}
+.lp-kpi.lp-accent-cyan::before{background:var(--lp-grad-cool);}
+.lp-kpi.lp-accent-green::before{background:var(--lp-grad-green);}
+.lp-kpi.lp-accent-warm::before{background:var(--lp-grad-warm);}
+.lp-kpi.lp-accent-pink::before{background:linear-gradient(120deg,#EC4899,#A855F7);}
+/* highlighted balance card */
+.lp-kpi-hero{position:relative;overflow:hidden;color:#fff;border:0!important;
+    background:linear-gradient(135deg,#5457E5 0%,#696CFF 45%,#8B5CF6 100%);}
+.lp-kpi-hero::after{content:"";position:absolute;width:200px;height:200px;right:-60px;top:-60px;
+    border-radius:9999px;background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%);}
+.lp-kpi-hero *{position:relative;}
+
+/* ---- icon chips with brand gradients ----------------------------------- */
+.lp-ic{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:13px;color:#fff;flex-shrink:0;box-shadow:0 6px 14px -6px rgba(0,0,0,.4);}
+.lp-ic-violet{background:linear-gradient(135deg,#696CFF,#8B5CF6);}
+.lp-ic-cyan{background:linear-gradient(135deg,#06B6D4,#0EA5E9);}
+.lp-ic-green{background:linear-gradient(135deg,#10B981,#06B6D4);}
+.lp-ic-amber{background:linear-gradient(135deg,#F59E0B,#F97316);}
+.lp-ic-pink{background:linear-gradient(135deg,#EC4899,#A855F7);}
+
+/* ---- sparkline ---------------------------------------------------------- */
+.lp-spark{display:block;width:100%;height:34px;overflow:visible;}
+.lp-spark path.line{fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:600;stroke-dashoffset:600;animation:lp-draw 1.1s ease forwards;}
+.lp-spark path.area{opacity:.16;}
+@keyframes lp-draw{to{stroke-dashoffset:0;}}
+
+/* ---- delta pills -------------------------------------------------------- */
+.lp-delta{display:inline-flex;align-items:center;gap:3px;font-weight:700;font-size:11px;padding:2px 8px;border-radius:999px;}
+.lp-delta-up{background:rgba(16,185,129,.12);color:#047857;}
+.lp-delta-down{background:rgba(244,63,94,.12);color:#be123c;}
+.lp-delta-flat{background:rgba(100,116,139,.12);color:#475569;}
+
+/* ---- progress bar ------------------------------------------------------- */
+.lp-progress{height:8px;border-radius:999px;background:rgba(105,108,255,.12);overflow:hidden;}
+.lp-progress>span{display:block;height:100%;border-radius:999px;background:var(--lp-grad);transition:width .9s cubic-bezier(.16,1,.3,1);}
+.lp-progress.warm>span{background:var(--lp-grad-warm);}
+.lp-progress.green>span{background:var(--lp-grad-green);}
+
+/* ---- gradient buttons --------------------------------------------------- */
+.lp-btn-grad{display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;font-weight:700;font-size:14px;
+    border-radius:12px;padding:11px 20px;color:#fff;background:var(--lp-grad);transition:transform .2s,box-shadow .2s;}
+.lp-btn-grad:hover{transform:translateY(-2px);box-shadow:0 14px 30px -10px rgba(105,108,255,.6);}
+.lp-btn-grad.warm{background:var(--lp-grad-warm);}
+.lp-btn-grad.green{background:var(--lp-grad-green);}
+
+/* ---- toast notifications ----------------------------------------------- */
+.lp-toasts{position:fixed;top:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:10px;max-width:360px;pointer-events:none;}
+.lp-toast{pointer-events:auto;display:flex;align-items:flex-start;gap:12px;padding:13px 15px;border-radius:14px;
+    background:#fff;border:1px solid rgba(30,34,51,.08);box-shadow:0 18px 44px -16px rgba(20,24,40,.4);
+    transform:translateX(120%);opacity:0;transition:transform .45s cubic-bezier(.16,1,.3,1),opacity .45s;min-width:260px;}
+.lp-toast.show{transform:translateX(0);opacity:1;}
+.lp-toast .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;}
+.lp-toast.ok    .ic{background:linear-gradient(135deg,#10B981,#06B6D4);}
+.lp-toast.err   .ic{background:linear-gradient(135deg,#F43F5E,#EC4899);}
+.lp-toast.info  .ic{background:linear-gradient(135deg,#06B6D4,#696CFF);}
+.lp-toast.reward .ic{background:linear-gradient(135deg,#F59E0B,#EC4899);}
+.lp-toast .body{flex:1;min-width:0;}
+.lp-toast .ttl{font-weight:800;font-size:13.5px;color:#1E2233;line-height:1.2;}
+.lp-toast .msg{font-size:12.5px;color:#5b6172;margin-top:2px;}
+.lp-toast .x{background:transparent;border:0;cursor:pointer;color:#9aa0ae;font-size:16px;line-height:1;padding:2px;}
+.lp-toast::after{content:"";position:absolute;}
+
+/* ---- floating bulk-action bar ------------------------------------------ */
+.lp-bulkbar{position:fixed;left:50%;bottom:24px;transform:translate(-50%,140%);z-index:60;
+    display:flex;align-items:center;gap:10px;padding:10px 12px 10px 18px;border-radius:16px;
+    background:#1E2233;color:#fff;box-shadow:0 22px 50px -16px rgba(0,0,0,.6);transition:transform .4s cubic-bezier(.16,1,.3,1);}
+.lp-bulkbar.show{transform:translate(-50%,0);}
+.lp-bulkbar .cnt{font-weight:800;}
+.lp-bulkbar .sep{width:1px;height:22px;background:rgba(255,255,255,.18);}
+.lp-bulkbar button{display:inline-flex;align-items:center;gap:6px;border:0;cursor:pointer;font-weight:700;font-size:13px;
+    border-radius:10px;padding:8px 13px;color:#fff;background:rgba(255,255,255,.1);transition:.18s;}
+.lp-bulkbar button:hover{background:rgba(255,255,255,.2);}
+.lp-bulkbar button.danger:hover{background:#F43F5E;}
+.lp-bulkbar button.ok:hover{background:#10B981;}
+
+/* ---- leaderboard rows --------------------------------------------------- */
+.lp-rank{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;background:#F1F2F7;color:#5b6172;}
+.lp-rank-1{background:linear-gradient(135deg,#F59E0B,#FBBF24);color:#fff;}
+.lp-rank-2{background:linear-gradient(135deg,#94A3B8,#CBD5E1);color:#fff;}
+.lp-rank-3{background:linear-gradient(135deg,#B45309,#D97706);color:#fff;}
+
+/* ---- tag chips ---------------------------------------------------------- */
+.lp-tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;line-height:1.3;}
+.lp-tag-violet{background:rgba(105,108,255,.12);color:#5457E5;}
+.lp-tag-cyan{background:rgba(6,182,212,.13);color:#0E7490;}
+.lp-tag-green{background:rgba(16,185,129,.13);color:#047857;}
+.lp-tag-amber{background:rgba(245,158,11,.15);color:#B45309;}
+.lp-tag-pink{background:rgba(236,72,153,.13);color:#BE185D;}
+.lp-tag-slate{background:rgba(100,116,139,.12);color:#475569;}
+
+/* ---- premium / glow panels --------------------------------------------- */
+.lp-glass-dark{position:relative;overflow:hidden;border-radius:24px;color:#fff;
+    background:radial-gradient(120% 140% at 0% 0%,#2A2150 0%,#11131F 55%);}
+.lp-glass-dark .blob{position:absolute;border-radius:9999px;filter:blur(70px);opacity:.6;pointer-events:none;}
+
+/* ---- reward float (interstitial +earn popup) --------------------------- */
+.lp-reward-pop{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.6);z-index:9999;
+    padding:18px 28px;border-radius:20px;color:#fff;font-weight:900;font-size:28px;text-align:center;
+    background:linear-gradient(135deg,#F59E0B,#EC4899);box-shadow:0 24px 60px -16px rgba(236,72,153,.7);
+    opacity:0;pointer-events:none;}
+.lp-reward-pop.go{animation:lp-reward 1.8s cubic-bezier(.16,1,.3,1) forwards;}
+@keyframes lp-reward{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.6);}
+    18%{opacity:1;transform:translate(-50%,-50%) scale(1.05);}
+    30%{transform:translate(-50%,-50%) scale(1);}
+    78%{opacity:1;transform:translate(-50%,-58%) scale(1);}
+    100%{opacity:0;transform:translate(-50%,-74%) scale(.95);}
+}
+
+/* ---- generic entrance stagger ------------------------------------------ */
+.lp-rise{opacity:0;transform:translateY(14px);animation:lp-rise .6s cubic-bezier(.16,1,.3,1) forwards;}
+@keyframes lp-rise{to{opacity:1;transform:none;}}
+.lp-rise.d1{animation-delay:.06s}.lp-rise.d2{animation-delay:.12s}.lp-rise.d3{animation-delay:.18s}
+.lp-rise.d4{animation-delay:.24s}.lp-rise.d5{animation-delay:.3s}.lp-rise.d6{animation-delay:.36s}
+
+/* ---- checkboxes --------------------------------------------------------- */
+.lp-check{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:6px;border:2px solid #cbd0db;cursor:pointer;position:relative;transition:.15s;vertical-align:middle;flex-shrink:0;}
+.lp-check:hover{border-color:var(--lp-violet);}
+.lp-check:checked{background:var(--lp-grad);border-color:transparent;}
+.lp-check:checked::after{content:"";position:absolute;left:5px;top:1.5px;width:4px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);}
+
+.lp-tag.on{box-shadow:0 0 0 2px var(--lp-violet);}
+
+/* ---- copyable mono ------------------------------------------------------ */
+.lp-copy{cursor:pointer;transition:.15s;}
+.lp-copy:hover{color:var(--lp-violet);}
+
+@media (prefers-reduced-motion: reduce){
+    .lp-spark path.line{animation:none;stroke-dashoffset:0;}
+    .lp-rise{animation:none;opacity:1;transform:none;}
+}

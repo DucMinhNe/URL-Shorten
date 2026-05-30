@@ -16,7 +16,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/linkpay-pro.css') }}">
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('js/linkpay-pro.js') }}" defer></script>
     @stack('head')
 
     <style>[x-cloak]{display:none!important}</style>
@@ -145,5 +147,14 @@
             </main>
         </div>
     </div>
+
+    {{-- Flash → toast bridge --}}
+    @php $flashType = session('error') ? 'err' : (session('success') ? 'ok' : 'info'); @endphp
+    @if(session('success') || session('error') || session('status') || session('info'))
+        <script>window.__LP_FLASH = {
+            type: @json($flashType),
+            title: @json(session('success') ?: session('error') ?: session('status') ?: session('info')),
+        };</script>
+    @endif
 </body>
 </html>

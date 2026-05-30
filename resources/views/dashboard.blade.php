@@ -16,57 +16,60 @@
         </div>
 
         {{-- KPI row --}}
-        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-            <div class="card-icon-feature !p-5 relative">
-                <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary-soft text-primary-deep">
-                    <x-heroicon-o-link class="w-5 h-5"/>
-                </div>
+        @php $validRate = $stats['total_clicks'] > 0 ? round($stats['valid_views'] / $stats['total_clicks'] * 100, 1) : 0; @endphp
+        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+
+            <div class="card-icon-feature lp-kpi lp-accent-cyan lp-rise d1 !p-5">
+                <div class="lp-ic lp-ic-cyan"><x-heroicon-o-link class="w-5 h-5"/></div>
                 <div class="type-caption-bold uppercase tracking-wider text-stone mt-4">Liên kết</div>
-                <div class="type-heading-lg text-ink-deep mt-1">{{ number_format($stats['total_links']) }}</div>
+                <div class="type-heading-lg text-ink-deep mt-1" data-count="{{ $stats['total_links'] }}">0</div>
                 <div class="type-caption text-slate mt-1">đang quản lý</div>
             </div>
 
-            <div class="card-icon-feature !p-5">
-                <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[color:var(--color-warning)]/20 text-[color:var(--color-attention)]">
-                    <x-heroicon-o-cursor-arrow-rays class="w-5 h-5"/>
-                </div>
+            <div class="card-icon-feature lp-kpi lp-accent-warm lp-rise d2 !p-5">
+                <div class="lp-ic lp-ic-amber"><x-heroicon-o-cursor-arrow-rays class="w-5 h-5"/></div>
                 <div class="type-caption-bold uppercase tracking-wider text-stone mt-4">Tổng click</div>
-                <div class="type-heading-lg text-ink-deep mt-1">{{ number_format($stats['total_clicks']) }}</div>
-                <div class="type-caption text-slate mt-1 flex items-center gap-1">
-                    <x-heroicon-s-arrow-trending-up class="w-3 h-3 text-success"/>
-                    tất cả thời gian
-                </div>
+                <div class="type-heading-lg text-ink-deep mt-1" data-count="{{ $stats['total_clicks'] }}">0</div>
+                <div class="mt-2"><x-spark :points="$sparkClicks" color="#F59E0B"/></div>
             </div>
 
-            <div class="card-icon-feature !p-5">
-                <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[color:var(--color-success-soft)] text-success">
-                    <x-heroicon-o-check-circle class="w-5 h-5"/>
-                </div>
+            <div class="card-icon-feature lp-kpi lp-accent-green lp-rise d3 !p-5">
+                <div class="lp-ic lp-ic-green"><x-heroicon-o-check-circle class="w-5 h-5"/></div>
                 <div class="type-caption-bold uppercase tracking-wider text-stone mt-4">View hợp lệ</div>
-                <div class="type-heading-lg text-ink-deep mt-1">{{ number_format($stats['valid_views']) }}</div>
-                <div class="type-caption text-slate mt-1">
-                    {{ $stats['total_clicks'] > 0 ? number_format($stats['valid_views'] / $stats['total_clicks'] * 100, 1) : 0 }}% rate
+                <div class="type-heading-lg text-ink-deep mt-1" data-count="{{ $stats['valid_views'] }}">0</div>
+                <div class="mt-2"><x-spark :points="$sparkValids" color="#10B981"/></div>
+            </div>
+
+            <div class="card-icon-feature lp-kpi lp-accent-pink lp-rise d4 !p-5">
+                <div class="lp-ic lp-ic-pink"><x-heroicon-o-calendar-days class="w-5 h-5"/></div>
+                <div class="type-caption-bold uppercase tracking-wider text-stone mt-4">Tháng này</div>
+                <div class="type-heading-lg text-ink-deep mt-1"><span data-count="{{ $earnedThisMonth }}">0</span><span class="type-subtitle-md ml-1">đ</span></div>
+                <div class="type-caption mt-1">
+                    @if($monthDelta === null)
+                        <span class="text-slate">tháng đầu tiên</span>
+                    @else
+                        <span class="lp-delta {{ $monthDelta >= 0 ? 'lp-delta-up' : 'lp-delta-down' }}">
+                            {{ $monthDelta >= 0 ? '▲' : '▼' }} {{ abs($monthDelta) }}%
+                        </span>
+                        <span class="text-slate">vs tháng trước</span>
+                    @endif
                 </div>
             </div>
 
-            <div class="card-icon-feature !p-5 !border-primary !bg-primary-soft relative overflow-hidden">
-                <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-canvas text-primary-deep">
-                    <x-heroicon-s-banknotes class="w-5 h-5"/>
-                </div>
-                <div class="type-caption-bold uppercase tracking-wider text-primary-deep mt-4">Số dư</div>
-                <div class="type-heading-lg text-primary-deep mt-1">{{ number_format($stats['balance']) }}<span class="type-subtitle-md ml-1">đ</span></div>
-                <a href="{{ route('payout.index') }}" class="type-caption-bold text-primary-deep mt-1 inline-flex items-center gap-1">
+            <div class="card-icon-feature lp-kpi-hero lp-rise d5 !p-5">
+                <div class="lp-ic !bg-white/20"><x-heroicon-s-banknotes class="w-5 h-5"/></div>
+                <div class="type-caption-bold uppercase tracking-wider text-white/70 mt-4">Số dư khả dụng</div>
+                <div class="type-heading-lg mt-1"><span data-count="{{ $stats['balance'] }}">0</span><span class="type-subtitle-md ml-1">đ</span></div>
+                <a href="{{ route('payout.index') }}" class="type-caption-bold text-white mt-1 inline-flex items-center gap-1">
                     Rút ngay <x-heroicon-m-arrow-right class="w-3 h-3"/>
                 </a>
             </div>
 
-            <div class="card-icon-feature !p-5">
-                <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-ink-deep text-on-dark">
-                    <x-heroicon-o-trophy class="w-5 h-5"/>
-                </div>
+            <div class="card-icon-feature lp-kpi lp-rise d6 !p-5">
+                <div class="lp-ic lp-ic-violet"><x-heroicon-o-trophy class="w-5 h-5"/></div>
                 <div class="type-caption-bold uppercase tracking-wider text-stone mt-4">Lifetime</div>
-                <div class="type-heading-lg text-ink-deep mt-1">{{ number_format($stats['total_earned']) }}<span class="type-subtitle-md ml-1">đ</span></div>
-                <div class="type-caption text-slate mt-1">đã kiếm tổng cộng</div>
+                <div class="type-heading-lg text-ink-deep mt-1"><span data-count="{{ $stats['total_earned'] }}">0</span><span class="type-subtitle-md ml-1">đ</span></div>
+                <div class="type-caption text-slate mt-1">đã kiếm · {{ $validRate }}% hợp lệ</div>
             </div>
         </div>
 

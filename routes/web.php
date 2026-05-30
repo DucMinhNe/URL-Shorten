@@ -38,6 +38,11 @@ Route::post('/shorten', [HomeController::class, 'shortenGuest'])
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/links/export', [ShortLinkController::class, 'export'])->name('links.export');
+    Route::get('/links/bulk-create', [ShortLinkController::class, 'bulkCreate'])->name('links.bulk-create');
+    Route::post('/links/bulk-create', [ShortLinkController::class, 'bulkStore'])->name('links.bulk-store');
+    Route::post('/links/bulk', [ShortLinkController::class, 'bulk'])->name('links.bulk');
+    Route::post('/links/{link}/clone', [ShortLinkController::class, 'clone'])->name('links.clone');
     Route::get('/links/{link}/stats', [ShortLinkController::class, 'stats'])->name('links.stats');
     Route::get('/links/{link}/qr', [ShortLinkController::class, 'qr'])->name('links.qr');
     Route::resource('links', ShortLinkController::class)->except('show');
