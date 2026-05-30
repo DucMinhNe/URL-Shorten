@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             RoleSeeder::class,
             AdCampaignSeeder::class,
+            AdBannerSeeder::class,
             ShortLinkSeeder::class,
             TagSeeder::class,
             ClickSeeder::class,

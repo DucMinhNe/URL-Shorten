@@ -189,19 +189,18 @@
             </div>
 
             @php
+                // Banner thật = creative hoàn chỉnh → render nguyên tấm (ảnh/video), không phủ chữ.
                 $parseAd = function($ad) use ($token) {
                     if (!$ad) return null;
-                    $meta = json_decode($ad->content ?? '', true);
-                    if (!is_array($meta) || !isset($meta['image'])) return null;
+                    $meta = json_decode($ad->content ?? '', true) ?: [];
+                    $src = $meta['video'] ?? $meta['image'] ?? null;
+                    if (!$src) return null;
                     return [
-                        'id'       => $ad->id,
-                        'image'    => $meta['image'],
-                        'headline' => $meta['headline'],
-                        'sub'      => $meta['sub'],
-                        'cta'      => $meta['cta'],
-                        'brand'    => $meta['brand'],
-                        'color'    => $meta['color'],
-                        'target'   => route('ad.click', ['campaign' => $ad->id, 'token' => $token]),
+                        'id'     => $ad->id,
+                        'kind'   => !empty($meta['video']) ? 'video' : 'image',
+                        'src'    => $src,
+                        'brand'  => $meta['brand'] ?? '',
+                        'target' => route('ad.click', ['campaign' => $ad->id, 'token' => $token]),
                     ];
                 };
                 $topAd = $parseAd($ads['top']);
@@ -209,47 +208,32 @@
                 $bottomAd = $parseAd($ads['bottom']);
             @endphp
 
-            {{-- Featured top ad --}}
+            {{-- Featured banner (ảnh ngang / video) --}}
             @if($topAd)
                 <a href="{{ $topAd['target'] }}" target="_blank" rel="noopener"
-                   style="display:block;border-radius:24px;overflow:hidden;position:relative;box-shadow:0 12px 40px -10px rgba(0,0,0,.6);border:1px solid var(--line);" class="group">
-                    <div style="position:relative;aspect-ratio:4/3;">
-                        <img src="{{ asset(ltrim($topAd['image'], '/')) }}" alt="{{ $topAd['brand'] }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
-                        <div style="position:absolute;inset:0;background:linear-gradient(135deg,{{ $topAd['color'] }}E6 0%,{{ $topAd['color'] }}99 50%,transparent 100%);"></div>
-                        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6),transparent 60%);"></div>
-                        <div style="position:absolute;top:16px;left:16px;right:16px;display:flex;align-items:center;justify-content:space-between;">
-                            <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#fff;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:{{ $topAd['color'] }};">
-                                <span style="width:6px;height:6px;border-radius:50%;background:{{ $topAd['color'] }};"></span>{{ $topAd['brand'] }}
-                            </span>
-                            <span class="mono" style="padding:4px 9px;border-radius:999px;background:rgba(0,0,0,.4);backdrop-filter:blur(8px);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.8);font-weight:700;">Featured</span>
-                        </div>
-                        <div style="position:absolute;bottom:20px;left:20px;right:20px;">
-                            <div style="color:#fff;font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1;text-shadow:0 2px 12px rgba(0,0,0,.5);">{{ $topAd['headline'] }}</div>
-                            <div style="color:rgba(255,255,255,.95);font-size:12px;margin-top:8px;font-weight:500;">{{ $topAd['sub'] }}</div>
-                            <div style="margin-top:16px;display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border-radius:999px;background:#fff;font-size:12px;font-weight:800;color:{{ $topAd['color'] }};">
-                                {{ $topAd['cta'] }}
-                                <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"/></svg>
-                            </div>
-                        </div>
-                    </div>
+                   style="display:block;border-radius:20px;overflow:hidden;position:relative;background:#0b0b12;box-shadow:0 12px 40px -10px rgba(0,0,0,.55);border:1px solid var(--line);">
+                    @if($topAd['kind'] === 'video')
+                        <video src="{{ asset(ltrim($topAd['src'], '/')) }}" autoplay muted loop playsinline preload="auto"
+                               style="display:block;width:100%;height:auto;pointer-events:none;"></video>
+                    @else
+                        <img src="{{ asset(ltrim($topAd['src'], '/')) }}" alt="{{ $topAd['brand'] }}" loading="eager" style="display:block;width:100%;height:auto;">
+                    @endif
+                    <span class="mono" style="position:absolute;top:10px;left:10px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.85);">QC · {{ $topAd['brand'] }}</span>
                 </a>
             @endif
 
-            {{-- Two smaller ads --}}
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            {{-- 2 banner dọc --}}
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;">
                 @foreach ([$sideAd, $bottomAd] as $small)
                     @if($small)
                         <a href="{{ $small['target'] }}" target="_blank" rel="noopener"
-                           style="display:block;border-radius:18px;overflow:hidden;position:relative;box-shadow:0 6px 20px -6px rgba(0,0,0,.5);border:1px solid var(--line);">
-                            <div style="position:relative;aspect-ratio:1/1;">
-                                <img src="{{ asset(ltrim($small['image'], '/')) }}" alt="{{ $small['brand'] }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
-                                <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,{{ $small['color'] }}AA 70%,{{ $small['color'] }}EE 100%);"></div>
-                                <div style="position:absolute;top:9px;left:9px;padding:3px 8px;border-radius:999px;background:#fff;font-size:9px;font-weight:800;text-transform:uppercase;color:{{ $small['color'] }};">{{ $small['brand'] }}</div>
-                                <div style="position:absolute;bottom:12px;left:12px;right:12px;">
-                                    <div style="color:#fff;font-size:14px;font-weight:800;letter-spacing:-.01em;line-height:1.05;text-shadow:0 1px 8px rgba(0,0,0,.5);">{{ $small['headline'] }}</div>
-                                    <div style="color:rgba(255,255,255,.9);font-size:10px;margin-top:4px;font-weight:500;">{{ $small['sub'] }}</div>
-                                </div>
-                            </div>
+                           style="display:block;border-radius:16px;overflow:hidden;position:relative;background:#0b0b12;box-shadow:0 6px 20px -6px rgba(0,0,0,.5);border:1px solid var(--line);">
+                            @if($small['kind'] === 'video')
+                                <video src="{{ asset(ltrim($small['src'], '/')) }}" autoplay muted loop playsinline preload="auto" style="display:block;width:100%;height:auto;pointer-events:none;"></video>
+                            @else
+                                <img src="{{ asset(ltrim($small['src'], '/')) }}" alt="{{ $small['brand'] }}" loading="lazy" style="display:block;width:100%;height:auto;">
+                            @endif
+                            <span class="mono" style="position:absolute;top:8px;left:8px;padding:2px 7px;border-radius:999px;background:rgba(0,0,0,.5);font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.85);">QC</span>
                         </a>
                     @endif
                 @endforeach

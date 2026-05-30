@@ -37,7 +37,7 @@
 {{-- JSON-LD: Organization + WebSite --}}
 <script type="application/ld+json">
 {!! json_encode([
-    '@context' => 'https://schema.org',
+    '@'.'context' => 'https://schema.org',
     '@graph' => [
         [
             '@type' => 'Organization',
@@ -57,7 +57,7 @@
 @if($type === 'FAQPage' && count($faqs))
 <script type="application/ld+json">
 {!! json_encode([
-    '@context' => 'https://schema.org',
+    '@'.'context' => 'https://schema.org',
     '@type' => 'FAQPage',
     'mainEntity' => collect($faqs)->map(fn ($f) => [
         '@type' => 'Question',
