@@ -101,7 +101,7 @@
         </div>
 
         <div class="mono" style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut2);">
-            <span style="display:none;@media(min-width:640px){display:inline;}">QC · </span>Sponsored
+            <span>QC · Tài trợ</span>
         </div>
     </header>
 
@@ -142,7 +142,7 @@
 
                     {{-- ───── Xác minh: tích sau khi hết giờ → mở lưới chọn ảnh ───── --}}
                     <div style="display:flex;justify-content:center;margin-bottom:24px;">
-                        <button type="button" id="robot-check" class="robot" disabled style="opacity:.55;">
+                        <button type="button" id="robot-check" class="robot" disabled style="opacity:.55;" aria-label="Tôi không phải là robot">
                             <span id="robot-box" class="robot-box">
                                 <svg id="robot-check-icon" width="14" height="14" viewBox="0 0 20 20" fill="#0B0B14" style="display:none;">
                                     <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"/>
@@ -172,10 +172,11 @@
                                 <path fill-rule="evenodd" d="M6.194 12.753a.75.75 0 001.06.053L16.5 4.44v2.81a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75h-4.5a.75.75 0 000 1.5h2.553l-9.056 8.194a.75.75 0 00-.053 1.06z"/>
                             </svg>
                         </button>
+                        <noscript><p style="color:var(--am);font-size:13px;margin-top:12px;">Cần bật JavaScript để tiếp tục đến liên kết đích.</p></noscript>
                     </form>
 
                     <p class="mono" style="font-size:12px;color:var(--mut2);margin-top:20px;">
-                        Bằng việc tiếp tục, bạn đồng ý <a href="#" class="lnk" style="text-decoration:underline;text-underline-offset:3px;">điều khoản</a>
+                        Bằng việc tiếp tục, bạn đồng ý <a href="{{ route('faq') }}" class="lnk" style="text-decoration:underline;text-underline-offset:3px;">điều khoản</a>
                     </p>
                 </div>
             </div>
@@ -183,11 +184,6 @@
 
         {{-- RIGHT: Ad column — real brand data from JSON content field --}}
         <div class="adcol" style="width:440px;display:flex;flex-direction:column;gap:16px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-                <span class="mono" style="font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--mut2);">Quảng cáo</span>
-                <a href="#" class="mono lnk" style="font-size:10px;">Tại sao tôi thấy quảng cáo?</a>
-            </div>
-
             @php
                 // Banner thật = creative hoàn chỉnh → render nguyên tấm (ảnh/video), không phủ chữ.
                 $parseAd = function($ad) use ($token) {
@@ -206,7 +202,15 @@
                 $topAd = $parseAd($ads['top']);
                 $sideAd = $parseAd($ads['side']);
                 $bottomAd = $parseAd($ads['bottom']);
+                $hasAds = $topAd || $sideAd || $bottomAd;
             @endphp
+
+            @if($hasAds)
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span class="mono" style="font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--mut2);">Quảng cáo</span>
+                <a href="{{ route('faq') }}" class="mono lnk" style="font-size:10px;">Tại sao tôi thấy quảng cáo?</a>
+            </div>
+            @endif
 
             {{-- Featured banner (ảnh ngang / video) --}}
             @if($topAd)
@@ -239,6 +243,7 @@
                 @endforeach
             </div>
 
+            @if($hasAds)
             <div class="mono" style="margin-top:auto;padding-top:16px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--mut2);">
                 <span style="display:flex;align-items:center;gap:6px;">
                     <svg width="12" height="12" viewBox="0 0 20 20" fill="var(--gr)"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001z"/></svg>
@@ -246,6 +251,7 @@
                 </span>
                 <span>Creator nhận tiền từ click này</span>
             </div>
+            @endif
         </div>
     </main>
 
@@ -253,8 +259,8 @@
     <footer class="mono" style="padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--mut2);border-top:1px solid var(--line);">
         <span>© LinkPay · Cảm ơn {{ $seconds }} giây của bạn ❤️</span>
         <div style="display:flex;align-items:center;gap:18px;">
-            <a href="#" class="lnk">Báo cáo</a>
-            <a href="#" class="lnk">Điều khoản</a>
+            <a href="mailto:support@mess.io.vn?subject=Báo cáo link {{ $link->slug }}" class="lnk">Báo cáo</a>
+            <a href="{{ route('faq') }}" class="lnk">Điều khoản</a>
             <a href="{{ route('premium.index') }}" class="lnk" style="color:var(--am);font-weight:700;">Tắt QC với Premium →</a>
         </div>
     </footer>
@@ -263,12 +269,12 @@
 {{-- ───── Captcha modal: lưới 9 ô ───── --}}
 @if($question)
     @php $cells = collect($question->options ?? [])->map(fn ($c, $i) => array_merge($c, ['idx' => $i]))->shuffle(); @endphp
-    <div id="cap-modal" class="cap-modal">
+    <div id="cap-modal" class="cap-modal" role="dialog" aria-modal="true" aria-labelledby="cap-prompt-title">
         <div class="cap-box">
             <div class="cap-head">
                 <div>
                     <div class="cap-mini">Xác minh bạn là người thật</div>
-                    <div class="cap-prompt">{{ $question->question }}</div>
+                    <div class="cap-prompt" id="cap-prompt-title">{{ $question->question }}</div>
                 </div>
                 <button type="button" id="cap-close" class="cap-x" aria-label="Đóng">&times;</button>
             </div>
@@ -390,7 +396,11 @@
         const cells = [...modal.querySelectorAll('.cap-cell')];
         const msg = document.getElementById('cap-msg');
         cells.forEach(cell => cell.addEventListener('click', () => cell.classList.toggle('sel')));
-        document.getElementById('cap-close').addEventListener('click', () => modal.classList.remove('open'));
+        document.getElementById('cap-close').addEventListener('click', () => {
+            modal.classList.remove('open');
+            cells.forEach(c => c.classList.remove('sel'));
+            msg.textContent = 'Chọn tất cả ô khớp rồi bấm Xác nhận';
+        });
         document.getElementById('cap-confirm').addEventListener('click', () => {
             const sel = cells.filter(c => c.classList.contains('sel'));
             const allCorrect = cells.filter(c => c.dataset.correct === '1').every(c => c.classList.contains('sel'));

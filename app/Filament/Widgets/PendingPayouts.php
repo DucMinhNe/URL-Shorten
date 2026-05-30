@@ -16,11 +16,11 @@ class PendingPayouts extends BaseWidget
     {
         return $table->query(PayoutRequest::where('status','pending')->latest()->limit(10))
             ->columns([
-                Tables\Columns\TextColumn::make('id'),
-                Tables\Columns\TextColumn::make('user.email'),
-                Tables\Columns\TextColumn::make('amount')->money('VND', divideBy:1),
-                Tables\Columns\TextColumn::make('method')->badge(),
-                Tables\Columns\TextColumn::make('created_at')->since(),
+                Tables\Columns\TextColumn::make('id')->label('ID'),
+                Tables\Columns\TextColumn::make('user.email')->label('Email'),
+                Tables\Columns\TextColumn::make('amount')->label('Số tiền')->money('VND', divideBy:1),
+                Tables\Columns\TextColumn::make('method')->label('Phương thức')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('method', $state)),
+                Tables\Columns\TextColumn::make('created_at')->label('Thời gian')->since(),
             ])
             ->actions([
                 Tables\Actions\Action::make('open')->label('Mở')->icon('heroicon-o-arrow-top-right-on-square')

@@ -53,14 +53,10 @@
                     <x-heroicon-m-arrow-left class="w-4 h-4"/>
                     Về trang chủ
                 </a>
-                <a href="#" class="btn btn-ghost">
-                    <x-heroicon-o-flag class="w-4 h-4"/>
-                    Báo cáo
-                </a>
             </div>
 
             <p class="mt-6 type-caption text-stone">
-                Bạn nghĩ đây là lỗi? <a href="#" class="text-ink-deep font-bold underline">Liên hệ support</a>
+                Bạn nghĩ đây là lỗi? <a href="mailto:support@mess.io.vn" class="text-ink-deep font-bold underline">Liên hệ support</a>
             </p>
         </div>
     </div>

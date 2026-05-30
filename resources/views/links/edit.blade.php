@@ -17,7 +17,7 @@
         {{-- Stats card --}}
         <div class="card-feature !p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-                <div class="type-caption-bold uppercase tracking-wider text-stone">Click</div>
+                <div class="type-caption-bold uppercase tracking-wider text-stone">Lượt click</div>
                 <div class="type-heading-sm text-ink-deep mt-1">{{ number_format($link->total_clicks) }}</div>
             </div>
             <div>
@@ -29,7 +29,7 @@
                 <div class="type-heading-sm text-success mt-1">{{ number_format($link->total_earned) }}đ</div>
             </div>
             <div>
-                <div class="type-caption-bold uppercase tracking-wider text-stone">Valid rate</div>
+                <div class="type-caption-bold uppercase tracking-wider text-stone">Tỉ lệ hợp lệ</div>
                 <div class="type-heading-sm text-ink-deep mt-1">
                     {{ $link->total_clicks > 0 ? number_format($link->valid_views / $link->total_clicks * 100, 1) : 0 }}%
                 </div>
@@ -52,7 +52,7 @@
             <div class="border-t border-hairline-soft pt-6">
                 <label class="type-body-sm-bold text-ink-deep block mb-2">Alias <span class="type-caption text-stone font-normal ml-2">không thể đổi</span></label>
                 <div class="flex items-stretch rounded-lg border border-hairline overflow-hidden opacity-60">
-                    <span class="bg-surface-soft px-4 flex items-center type-body-sm text-slate font-mono">linkpay.vn/</span>
+                    <span class="bg-surface-soft px-4 flex items-center type-body-sm text-slate font-mono">{{ parse_url(config('app.url'), PHP_URL_HOST) }}/</span>
                     <input value="{{ $link->slug }}" disabled type="text"
                            class="flex-1 px-3 type-body-md outline-none bg-canvas font-mono"/>
                 </div>

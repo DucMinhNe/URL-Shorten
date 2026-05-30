@@ -19,8 +19,8 @@ class ClicksChart extends ChartWidget
 
         return [
             'datasets' => [
-                ['label'=>'Total','data'=>$totals->toArray(),'borderColor'=>'#3b82f6'],
-                ['label'=>'Valid','data'=>$valid->toArray(),'borderColor'=>'#10b981'],
+                ['label'=>'Tổng','data'=>$totals->toArray(),'borderColor'=>'#3b82f6'],
+                ['label'=>'Hợp lệ','data'=>$valid->toArray(),'borderColor'=>'#10b981'],
             ],
             'labels' => $days->map(fn($d)=>substr($d,5))->toArray(),
         ];

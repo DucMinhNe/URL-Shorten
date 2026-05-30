@@ -103,7 +103,7 @@ class PayoutRequestResource extends Resource
             ], fn () => \App\Models\PayoutRequest::with('user')->latest()->get()),
         ])->actions([
             Tables\Actions\Action::make('markPaid')->visible(fn($record)=>in_array($record->status,['pending','approved']))
-                ->form([Forms\Components\TextInput::make('transaction_ref')->required()->label('Transaction ref')])
+                ->form([Forms\Components\TextInput::make('transaction_ref')->required()->label('Mã giao dịch')])
                 ->action(fn($record,$data)=>app(\App\Services\PayoutService::class)->markPaid($record, auth()->user(), $data['transaction_ref']))
                 ->color('success')->icon('heroicon-o-check'),
             Tables\Actions\Action::make('reject')->visible(fn($record)=>$record->status==='pending')

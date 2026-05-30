@@ -52,18 +52,19 @@ class HomeController extends Controller
         return back()->with('shortUrl', url('/'.$link->slug));
     }
 
-    /** Số liệu thật cho stats band ở landing (có fallback khi DB trống). */
+    /** Số liệu thật cho landing (có fallback khi DB trống). */
     private function landingStats(SettingService $settings): array
     {
         $rate = (int) $settings->get('rate_per_1000_views', 5000);
-        $validViews = (int) ShortLink::sum('valid_views');
-        $activeLinks = (int) ShortLink::where('status', 'active')->count();
 
         return [
-            'valid_views' => $validViews,
+            'valid_views' => (int) ShortLink::sum('valid_views'),
             'rate_per_1000' => $rate,
-            'active_links' => $activeLinks,
+            'active_links' => (int) ShortLink::where('status', 'active')->count(),
             'payout_methods' => 3, // MoMo · ZaloPay · PayPal
+            'total_clicks' => (int) ShortLink::sum('total_clicks'),
+            'total_users' => (int) \App\Models\User::count(),
+            'total_paid' => (int) \App\Models\PayoutRequest::where('status', 'paid')->sum('amount'),
         ];
     }
 

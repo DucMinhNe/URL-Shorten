@@ -21,4 +21,10 @@ class ApiToken extends Model
     {
         return 'lp_'.Str::random(48);
     }
+
+    /** Băm token để lưu/đối chiếu (không bao giờ lưu plaintext). 64 hex = vừa cột string(64). */
+    public static function hash(string $plain): string
+    {
+        return hash('sha256', $plain);
+    }
 }

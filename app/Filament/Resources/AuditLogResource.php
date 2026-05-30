@@ -17,8 +17,8 @@ class AuditLogResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
     protected static ?string $navigationGroup = 'Hệ thống';
     protected static ?string $navigationLabel = 'Nhật ký hệ thống';
-    protected static ?string $modelLabel = 'audit log';
-    protected static ?string $pluralModelLabel = 'audit logs';
+    protected static ?string $modelLabel = 'nhật ký hệ thống';
+    protected static ?string $pluralModelLabel = 'nhật ký hệ thống';
     protected static ?int $navigationSort = 10;
 
     public static function form(Form $form): Form
@@ -35,7 +35,7 @@ class AuditLogResource extends Resource
                 Infolists\Components\TextEntry::make('id'),
                 Infolists\Components\TextEntry::make('created_at')->dateTime('d/m/Y H:i:s'),
                 Infolists\Components\TextEntry::make('action')->badge(),
-                Infolists\Components\TextEntry::make('severity')->badge(),
+                Infolists\Components\TextEntry::make('severity')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('severity', $state)),
                 Infolists\Components\TextEntry::make('user.name')->label('Người thực hiện'),
                 Infolists\Components\TextEntry::make('user_email'),
                 Infolists\Components\TextEntry::make('ip_address')->label('IP'),

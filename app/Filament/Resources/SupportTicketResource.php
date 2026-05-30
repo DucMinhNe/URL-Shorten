@@ -17,8 +17,8 @@ class SupportTicketResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-lifebuoy';
     protected static ?string $navigationGroup = 'Nội dung';
     protected static ?string $navigationLabel = 'Yêu cầu hỗ trợ';
-    protected static ?string $modelLabel = 'ticket';
-    protected static ?string $pluralModelLabel = 'tickets';
+    protected static ?string $modelLabel = 'yêu cầu hỗ trợ';
+    protected static ?string $pluralModelLabel = 'yêu cầu hỗ trợ';
     protected static ?int $navigationSort = 1;
 
     public static function getNavigationBadge(): ?string
@@ -62,10 +62,10 @@ class SupportTicketResource extends Resource
             Tables\Columns\TextColumn::make('priority')->label('Ưu tiên')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('priority', $state))->colors([
                 'gray' => 'low', 'info' => 'normal', 'warning' => 'high', 'danger' => 'urgent',
             ]),
-            Tables\Columns\TextColumn::make('status')->label('Trạng thái')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('ticket_status', $state))->colors([
-                'warning' => 'open', 'info' => 'in_progress', 'gray' => 'waiting_user',
-                'success' => 'resolved', 'gray' => 'closed',
-            ]),
+            Tables\Columns\TextColumn::make('status')->label('Trạng thái')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('ticket_status', $state))->color(fn ($state) => match ($state) {
+                'open' => 'warning', 'in_progress' => 'info', 'waiting_user' => 'gray',
+                'resolved' => 'success', 'closed' => 'gray', default => 'gray',
+            }),
             Tables\Columns\TextColumn::make('reply_count')->label('Số phản hồi')->alignCenter(),
             Tables\Columns\TextColumn::make('assignee.name')->label('Giao cho')->default('—'),
             Tables\Columns\TextColumn::make('last_reply_at')->label('Phản hồi cuối')->dateTime('d/m H:i')->sortable(),
@@ -79,7 +79,7 @@ class SupportTicketResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('resolve')->label('Resolved')
+                Tables\Actions\Action::make('resolve')->label('Đánh dấu đã giải quyết')
                     ->color('success')->icon('heroicon-o-check')
                     ->visible(fn ($record) => $record->status !== 'resolved')
                     ->action(fn ($record) => $record->update(['status' => 'resolved', 'resolved_at' => now()])),

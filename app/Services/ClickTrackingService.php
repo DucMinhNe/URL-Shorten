@@ -34,7 +34,7 @@ class ClickTrackingService
             $earnings = 0;
             if ($isValid) {
                 $rate = (int) $this->settings->get('rate_per_1000_views', 5000);
-                $earnings = intdiv($rate, 1000);
+                $earnings = (int) round($rate / 1000);
             }
 
             return DB::transaction(function () use ($link, $ip, $userAgent, $referer, $isValid, $earnings) {
@@ -60,13 +60,19 @@ class ClickTrackingService
 
                     if ($link->user_id && $earnings > 0) {
                         $link->increment('total_earned', $earnings);
-                        $this->wallet->credit(
-                            User::find($link->user_id),
-                            $earnings,
-                            'click',
-                            $click->id,
-                            "Click /{$link->slug}"
-                        );
+                        $owner = User::find($link->user_id);
+                        $this->wallet->credit($owner, $earnings, 'click', $click->id, "Click /{$link->slug}");
+
+                        // Hoa hồng giới thiệu: người giới thiệu nhận % thu nhập của referee.
+                        $referrer = $owner?->referrer;
+                        if ($referrer) {
+                            $pct = (int) $this->settings->get('referral_rate_percent', 10);
+                            $commission = (int) round($earnings * $pct / 100);
+                            if ($commission > 0) {
+                                $referrer->increment('referral_earned', $commission);
+                                $this->wallet->credit($referrer, $commission, 'referral', $click->id, 'Hoa hồng giới thiệu');
+                            }
+                        }
                     }
                 }
 

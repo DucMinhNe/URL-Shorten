@@ -1,6 +1,7 @@
 <x-guest-layout :title="'Đăng nhập — LinkPay'">
 <x-auth-layout eyebrow="Chào mừng quay lại" :title="'Đăng nhập để<br><span class=\'font-light italic text-slate\'>tiếp tục kiếm tiền.</span>'" subtitle="Mỗi giây bạn không đăng nhập là click hợp lệ không được tính. Vào ngay.">
 
+    @if(config('services.google.client_id'))
     <a href="{{ route('auth.google') }}" class="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-full border-2 border-hairline hover:border-ink-deep transition-colors">
         <svg class="w-5 h-5" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -12,10 +13,11 @@
     </a>
 
     <div class="my-6 flex items-center gap-3">
-        <div class="flex-1 h-px bg-hairline-soft"></div>
+        <div class="flex-1 border-t border-hairline-soft"></div>
         <span class="type-caption text-stone uppercase tracking-wider">hoặc</span>
-        <div class="flex-1 h-px bg-hairline-soft"></div>
+        <div class="flex-1 border-t border-hairline-soft"></div>
     </div>
+    @endif
 
     <x-auth-session-status class="mb-4 type-body-sm text-success" :status="session('status')" />
 

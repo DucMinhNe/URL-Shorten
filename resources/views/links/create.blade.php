@@ -37,7 +37,7 @@
                     <span class="type-caption text-stone font-normal">tuỳ chọn</span>
                 </label>
                 <div class="flex items-stretch rounded-lg border border-hairline overflow-hidden focus-within:border-[color:var(--color-fb-blue)] focus-within:border-2 @error('custom_alias') !border-critical-strong @enderror">
-                    <span class="bg-surface-soft px-4 flex items-center type-body-sm text-slate font-mono">linkpay.vn/</span>
+                    <span class="bg-surface-soft px-4 flex items-center type-body-sm text-slate font-mono">{{ parse_url(config('app.url'), PHP_URL_HOST) }}/</span>
                     <input id="custom_alias" name="custom_alias" value="{{ old('custom_alias') }}" type="text" pattern="[A-Za-z0-9_-]{3,32}"
                            placeholder="ten-de-nho"
                            class="flex-1 px-3 type-body-md outline-none bg-canvas font-mono"/>

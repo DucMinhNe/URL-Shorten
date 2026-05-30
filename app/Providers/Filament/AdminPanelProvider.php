@@ -61,6 +61,21 @@ class AdminPanelProvider extends PanelProvider
                     500 => '#03c3ec',
                     600 => '#029cbd',
                 ],
+                'slate' => Color::Slate,
+                'red' => Color::Red,
+                'orange' => Color::Orange,
+                'amber' => Color::Amber,
+                'yellow' => Color::Yellow,
+                'lime' => Color::Lime,
+                'green' => Color::Green,
+                'emerald' => Color::Emerald,
+                'cyan' => Color::Cyan,
+                'blue' => Color::Blue,
+                'indigo' => Color::Indigo,
+                'violet' => Color::Violet,
+                'purple' => Color::Purple,
+                'pink' => Color::Pink,
+                'rose' => Color::Rose,
             ])
             ->font('Public Sans')
             ->sidebarCollapsibleOnDesktop()

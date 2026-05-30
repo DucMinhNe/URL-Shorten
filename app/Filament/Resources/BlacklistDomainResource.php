@@ -19,9 +19,9 @@ class BlacklistDomainResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-no-symbol';
     protected static ?string $navigationGroup = 'Hệ thống';
-    protected static ?string $navigationLabel = 'Domain blacklist';
-    protected static ?string $modelLabel = 'domain blacklist';
-    protected static ?string $pluralModelLabel = 'domain blacklist';
+    protected static ?string $navigationLabel = 'Tên miền bị chặn';
+    protected static ?string $modelLabel = 'tên miền bị chặn';
+    protected static ?string $pluralModelLabel = 'tên miền bị chặn';
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form

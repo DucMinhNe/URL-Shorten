@@ -90,7 +90,10 @@ class ShortLinkResource extends Resource
             Tables\Columns\TextColumn::make('total_clicks')->label('Lượt click')->numeric()->sortable(),
             Tables\Columns\TextColumn::make('valid_views')->label('View hợp lệ')->numeric()->sortable(),
             Tables\Columns\TextColumn::make('total_earned')->label('Doanh thu')->money('VND', divideBy:1)->sortable(),
-            Tables\Columns\TextColumn::make('status')->label('Trạng thái')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('link_status', $state))->colors(['success'=>'active','warning'=>'disabled','danger'=>'blocked']),
+            Tables\Columns\TextColumn::make('status')->label('Trạng thái')->badge()->formatStateUsing(fn ($state) => \App\Support\Labels::get('link_status', $state))->color(fn ($state) => match ($state) {
+                'active' => 'success', 'disabled' => 'warning', 'blocked' => 'danger',
+                'expired' => 'gray', 'limit_reached' => 'warning', default => 'gray',
+            }),
             Tables\Columns\TextColumn::make('created_at')->label('Ngày tạo')->dateTime()->sortable(),
         ])->filters([
             Tables\Filters\SelectFilter::make('status')->label('Trạng thái')->options(\App\Support\Labels::options('link_status')),

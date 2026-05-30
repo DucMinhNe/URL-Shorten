@@ -16,9 +16,9 @@ class TagResource extends Resource
     protected static ?string $model = Tag::class;
     protected static ?string $navigationIcon = 'heroicon-o-tag';
     protected static ?string $navigationGroup = 'Nội dung';
-    protected static ?string $navigationLabel = 'Tags';
-    protected static ?string $modelLabel = 'tag';
-    protected static ?string $pluralModelLabel = 'tags';
+    protected static ?string $navigationLabel = 'Nhãn';
+    protected static ?string $modelLabel = 'nhãn';
+    protected static ?string $pluralModelLabel = 'nhãn';
     protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
@@ -44,7 +44,7 @@ class TagResource extends Resource
         return $table->columns([
             Tables\Columns\TextColumn::make('name')->label('Tên')->searchable()->badge()->color(fn ($record) => $record->color),
             Tables\Columns\TextColumn::make('slug')->label('Slug')->fontFamily('mono')->copyable(),
-            Tables\Columns\TextColumn::make('short_links_count')->counts('shortLinks')->label('Links'),
+            Tables\Columns\TextColumn::make('short_links_count')->counts('shortLinks')->label('Số liên kết'),
             Tables\Columns\TextColumn::make('usage_count')->label('Lượt dùng')->sortable(),
             Tables\Columns\IconColumn::make('is_featured')->label('Nổi bật')->boolean(),
             Tables\Columns\TextColumn::make('created_at')->label('Ngày tạo')->dateTime('d/m/Y')->sortable(),

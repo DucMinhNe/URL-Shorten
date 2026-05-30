@@ -1,5 +1,5 @@
-<x-app-layout :title="'Dashboard'">
-    <x-slot name="header">Dashboard</x-slot>
+<x-app-layout :title="'Tổng quan'">
+    <x-slot name="header">Tổng quan</x-slot>
 
     <div class="max-w-[1400px] mx-auto space-y-8">
 
@@ -67,7 +67,7 @@
 
             <div class="card-icon-feature lp-kpi lp-rise d6 !p-5">
                 <div class="lp-ic lp-ic-violet"><x-heroicon-o-trophy class="w-5 h-5"/></div>
-                <div class="type-caption-bold uppercase tracking-wider text-stone mt-4">Lifetime</div>
+                <div class="type-caption-bold uppercase tracking-wider text-stone mt-4">Tổng tích lũy</div>
                 <div class="type-heading-lg text-ink-deep mt-1"><span data-count="{{ $stats['total_earned'] }}">0</span><span class="type-subtitle-md ml-1">đ</span></div>
                 <div class="type-caption text-slate mt-1">đã kiếm · {{ $validRate }}% hợp lệ</div>
             </div>

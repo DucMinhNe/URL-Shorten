@@ -17,7 +17,14 @@ class PremiumController extends Controller
         $plan = $request->input('plan') === 'year' ? 'year' : 'month';
         $user = $request->user();
 
-        $base = $user->isPremium() && $user->premium_until ? $user->premium_until : now();
+        // Premium không giới hạn (premium_until = null) → không hạ thành có hạn.
+        if ($user->is_premium && $user->premium_until === null) {
+            return redirect()->route('premium.index')
+                ->with('success', 'Bạn đang là Premium không giới hạn.');
+        }
+
+        // Chỉ cộng dồn từ mốc tương lai; nếu đã hết hạn thì tính từ bây giờ.
+        $base = ($user->premium_until && $user->premium_until->isFuture()) ? $user->premium_until : now();
         $user->update([
             'is_premium' => true,
             'premium_until' => $plan === 'year' ? $base->copy()->addYear() : $base->copy()->addMonth(),

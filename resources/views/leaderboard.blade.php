@@ -24,6 +24,14 @@
                     <div class="text-white/50 text-xs uppercase tracking-wider mt-1">Thành viên</div>
                 </div>
             </div>
+
+            {{-- Toggle: Tất cả thời gian / Tháng này --}}
+            <div class="flex items-center justify-center gap-2 mt-6">
+                <a href="{{ route('leaderboard') }}"
+                   class="lp-tag {{ $period === 'all' ? 'lp-tag-cyan on' : 'lp-tag-slate' }}">Tất cả thời gian</a>
+                <a href="{{ route('leaderboard', ['period' => 'month']) }}"
+                   class="lp-tag {{ $period === 'month' ? 'lp-tag-cyan on' : 'lp-tag-slate' }}">Tháng này</a>
+            </div>
         </div>
 
         {{-- Podium top 3 --}}

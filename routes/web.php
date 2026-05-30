@@ -15,6 +15,11 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
 Route::get('/leaderboard', [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('leaderboard');
 
+// Trang pháp lý / liên hệ (tĩnh).
+Route::view('/terms', 'legal.terms')->name('terms');
+Route::view('/privacy', 'legal.privacy')->name('privacy');
+Route::view('/contact', 'legal.contact')->name('contact');
+
 Route::get('/sitemap.xml', function () {
     $base = rtrim(config('app.url'), '/');
     $urls = [

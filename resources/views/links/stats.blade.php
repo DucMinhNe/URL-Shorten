@@ -43,7 +43,7 @@
                             x-on:click="navigator.clipboard.writeText('{{ $shortUrl }}'); copied = true; setTimeout(() => copied = false, 1500)"
                             class="btn btn-ghost">
                         <x-heroicon-o-clipboard class="w-4 h-4"/>
-                        <span x-text="copied ? 'Đã copy ✓' : 'Copy link'"></span>
+                        <span x-text="copied ? 'Đã copy ✓' : 'Copy liên kết'"></span>
                     </button>
                     <a href="{{ route('links.edit', $link) }}" class="btn btn-primary">
                         <x-heroicon-o-pencil-square class="w-4 h-4"/> Sửa
@@ -106,21 +106,21 @@
             {{-- Device --}}
             <div class="card-feature !p-6">
                 <div class="section-label mb-1"><span>Thiết bị</span></div>
-                <h3 class="type-heading-sm mb-4">Phân bố device</h3>
+                <h3 class="type-heading-sm mb-4">Phân bố thiết bị</h3>
                 <x-stat-bars :items="$devices" empty="Chưa có dữ liệu."/>
             </div>
 
             {{-- Browser bars --}}
             <div class="card-feature !p-6">
                 <div class="section-label mb-1"><span>Trình duyệt</span></div>
-                <h3 class="type-heading-sm mb-4">Top browser</h3>
+                <h3 class="type-heading-sm mb-4">Trình duyệt phổ biến</h3>
                 <x-stat-bars :items="$browsers" empty="Chưa có dữ liệu."/>
             </div>
 
             {{-- OS bars --}}
             <div class="card-feature !p-6">
                 <div class="section-label mb-1"><span>Hệ điều hành</span></div>
-                <h3 class="type-heading-sm mb-4">Top OS</h3>
+                <h3 class="type-heading-sm mb-4">Hệ điều hành phổ biến</h3>
                 <x-stat-bars :items="$oses" empty="Chưa có dữ liệu."/>
             </div>
         </div>

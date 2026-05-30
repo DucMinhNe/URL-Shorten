@@ -8,7 +8,7 @@
                     Hệ thống rút gọn liên kết kèm quảng cáo. Mỗi 1.000 view hợp lệ — tiền vào ví của bạn.
                 </p>
 
-                <form class="mt-6 flex gap-2 max-w-[320px]" onsubmit="event.preventDefault()">
+                <form class="mt-6 flex gap-2 max-w-[320px]" onsubmit="event.preventDefault();LP.toast('ok','Đã đăng ký','Cảm ơn bạn đã quan tâm');this.reset()">
                     <input type="email" placeholder="email@example.com" class="input flex-1"/>
                     <button class="btn btn-primary px-5">
                         <x-heroicon-m-arrow-right class="w-4 h-4"/>
@@ -35,7 +35,8 @@
                     <li><a href="{{ route('home') }}" class="hover:text-ink-deep">Trang chủ</a></li>
                     <li><a href="#how" class="hover:text-ink-deep">Cách hoạt động</a></li>
                     <li><a href="#pricing" class="hover:text-ink-deep">Bảng giá</a></li>
-                    <li><a href="#faq" class="hover:text-ink-deep">FAQ</a></li>
+                    <li><a href="{{ route('faq') }}" class="hover:text-ink-deep">FAQ</a></li>
+                    <li><a href="{{ route('leaderboard') }}" class="hover:text-ink-deep">Bảng xếp hạng</a></li>
                 </ul>
             </div>
             <div class="col-span-1 md:col-span-2">
@@ -44,7 +45,7 @@
                     <li><a href="{{ route('login') }}" class="hover:text-ink-deep">Đăng nhập</a></li>
                     <li><a href="{{ route('register') }}" class="hover:text-ink-deep">Đăng ký</a></li>
                     @auth
-                        <li><a href="{{ route('dashboard') }}" class="hover:text-ink-deep">Dashboard</a></li>
+                        <li><a href="{{ route('dashboard') }}" class="hover:text-ink-deep">Tổng quan</a></li>
                         <li><a href="{{ route('payout.index') }}" class="hover:text-ink-deep">Rút tiền</a></li>
                     @endauth
                 </ul>
@@ -52,17 +53,17 @@
             <div class="col-span-1 md:col-span-2">
                 <div class="type-body-sm-bold text-ink-deep mb-4">Công ty</div>
                 <ul class="space-y-3 type-body-sm text-steel">
-                    <li><a href="#" class="hover:text-ink-deep">Giới thiệu</a></li>
-                    <li><a href="#" class="hover:text-ink-deep">Liên hệ</a></li>
-                    <li><a href="#" class="hover:text-ink-deep">Blog</a></li>
+                    <li><a href="{{ route('faq') }}" class="hover:text-ink-deep">Giới thiệu</a></li>
+                    <li><a href="{{ route('contact') }}" class="hover:text-ink-deep">Liên hệ</a></li>
+                    <li><a href="{{ route('faq') }}" class="hover:text-ink-deep">Blog</a></li>
                 </ul>
             </div>
             <div class="col-span-1 md:col-span-2">
                 <div class="type-body-sm-bold text-ink-deep mb-4">Pháp lý</div>
                 <ul class="space-y-3 type-body-sm text-steel">
-                    <li><a href="#" class="hover:text-ink-deep">Điều khoản</a></li>
-                    <li><a href="#" class="hover:text-ink-deep">Bảo mật</a></li>
-                    <li><a href="#" class="hover:text-ink-deep">Cookies</a></li>
+                    <li><a href="{{ route('terms') }}" class="hover:text-ink-deep">Điều khoản</a></li>
+                    <li><a href="{{ route('privacy') }}" class="hover:text-ink-deep">Bảo mật</a></li>
+                    <li><a href="{{ route('faq') }}" class="hover:text-ink-deep">Cookies</a></li>
                 </ul>
             </div>
         </div>
@@ -70,12 +71,12 @@
         <div class="mt-12 pt-8 border-t border-hairline-soft flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3 type-caption text-stone">
                 <button class="pill-tab !py-1 !px-3 !type-caption-bold">🇻🇳 Tiếng Việt</button>
-                <span>© 2026 LinkPay. All rights reserved.</span>
+                <span>© {{ date('Y') }} LinkPay. Bảo lưu mọi quyền.</span>
             </div>
             <div class="flex items-center gap-4 type-caption text-stone">
-                <a href="#" class="hover:text-ink-deep">Điều khoản</a>
-                <a href="#" class="hover:text-ink-deep">Bảo mật</a>
-                <a href="#" class="hover:text-ink-deep">Cookies</a>
+                <a href="{{ route('terms') }}" class="hover:text-ink-deep">Điều khoản</a>
+                <a href="{{ route('privacy') }}" class="hover:text-ink-deep">Bảo mật</a>
+                <a href="{{ route('faq') }}" class="hover:text-ink-deep">Cookies</a>
             </div>
         </div>
     </div>

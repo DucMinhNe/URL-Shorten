@@ -40,7 +40,7 @@ class FaqCategoryResource extends Resource
             Tables\Columns\TextColumn::make('sort_order')->sortable()->label('#'),
             Tables\Columns\TextColumn::make('name')->label('Tên')->searchable(),
             Tables\Columns\TextColumn::make('slug')->label('Slug')->fontFamily('mono'),
-            Tables\Columns\TextColumn::make('faqs_count')->counts('faqs')->label('FAQs'),
+            Tables\Columns\TextColumn::make('faqs_count')->counts('faqs')->label('Số câu hỏi'),
             Tables\Columns\IconColumn::make('is_published')->label('Hiển thị')->boolean(),
         ])
             ->defaultSort('sort_order')

@@ -53,17 +53,10 @@
             <div class="max-w-[420px]">
                 <div class="flex items-center gap-2 mb-6">
                     <span class="w-2 h-2 rounded-full bg-[color:var(--color-warning)] pulse-dot"></span>
-                    <span class="type-caption-bold uppercase tracking-wider text-stone">Người dùng thật · cập nhật trực tiếp</span>
+                    <span class="type-caption-bold uppercase tracking-wider text-stone">Kiếm tiền từ mỗi liên kết</span>
                 </div>
                 <div class="type-heading-md text-on-dark font-light">
-                    "Tao kiếm <span class="font-medium text-[color:var(--color-warning)]">400k/tháng</span> chỉ từ share link bài tập trong group lớp. Đủ tiền cafe mỗi ngày."
-                </div>
-                <div class="mt-6 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-orange-400 flex items-center justify-center type-body-md-bold text-on-dark">KN</div>
-                    <div>
-                        <div class="type-body-sm-bold text-on-dark">Khoa N.</div>
-                        <div class="type-caption text-stone">Content Creator · Đà Nẵng</div>
-                    </div>
+                    Chia sẻ link vào nhóm của bạn — mỗi <span class="font-medium text-[color:var(--color-warning)]">view hợp lệ</span> là tiền vào ví. Rút về MoMo, ZaloPay, PayPal trong 24h.
                 </div>
             </div>
 

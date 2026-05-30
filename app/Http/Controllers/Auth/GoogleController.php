@@ -44,6 +44,12 @@ class GoogleController extends Controller
             ])->save();
             $user = $existing;
         } else {
+            // Gán người giới thiệu nếu visitor vào /register?ref=CODE trước khi bấm Google.
+            $referrer = null;
+            if ($code = session()->pull('ref_code')) {
+                $referrer = User::where('referral_code', $code)->first();
+            }
+
             $user = User::create([
                 'name' => $g->getName() ?: $g->getNickname() ?: 'User',
                 'email' => $email,
@@ -51,6 +57,7 @@ class GoogleController extends Controller
                 'avatar' => $g->getAvatar(),
                 'email_verified_at' => now(),
                 'password' => Hash::make(Str::random(32)),
+                'referred_by' => $referrer?->id,
             ]);
         }
 

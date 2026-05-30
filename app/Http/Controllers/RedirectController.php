@@ -82,8 +82,20 @@ class RedirectController extends Controller
 
     public function unlock(UnlockLinkRequest $request, string $slug)
     {
-        $link = ShortLink::where('slug', $slug)->firstOrFail();
-        abort_if(! $link->isActive(), 410);
+        $link = ShortLink::where('slug', $slug)->first();
+        abort_if(! $link, 404);
+
+        // Cùng guard chain với show(): hiện trang blocked thống nhất.
+        if (! $link->isActive()) {
+            return response()->view('interstitial.blocked', ['link' => $link, 'reason' => 'blocked'], 410);
+        }
+        if ($link->isExpired()) {
+            return response()->view('interstitial.blocked', ['link' => $link, 'reason' => 'expired'], 410);
+        }
+        if ($link->isLimitReached()) {
+            return response()->view('interstitial.blocked', ['link' => $link, 'reason' => 'limit_reached'], 410);
+        }
+
         if (! $link->hasPassword() || ! Hash::check($request->password, $link->password)) {
             return back()->withErrors(['password' => __('Mật khẩu không đúng.')]);
         }

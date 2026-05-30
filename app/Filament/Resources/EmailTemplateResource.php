@@ -15,9 +15,9 @@ class EmailTemplateResource extends Resource
     protected static ?string $model = EmailTemplate::class;
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
     protected static ?string $navigationGroup = 'Quảng cáo';
-    protected static ?string $navigationLabel = 'Email Templates';
-    protected static ?string $modelLabel = 'email template';
-    protected static ?string $pluralModelLabel = 'email templates';
+    protected static ?string $navigationLabel = 'Mẫu email';
+    protected static ?string $modelLabel = 'mẫu email';
+    protected static ?string $pluralModelLabel = 'mẫu email';
     protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
@@ -37,7 +37,7 @@ class EmailTemplateResource extends Resource
                 Forms\Components\Textarea::make('body_text')->label('Nội dung văn bản')->rows(4)->columnSpanFull()
                     ->helperText('Bản plain-text cho email client cũ'),
                 Forms\Components\TagsInput::make('variables')->label('Biến')
-                    ->helperText('Variables sử dụng được trong template: {{ user_name }}, {{ amount }}, etc.'),
+                    ->helperText('Các biến dùng được trong mẫu: {{ user_name }}, {{ amount }}, …'),
             ]),
 
             Forms\Components\Section::make('Gửi')->schema([

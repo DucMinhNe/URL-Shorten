@@ -55,6 +55,23 @@
 
             {{-- Request form --}}
             <div class="lg:col-span-2">
+                @php $min = 100000; @endphp
+                @if($user->balance < $min)
+                <div class="card-feature !p-8 space-y-4 text-center">
+                    <div class="w-14 h-14 mx-auto rounded-2xl bg-[color:var(--color-warning-soft)] flex items-center justify-center">
+                        <x-heroicon-o-banknotes class="w-7 h-7 text-[color:var(--color-warning)]"/>
+                    </div>
+                    <div>
+                        <div class="section-label justify-center mb-2"><span>Chưa đủ điều kiện</span></div>
+                        <h2 class="type-heading-sm text-ink-deep">Chưa thể rút tiền</h2>
+                        <p class="type-body-sm text-slate mt-2">Cần tối thiểu 100.000đ để rút — còn thiếu {{ number_format($min - $user->balance) }}đ. Tạo thêm liên kết để kiếm tiền.</p>
+                    </div>
+                    <a href="{{ route('links.create') }}" class="btn btn-buy w-full">
+                        Tạo liên kết mới
+                        <x-heroicon-m-arrow-right class="w-4 h-4"/>
+                    </a>
+                </div>
+                @else
                 <form method="POST" action="{{ route('payout.store') }}" class="card-feature !p-8 space-y-6">
                     @csrf
                     <div>
@@ -72,9 +89,11 @@
                             <span class="absolute right-4 top-1/2 -translate-y-1/2 type-body-md-bold text-slate">đ</span>
                         </div>
                         <div class="flex flex-wrap gap-2 mt-3">
-                            <button type="button" onclick="document.getElementById('amount').value=100000" class="pill-tab !py-1 !px-3 type-caption-bold">100k</button>
-                            <button type="button" onclick="document.getElementById('amount').value=200000" class="pill-tab !py-1 !px-3 type-caption-bold">200k</button>
-                            <button type="button" onclick="document.getElementById('amount').value=500000" class="pill-tab !py-1 !px-3 type-caption-bold">500k</button>
+                            @foreach([100000 => '100k', 200000 => '200k', 500000 => '500k'] as $qfVal => $qfLabel)
+                                @if($qfVal <= $user->balance)
+                                    <button type="button" onclick="document.getElementById('amount').value={{ $qfVal }}" class="pill-tab !py-1 !px-3 type-caption-bold">{{ $qfLabel }}</button>
+                                @endif
+                            @endforeach
                             <button type="button" onclick="document.getElementById('amount').value={{ $user->balance }}" class="pill-tab !py-1 !px-3 type-caption-bold">Max ({{ number_format($user->balance) }}đ)</button>
                         </div>
                         @error('amount') <p class="type-body-sm text-critical mt-2">{{ $message }}</p> @enderror
@@ -121,9 +140,10 @@
                     </button>
 
                     <p class="type-caption text-stone text-center">
-                        Bằng việc gửi yêu cầu, bạn đồng ý <a href="#" class="text-ink-deep font-bold underline">điều khoản rút tiền</a>.
+                        Bằng việc gửi yêu cầu, bạn đồng ý <a href="{{ route('faq') }}" class="text-ink-deep font-bold underline">điều khoản rút tiền</a>.
                     </p>
                 </form>
+                @endif
             </div>
 
             {{-- History --}}

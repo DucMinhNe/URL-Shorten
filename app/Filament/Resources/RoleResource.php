@@ -46,7 +46,7 @@ class RoleResource extends Resource
             Tables\Columns\TextColumn::make('name')->label('Tên')->searchable(),
             Tables\Columns\TextColumn::make('slug')->label('Slug')->badge()->color(fn ($record) => $record->color),
             Tables\Columns\TextColumn::make('level')->label('Cấp')->sortable()->alignCenter(),
-            Tables\Columns\TextColumn::make('users_count')->counts('users')->label('Users'),
+            Tables\Columns\TextColumn::make('users_count')->counts('users')->label('Số người dùng'),
             Tables\Columns\IconColumn::make('is_system')->boolean()->label('Hệ thống'),
             Tables\Columns\TextColumn::make('created_at')->label('Ngày tạo')->dateTime('d/m/Y')->sortable(),
         ])

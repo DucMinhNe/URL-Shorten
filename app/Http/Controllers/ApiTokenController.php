@@ -21,7 +21,7 @@ class ApiTokenController extends Controller
         $plain = ApiToken::generate();
         $request->user()->apiTokens()->create([
             'name' => $data['name'],
-            'token' => $plain,
+            'token' => ApiToken::hash($plain),   // chỉ lưu bản băm
         ]);
 
         // Hiện token đầy đủ đúng một lần qua flash.

@@ -34,7 +34,7 @@ class ProFeaturesSeeder extends Seeder
 
             // API token mẫu.
             if (! $demo->apiTokens()->exists()) {
-                $demo->apiTokens()->create(['name' => 'Demo bot', 'token' => ApiToken::generate()]);
+                $demo->apiTokens()->create(['name' => 'Demo bot', 'token' => ApiToken::hash(ApiToken::generate())]);
             }
         }
 

@@ -15,7 +15,7 @@ class ShortenController extends Controller
     public function store(Request $request)
     {
         $bearer = $request->bearerToken();
-        $token = $bearer ? ApiToken::where('token', $bearer)->first() : null;
+        $token = $bearer ? ApiToken::where('token', ApiToken::hash($bearer))->first() : null;
 
         if (! $token) {
             return response()->json(['error' => 'Token không hợp lệ hoặc thiếu.'], 401);

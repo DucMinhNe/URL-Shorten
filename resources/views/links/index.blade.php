@@ -37,7 +37,7 @@
             <div class="flex items-center gap-2">
                 <a href="{{ route('links.export') }}" class="btn btn-ghost" title="Tải CSV">
                     <x-heroicon-o-arrow-down-tray class="w-4 h-4"/>
-                    <span class="hidden sm:inline">Export CSV</span>
+                    <span class="hidden sm:inline">Xuất CSV</span>
                 </a>
                 <a href="{{ route('links.bulk-create') }}" class="btn btn-ghost">
                     <x-heroicon-o-queue-list class="w-4 h-4"/>
@@ -60,9 +60,13 @@
                     <div class="type-body-sm-bold text-success">Đã tạo liên kết thành công</div>
                     <a href="{{ session('shortUrl') }}" class="font-mono type-body-sm text-ink-deep truncate block" target="_blank">{{ session('shortUrl') }}</a>
                 </div>
-                <button onclick="navigator.clipboard.writeText('{{ session('shortUrl') }}'); this.innerHTML='Đã copy ✓'" class="btn btn-ghost !py-2">
-                    <x-heroicon-o-clipboard class="w-4 h-4"/>
-                    Copy
+                <button type="button"
+                        x-data="{ copied: false }"
+                        x-on:click="navigator.clipboard.writeText('{{ session('shortUrl') }}'); copied = true; setTimeout(() => copied = false, 1500)"
+                        class="btn btn-ghost !py-2" :class="copied && 'text-success'">
+                    <template x-if="!copied"><x-heroicon-o-clipboard class="w-4 h-4"/></template>
+                    <template x-if="copied"><x-heroicon-o-check class="w-4 h-4"/></template>
+                    <span x-text="copied ? 'Đã copy' : 'Copy'"></span>
                 </button>
             </div>
         @endif
@@ -94,6 +98,9 @@
             </div>
 
             <input type="hidden" name="sort" value="{{ $currentSort }}">
+            @if($currentStatus !== 'all')<input type="hidden" name="status" value="{{ $currentStatus }}">@endif
+            @php $ctag = trim((string) request('tag', '')); @endphp
+            @if($ctag !== '')<input type="hidden" name="tag" value="{{ $ctag }}">@endif
 
             <div class="flex items-center gap-2 flex-wrap">
                 @foreach(['all' => 'Tất cả', 'active' => 'Hoạt động', 'disabled' => 'Đã tắt'] as $key => $label)
@@ -158,11 +165,11 @@
                     <thead class="bg-surface-soft border-b border-hairline-soft">
                         <tr class="type-caption-bold uppercase tracking-wider text-stone">
                             <th class="pl-6 pr-2 py-3 w-10">
-                                <input type="checkbox" class="lp-check" x-on:change="toggleAll($event)" :checked="isAll()" title="Chọn tất cả">
+                                <input type="checkbox" class="lp-check" x-on:change="toggleAll($event)" :checked="isAll()" title="Chọn tất cả" aria-label="Chọn tất cả liên kết">
                             </th>
                             <th class="text-left px-2 py-3">Liên kết ngắn</th>
                             <th class="text-left px-6 py-3 hidden md:table-cell">URL gốc</th>
-                            <th class="text-right px-6 py-3 hidden sm:table-cell">Click</th>
+                            <th class="text-right px-6 py-3 hidden sm:table-cell">Lượt click</th>
                             <th class="text-right px-6 py-3 hidden lg:table-cell">View hợp lệ</th>
                             <th class="text-right px-6 py-3">Doanh thu</th>
                             <th class="text-center px-6 py-3 hidden md:table-cell">Trạng thái</th>
@@ -180,7 +187,7 @@
                             @endphp
                             <tr class="hover:bg-surface-soft transition-colors group" :class="selected.includes({{ $link->id }}) && 'bg-primary-soft/40'">
                                 <td class="pl-6 pr-2 py-4">
-                                    <input type="checkbox" class="lp-check" value="{{ $link->id }}" x-model.number="selected">
+                                    <input type="checkbox" class="lp-check" value="{{ $link->id }}" x-model.number="selected" aria-label="Chọn liên kết /{{ $link->slug }}">
                                 </td>
                                 <td class="px-2 py-4">
                                     <div class="flex items-center gap-3">
@@ -223,7 +230,7 @@
                                         <button type="button"
                                                 x-data="{ copied: false }"
                                                 x-on:click="navigator.clipboard.writeText('{{ $shortUrl }}'); copied = true; setTimeout(() => copied = false, 1500)"
-                                                class="btn-icon-ghost" :class="copied && 'text-success'" title="Copy short URL">
+                                                class="btn-icon-ghost" :class="copied && 'text-success'" title="Sao chép liên kết">
                                             <template x-if="!copied"><x-heroicon-o-clipboard class="w-4 h-4"/></template>
                                             <template x-if="copied"><x-heroicon-o-check class="w-4 h-4"/></template>
                                         </button>

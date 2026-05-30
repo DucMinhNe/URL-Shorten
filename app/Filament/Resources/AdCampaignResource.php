@@ -20,8 +20,8 @@ class AdCampaignResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';
     protected static ?string $navigationGroup = 'Quảng cáo';
     protected static ?string $navigationLabel = 'Quảng cáo';
-    protected static ?string $modelLabel = 'campaign';
-    protected static ?string $pluralModelLabel = 'campaigns';
+    protected static ?string $modelLabel = 'chiến dịch';
+    protected static ?string $pluralModelLabel = 'chiến dịch';
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
@@ -30,7 +30,7 @@ class AdCampaignResource extends Resource
             Forms\Components\TextInput::make('name')->label('Tên')->required(),
             Forms\Components\Select::make('placement')->label('Vị trí')->options(\App\Support\Labels::options('ad_placement'))->required(),
             Forms\Components\Select::make('type')->label('Loại')->options(\App\Support\Labels::options('ad_type'))->required()->reactive(),
-            Forms\Components\Textarea::make('content')->label('Nội dung')->required()->rows(4)->helperText('Image URL, HTML, or iframe URL'),
+            Forms\Components\Textarea::make('content')->label('Nội dung')->required()->rows(4)->helperText('URL ảnh, mã HTML, hoặc URL iframe'),
             Forms\Components\TextInput::make('target_url')->label('URL đích')->url()->nullable(),
             Forms\Components\TextInput::make('weight')->label('Trọng số')->numeric()->default(1)->minValue(1)->maxValue(100),
             Forms\Components\Select::make('status')->label('Trạng thái')->options(\App\Support\Labels::options('ad_status'))->required(),

@@ -206,3 +206,8 @@
     .lp-spark path.line{animation:none;stroke-dashoffset:0;}
     .lp-rise{animation:none;opacity:1;transform:none;}
 }
+
+/* ---- auth pages: missing border utilities (frozen build) --------------- */
+.border-ink-deep{border-color:var(--color-ink-deep)}
+.hover\:border-ink-deep:hover{border-color:var(--color-ink-deep)}
+.border-success\/30{border-color:rgba(92,185,40,.3)}
