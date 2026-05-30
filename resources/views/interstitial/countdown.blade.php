@@ -42,6 +42,15 @@
     .robot-box{width:24px;height:24px;border-radius:7px;border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.25s;}
     .robot-box.ok{background:linear-gradient(135deg,var(--gr),var(--cy));border-color:transparent;}
 
+    /* quiz options */
+    .qopt{padding:13px 14px;border-radius:14px;border:1px solid var(--line2);background:rgba(255,255,255,.03);
+        color:var(--fg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:.18s;text-align:center;}
+    .qopt:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.28);}
+    .qopt.correct{background:linear-gradient(135deg,rgba(52,211,153,.22),rgba(103,232,249,.18));border-color:var(--gr);color:#fff;cursor:default;}
+    .qopt.wrong{border-color:#F472B6;background:rgba(244,114,182,.12);animation:shake .35s;}
+    .qopt.locked{pointer-events:none;opacity:.5;}
+    @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+
     /* skip button */
     .skip{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;font-weight:700;font-size:16px;
         padding:16px 24px;border-radius:18px;border:1px solid var(--line2);background:rgba(255,255,255,.04);color:var(--mut);
@@ -117,28 +126,53 @@
 
                     <p id="status-text" style="color:var(--mut);font-size:14px;margin:0 0 24px;min-height:20px;">Vui lòng chờ <strong style="color:var(--fg);">{{ $seconds }}</strong> giây và xác thực bạn không phải bot</p>
 
-                    {{-- captcha --}}
-                    <div style="display:flex;justify-content:center;margin-bottom:24px;">
-                        <button type="button" id="robot-check" class="robot">
-                            <span id="robot-box" class="robot-box">
-                                <svg id="robot-check-icon" width="14" height="14" viewBox="0 0 20 20" fill="#0B0B14" style="display:none;">
-                                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"/>
+                    {{-- ───── Xác minh người thật ───── --}}
+                    @if($question)
+                        @php $opts = collect($question->options ?? [])->shuffle(); @endphp
+                        <div id="quiz" style="margin-bottom:24px;text-align:left;">
+                            <div class="mono" style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut2);text-align:center;margin-bottom:10px;">Xác minh bạn là người thật</div>
+                            @if($question->image)
+                                <img src="{{ \Illuminate\Support\Str::startsWith($question->image, ['http','//']) ? $question->image : asset(ltrim($question->image,'/')) }}"
+                                     alt="" style="width:100%;max-height:140px;object-fit:cover;border-radius:14px;border:1px solid var(--line);margin-bottom:12px;">
+                            @endif
+                            <div style="font-size:17px;font-weight:700;text-align:center;margin-bottom:14px;">{{ $question->question }}</div>
+                            <div id="quiz-opts" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                                @foreach($opts as $o)
+                                    <button type="button" class="qopt" data-correct="{{ !empty($o['correct']) ? 1 : 0 }}" data-text="{{ $o['text'] }}">
+                                        {{ $o['text'] }}
+                                    </button>
+                                @endforeach
+                            </div>
+                            <div id="quiz-msg" class="mono" style="font-size:12px;text-align:center;margin-top:10px;min-height:16px;color:var(--mut2);"></div>
+                        </div>
+                    @else
+                        {{-- Fallback: checkbox đơn giản (admin chưa cấu hình câu hỏi) --}}
+                        <div style="display:flex;justify-content:center;margin-bottom:24px;">
+                            <button type="button" id="robot-check" class="robot">
+                                <span id="robot-box" class="robot-box">
+                                    <svg id="robot-check-icon" width="14" height="14" viewBox="0 0 20 20" fill="#0B0B14" style="display:none;">
+                                        <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"/>
+                                    </svg>
+                                    <svg id="robot-spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" style="display:none;" class="tw-spin">
+                                        <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.7)" stroke-width="3" stroke-dasharray="32" stroke-linecap="round"/>
+                                    </svg>
+                                </span>
+                                <span id="robot-label" style="font-size:14px;font-weight:600;color:var(--fg);flex:1;text-align:left;">Tôi không phải là robot</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                 </svg>
-                                <svg id="robot-spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" style="display:none;" class="tw-spin">
-                                    <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.7)" stroke-width="3" stroke-dasharray="32" stroke-linecap="round"/>
-                                </svg>
-                            </span>
-                            <span id="robot-label" style="font-size:14px;font-weight:600;color:var(--fg);flex:1;text-align:left;">Tôi không phải là robot</span>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                            </svg>
-                        </button>
-                    </div>
+                            </button>
+                        </div>
+                    @endif
 
                     {{-- skip --}}
                     <form id="verify-form" method="POST" action="{{ route('link.verify', $link->slug) }}">
                         @csrf
                         <input type="hidden" name="impression_token" value="{{ $token }}">
+                        @if($question)
+                            <input type="hidden" name="captcha_question_id" value="{{ $question->id }}">
+                            <input type="hidden" name="captcha_answer" id="captcha-answer" value="">
+                        @endif
                         <button id="skip-btn" type="button" disabled class="skip">
                             <span id="skip-label">Đợi {{ $seconds }} giây</span>
                             <svg id="skip-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
@@ -303,29 +337,56 @@
         if (c <= 0) clearInterval(interval);
     }, 1000);
 
-    // captcha
-    const robotCheck = document.getElementById('robot-check');
-    const robotBox = document.getElementById('robot-box');
-    const robotIcon = document.getElementById('robot-check-icon');
-    const robotSpinner = document.getElementById('robot-spinner');
-    const robotLabel = document.getElementById('robot-label');
     let captchaToken = '';
 
-    robotCheck.addEventListener('click', () => {
-        if (captchaOk || robotCheck.disabled) return;
-        robotCheck.disabled = true;
-        robotSpinner.style.display = 'block';
-        robotLabel.textContent = 'Đang xác thực...';
-        setTimeout(() => {
-            robotSpinner.style.display = 'none';
-            robotIcon.style.display = 'block';
-            robotBox.classList.add('ok');
-            robotLabel.innerHTML = '<span style="color:#34D399">✓</span> Đã xác thực thành công';
-            captchaToken = 'demo-' + Math.random().toString(36).slice(2);
-            captchaOk = true;
-            refresh();
-        }, 400 + Math.random() * 300);
-    });
+    // ── Quiz challenge (câu hỏi cấu hình từ admin) ──
+    const quiz = document.getElementById('quiz');
+    if (quiz) {
+        const msg = document.getElementById('quiz-msg');
+        const answerInput = document.getElementById('captcha-answer');
+        quiz.querySelectorAll('.qopt').forEach(opt => {
+            opt.addEventListener('click', () => {
+                if (captchaOk) return;
+                if (opt.dataset.correct === '1') {
+                    opt.classList.add('correct');
+                    quiz.querySelectorAll('.qopt').forEach(o => { if (o !== opt) o.classList.add('locked'); });
+                    if (answerInput) answerInput.value = opt.dataset.text;
+                    captchaToken = 'quiz-' + Math.random().toString(36).slice(2);
+                    msg.innerHTML = '<span style="color:#34D399">✓ Chính xác!</span>';
+                    captchaOk = true;
+                    refresh();
+                } else {
+                    opt.classList.add('wrong');
+                    msg.innerHTML = '<span style="color:#F472B6">✗ Sai rồi, thử lại</span>';
+                    setTimeout(() => opt.classList.remove('wrong'), 400);
+                }
+            });
+        });
+    }
+
+    // ── Fallback: checkbox "Tôi không phải robot" ──
+    const robotCheck = document.getElementById('robot-check');
+    if (robotCheck) {
+        const robotBox = document.getElementById('robot-box');
+        const robotIcon = document.getElementById('robot-check-icon');
+        const robotSpinner = document.getElementById('robot-spinner');
+        const robotLabel = document.getElementById('robot-label');
+        robotCheck.addEventListener('click', () => {
+            if (captchaOk || robotCheck.disabled) return;
+            robotCheck.disabled = true;
+            robotSpinner.style.display = 'block';
+            robotLabel.textContent = 'Đang xác thực...';
+            setTimeout(() => {
+                robotSpinner.style.display = 'none';
+                robotIcon.style.display = 'block';
+                robotBox.classList.add('ok');
+                robotLabel.innerHTML = '<span style="color:#34D399">✓</span> Đã xác thực thành công';
+                captchaToken = 'demo-' + Math.random().toString(36).slice(2);
+                captchaOk = true;
+                refresh();
+            }, 400 + Math.random() * 300);
+        });
+    }
 
     btn.addEventListener('click', async () => {
         if (btn.disabled) return;

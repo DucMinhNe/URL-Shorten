@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             FaqSeeder::class,
             AuditLogSeeder::class,
             ProFeaturesSeeder::class,
+            CaptchaQuestionSeeder::class,
         ]);
     }
 }

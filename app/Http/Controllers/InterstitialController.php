@@ -38,7 +38,20 @@ class InterstitialController extends Controller
         $data = $request->validate([
             'impression_token' => ['required', 'string', 'size:36'],
             'cf-turnstile-response' => ['nullable', 'string'],
+            'captcha_question_id' => ['nullable', 'integer'],
+            'captcha_answer' => ['nullable', 'string'],
         ]);
+
+        // Nếu trang chờ hiển thị câu hỏi → bắt buộc trả lời đúng.
+        if (! empty($data['captcha_question_id'])) {
+            $question = \App\Models\CaptchaQuestion::find($data['captcha_question_id']);
+            if (! $question || ! $question->isCorrect($data['captcha_answer'] ?? null)) {
+                return response()->json([
+                    'error' => 'captcha_failed',
+                    'message' => 'Vui lòng trả lời đúng câu hỏi xác minh.',
+                ], 422);
+            }
+        }
 
         $sessionKey = "interstitial:{$data['impression_token']}";
         $meta = session()->pull($sessionKey); // one-time use — pull removes from session

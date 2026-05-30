@@ -65,11 +65,17 @@ class RedirectController extends Controller
             }
         }
 
+        $question = \App\Models\CaptchaQuestion::pickActive();
+        if ($question) {
+            $question->increment('shown_count');
+        }
+
         return view('interstitial.countdown', [
             'link' => $link,
             'ads' => $picked,
             'token' => $token,
             'seconds' => 5,
+            'question' => $question,
             'turnstileSiteKey' => config('services.turnstile.site_key'),
         ]);
     }
