@@ -20,8 +20,7 @@ Route::get('/sitemap.xml', function () {
     $urls = [
         ['loc' => $base.'/', 'priority' => '1.0', 'freq' => 'daily'],
         ['loc' => $base.'/faq', 'priority' => '0.7', 'freq' => 'weekly'],
-        ['loc' => $base.'/login', 'priority' => '0.5', 'freq' => 'monthly'],
-        ['loc' => $base.'/register', 'priority' => '0.6', 'freq' => 'monthly'],
+        ['loc' => $base.'/leaderboard', 'priority' => '0.6', 'freq' => 'daily'],
     ];
 
     $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";

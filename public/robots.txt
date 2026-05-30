@@ -1,14 +1,20 @@
 User-agent: *
 Allow: /$
 Allow: /faq
+Allow: /leaderboard
 Disallow: /admin
 Disallow: /dashboard
 Disallow: /links
 Disallow: /payout
 Disallow: /profile
+Disallow: /referral
+Disallow: /premium
+Disallow: /api-tokens
+Disallow: /api/
+Disallow: /go/
 Disallow: /login
 Disallow: /register
 Disallow: /forgot-password
 Disallow: /reset-password
 
-Sitemap: https://demoweb.page.gd/sitemap.xml
+Sitemap: https://mess.io.vn/sitemap.xml
