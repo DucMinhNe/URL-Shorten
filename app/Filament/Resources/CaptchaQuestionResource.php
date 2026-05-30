@@ -32,30 +32,34 @@ class CaptchaQuestionResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('question')
-                    ->label('Câu hỏi')
+                    ->label('Câu lệnh (hiện trên lưới)')
                     ->required()->maxLength(255)
-                    ->placeholder('VD: 3 + 4 bằng mấy?')
+                    ->placeholder('VD: Chọn tất cả ô có con chó 🐶 · Chọn các số 2, 3, 4, 5')
                     ->columnSpanFull(),
 
                 Forms\Components\Repeater::make('options')
-                    ->label('Các đáp án (đánh dấu đáp án đúng)')
+                    ->label('Các ô của lưới (đánh dấu ô ĐÚNG)')
                     ->schema([
                         Forms\Components\TextInput::make('text')
-                            ->label('Đáp án')->required()->columnSpan(3),
+                            ->label('Nội dung ô (chữ / số / emoji 🐶)')
+                            ->columnSpan(3),
+                        Forms\Components\TextInput::make('image')
+                            ->label('hoặc URL ảnh')
+                            ->placeholder('https://… (để trống nếu dùng emoji/chữ)')
+                            ->columnSpan(2),
                         Forms\Components\Toggle::make('correct')
                             ->label('Đúng')->inline(false)->columnSpan(1),
                     ])
-                    ->columns(4)
-                    ->minItems(2)->maxItems(6)
-                    ->default([['text' => '', 'correct' => true], ['text' => '', 'correct' => false]])
+                    ->columns(6)
+                    ->minItems(4)->maxItems(9)
+                    ->default([
+                        ['text' => '🐶', 'correct' => true], ['text' => '🐱', 'correct' => false], ['text' => '🚗', 'correct' => false],
+                        ['text' => '🐶', 'correct' => true], ['text' => '🍎', 'correct' => false], ['text' => '🐶', 'correct' => true],
+                        ['text' => '🐰', 'correct' => false], ['text' => '🐶', 'correct' => true], ['text' => '🚲', 'correct' => false],
+                    ])
                     ->reorderable()
-                    ->helperText('Tối thiểu 2 đáp án. Bật "Đúng" ở ít nhất một đáp án.')
-                    ->columnSpanFull(),
-
-                Forms\Components\TextInput::make('image')
-                    ->label('Ảnh minh hoạ (tuỳ chọn)')
-                    ->placeholder('URL ảnh hoặc đường dẫn trong /public')
-                    ->maxLength(500)
+                    ->grid(3)
+                    ->helperText('Nên đủ 9 ô (lưới 3×3). Bật "Đúng" cho các ô khớp câu lệnh. Người dùng phải chọn ĐÚNG hết và không thừa.')
                     ->columnSpanFull(),
 
                 Forms\Components\Toggle::make('is_active')

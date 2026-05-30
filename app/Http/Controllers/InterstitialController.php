@@ -45,7 +45,7 @@ class InterstitialController extends Controller
         // Nếu trang chờ hiển thị câu hỏi → bắt buộc trả lời đúng.
         if (! empty($data['captcha_question_id'])) {
             $question = \App\Models\CaptchaQuestion::find($data['captcha_question_id']);
-            if (! $question || ! $question->isCorrect($data['captcha_answer'] ?? null)) {
+            if (! $question || ! $question->isSolved($data['captcha_answer'] ?? null)) {
                 return response()->json([
                     'error' => 'captcha_failed',
                     'message' => 'Vui lòng trả lời đúng câu hỏi xác minh.',
